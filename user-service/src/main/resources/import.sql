@@ -1,9 +1,9 @@
 -- Sequence para User
-CREATE SEQUENCE user_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE users_seq START WITH 1 INCREMENT BY 1;
 
 -- Tabela User
 CREATE TABLE users (
-    id BIGINT NOT NULL PRIMARY KEY DEFAULT nextval('user_seq'),
+    id BIGINT NOT NULL PRIMARY KEY DEFAULT nextval('users_seq'),
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE

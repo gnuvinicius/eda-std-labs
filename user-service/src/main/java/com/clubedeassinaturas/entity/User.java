@@ -4,10 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.Getter;
 
 @Entity
 @Getter
+@Table(name = "users")
 public class User extends PanacheEntity {
 
     private String name;
