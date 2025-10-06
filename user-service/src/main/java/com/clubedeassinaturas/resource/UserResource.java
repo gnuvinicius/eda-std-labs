@@ -2,12 +2,11 @@ package com.clubedeassinaturas.resource;
 
 import com.clubedeassinaturas.entity.OutboxEvent;
 import com.clubedeassinaturas.entity.User;
+import com.clubedeassinaturas.messaging.OutboxPublisher;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.slf4j.Logger;
@@ -20,10 +19,13 @@ public class UserResource {
 
     private static final Logger log = LoggerFactory.getLogger(UserResource.class);
 
+    @Inject
+    OutboxPublisher publisher;
+
     @POST
     @Transactional
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createUser(@Valid UserRequestDTO request) {
+    public Response createUser(@Valid CreateUserRequest request) {
         try {
             User.find("email", request.email()).firstResultOptional()
                     .ifPresent(u -> {
@@ -44,6 +46,28 @@ public class UserResource {
         } catch (Exception e) {
             log.error("Error creating user", e);
             return Response.serverError().build();
+        }
+    }
+
+    @DELETE
+    @Transactional
+    @Path("/{userId}")
+    public Response disableUser(@PathParam("userId") Long userId) {
+        try {
+            User user = User.find("id = ?1 AND active = true", userId)
+                    .firstResultOptional()
+                    .map(User.class::cast)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            user.updateStatus(false);
+            publisher.publishUserDisabledEvent(user.toJson());
+
+            return Response.noContent().build();
+        } catch (Exception e) {
+            log.error("Error disabling user", e);
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ErrorMessage(e.getMessage()))
+                    .build();
         }
     }
 }

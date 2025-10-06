@@ -6,6 +6,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -14,7 +15,7 @@ public class User extends PanacheEntity {
 
     private String name;
     private String email;
-    private final boolean active = true;
+    private boolean active = true;
 
     protected User() {
     }
@@ -25,6 +26,11 @@ public class User extends PanacheEntity {
         user.email = email;
         user.persist();
         return user;
+    }
+
+    public void updateStatus(boolean isActive) {
+        this.active = isActive;
+        this.persist();
     }
 
     public String toJson() throws JsonProcessingException {

@@ -16,7 +16,7 @@ import java.util.UUID;
 @ApplicationScoped
 public class OutboxPublisher {
 
-    @Channel("outbox-events")
+    @Channel("user-events")
     Emitter<CloudEvent> emitter;
 
     @Transactional
@@ -33,5 +33,16 @@ public class OutboxPublisher {
             emitter.send(cloudEvent);
             event.setPublished(true);
         }
+    }
+
+    public void publishUserDisabledEvent(String userJson) {
+        CloudEvent cloudEvent = CloudEventBuilder.v1()
+                .withId(UUID.randomUUID().toString())
+                .withType("user.disabled")
+                .withSource(URI.create("user-service"))
+                .withData("application/json", userJson.getBytes(StandardCharsets.UTF_8))
+                .build();
+
+        emitter.send(cloudEvent);
     }
 }
