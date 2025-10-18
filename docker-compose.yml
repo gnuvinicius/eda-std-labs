@@ -58,6 +58,20 @@ services:
     ports:
       - "9092:9092"
       - "9093:9093"
+  
+  kafka-init:
+    image: confluentinc/cp-kafka:7.4.0
+    depends_on:
+      - kafka
+    volumes:
+      - ./scripts:/scripts:ro
+    networks:
+      - app-network
+    entrypoint: ["/bin/bash", "/scripts/create-topics.sh"]
+    environment:
+      # bootstrap usado pelo script
+      BOOTSTRAP_SERVERS: "kafka:9093"
+    # kafka-init executa e termina (one-shot). Não expõe portas.
 
   debezium:
     image: quay.io/debezium/connect:2.7
@@ -92,6 +106,55 @@ services:
       JVM_OPTS: "-Xms32M -Xmx64M"
     ports:
       - "9000:9000"
+
+  traefik:
+    image: traefik:v3.1
+    container_name: traefik
+    command:
+      - "--api.insecure=true"            # Habilita painel web (http://localhost:8080)
+      - "--providers.docker=true"        # Descobre containers Docker
+      - "--entrypoints.web.address=:80"  # Entrada padrão HTTP
+      - "--log.level=DEBUG"              # Habilita logs do Traefik (DEBUG, INFO, WARN, ERROR)
+      - "--log.format=json"              # Formato do log (json ou common)
+      - "--accesslog=true"               # Habilita access log
+      - "--accesslog.format=json"        # Formato do access log (json ou common)
+    ports:
+      - "8080:8080"  # Painel do Traefik
+      - "80:80"      # Entrada para os serviços
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - app-network
+
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: src/main/docker/Dockerfile.jvm
+    image: club/user-service
+    container_name: user-service
+    depends_on:
+      - postgres
+      - kafka
+    labels:
+      - "traefik.http.routers.user.rule=PathPrefix(`/users`)"
+    environment:
+      # Banco de Dados
+      QUARKUS_DATASOURCE_DB_KIND: postgresql
+      QUARKUS_DATASOURCE_USERNAME: user
+      QUARKUS_DATASOURCE_PASSWORD: password
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres:5432/subscriptions
+    
+      # Kafka
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      
+      # Configurações de porta
+      QUARKUS_HTTP_PORT: 8080
+    ports:
+      - "8082:8080"
+    networks:
+      - app-network
+
+  
 
 networks:
   app-network:

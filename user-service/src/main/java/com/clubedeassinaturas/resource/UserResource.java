@@ -9,6 +9,9 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +24,12 @@ public class UserResource {
 
     @Inject
     OutboxPublisher publisher;
+
+    @GET
+    public Response getUsers() {
+        List<User> user = User.findAll().list();
+        return Response.ok(user).build();
+    }
 
     @POST
     @Transactional
