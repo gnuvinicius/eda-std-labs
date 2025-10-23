@@ -38,6 +38,9 @@ services:
       - app-network
     ports:
       - "2181:2181"
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+      - zookeeper-logs:/var/lib/zookeeper/log
 
   kafka:
     image: confluentinc/cp-kafka:7.6.0
@@ -58,21 +61,9 @@ services:
     ports:
       - "9092:9092"
       - "9093:9093"
-  
-  kafka-init:
-    image: confluentinc/cp-kafka:7.4.0
-    depends_on:
-      - kafka
     volumes:
-      - ./scripts:/scripts:ro
-    networks:
-      - app-network
-    entrypoint: ["/bin/bash", "/scripts/create-topics.sh"]
-    environment:
-      # bootstrap usado pelo script
-      BOOTSTRAP_SERVERS: "kafka:9093"
-    # kafka-init executa e termina (one-shot). Não expõe portas.
-
+      - kafka-data:/var/lib/kafka/data
+  
   debezium:
     image: quay.io/debezium/connect:2.7
     container_name: debezium
@@ -154,8 +145,6 @@ services:
     networks:
       - app-network
 
-  
-
 networks:
   app-network:
     driver: bridge
@@ -163,3 +152,6 @@ networks:
 volumes:
   pgdata:
   pgadmin_data:
+  kafka-data:
+  zookeeper-data:
+  zookeeper-logs:

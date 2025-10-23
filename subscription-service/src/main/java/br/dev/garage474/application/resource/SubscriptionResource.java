@@ -13,6 +13,10 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Path("/subscriptions")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -21,19 +25,30 @@ public class SubscriptionResource {
     @Inject
     private SubscriptionService service;
 
+    private static final Logger log = LoggerFactory.getLogger(SubscriptionResource.class);
+
     @POST
+    @Operation(
+        summary = "cadastro de assinatura",
+        description = "cadastro de uma nova assinatura para um usuário"
+    )
     public Response create(SubscriptionRequest req) {
         try {
             var subscription = Subscription.of(req.userId(), req.planName(), Instant.now().plus(1, ChronoUnit.YEARS));
             Subscription created = service.create(subscription);
             return Response.ok(SubscriptionResponse.fromEntity(created)).build();
         } catch (Exception e) {
+            log.error("Erro ao criar assinatura: {}", e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
     }
 
     @GET
     @Path("/user/{userId}")
+    @Operation(
+        summary = "Lista as assinaturas de um usuario",
+        description = "Lista todas as assinaturas associadas a um usuário específico"
+    )
     public List<SubscriptionResponse> listByUser(@PathParam("userId") Long userId) {
         return service.listByUser(userId)
                 .stream()
@@ -43,8 +58,17 @@ public class SubscriptionResource {
 
     @PUT
     @Path("/{id}/cancel")
+    @Operation(
+        summary = "cancela assinatura",
+        description = "Cancela uma assinatura existente pelo ID"
+    )
     public Response cancel(@PathParam("id") Long id) {
-        service.cancel(id);
-        return Response.noContent().build();
+        try {
+            service.cancel(id);
+            return Response.noContent().build();
+        } catch (Exception e) {
+            log.error("Erro ao cancelar assinatura: {}", e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
     }
 }
