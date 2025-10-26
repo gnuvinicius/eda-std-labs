@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: garage474-main-service
+  labels:
+    app: garage474-main-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: garage474-main-service
+  template:
+    metadata:
+      labels:
+        app: garage474-main-service
+    spec:
+      containers:
+        - name: garage474-main-service
+          image: garage474-main-service:latest
+          imagePullPolicy: Never
+          resources:
+            limits:
+              memory: "1024Mi"
+              cpu: "500m"
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp
+spec:
+  selector:
+    app: garage474-main-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+          
