@@ -1,32 +1,4 @@
 services:
-  postgres:
-    image: postgres:15
-    container_name: postgres
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: subscriptions
-    ports:
-      - "5432:5432"
-    networks:
-      - app-network
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-
-  pgadmin:
-    image: dpage/pgadmin4:8.10
-    container_name: pgadmin
-    depends_on:
-      - postgres
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - "8081:80"
-    networks:
-      - app-network
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.0
@@ -69,7 +41,6 @@ services:
     container_name: debezium
     depends_on:
       - kafka
-      - postgres
     networks:
       - app-network
     environment:
@@ -124,7 +95,6 @@ services:
     image: club/user-service
     container_name: user-service
     depends_on:
-      - postgres
       - kafka
     labels:
       - "traefik.http.routers.user.rule=PathPrefix(`/users`)"
@@ -150,8 +120,6 @@ networks:
     driver: bridge
 
 volumes:
-  pgdata:
-  pgadmin_data:
   kafka-data:
   zookeeper-data:
   zookeeper-logs:
