@@ -34,10 +34,12 @@ kind: Service
 metadata:
   name: myapp
 spec:
+  type: NodePort
   selector:
     app: garage474-main-service
   ports:
     - protocol: TCP
       port: 80
       targetPort: 8080
+      nodePort: 30080
           

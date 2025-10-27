@@ -82,5 +82,121 @@ Ele automatiza a implantação, o balanceamento de carga, a recuperação de fal
 
 ---
 
-Quer que eu monte um exemplo prático completo (com YAML de Deployment + Service e os comandos correspondentes)?
-Posso gerar um mini tutorial passo a passo.
+Vamos destrinchar **`port`**, **`targetPort`** e **`nodePort`** de forma simples, visual e prática.
+
+---
+
+## 🎯 Contexto rápido
+
+Seu **Pod** (onde roda o WildFly) expõe a porta **8080** internamente:
+
+```yaml
+containers:
+  - name: garage474-main-service
+    ports:
+      - containerPort: 8080
+```
+
+Mas o Kubernetes **não deixa você acessar um Pod diretamente de fora** (por segurança e abstração).
+Então você cria um **Service**, que serve como “ponte” entre o **mundo externo** e o **Pod**.
+
+---
+
+## ⚙️ O papel de cada porta
+
+Vamos usar um exemplo prático:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp
+spec:
+  type: NodePort
+  selector:
+    app: garage474-main-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      nodePort: 30080
+```
+
+Agora, veja o fluxo:
+
+```
+[Usuário navegador]
+       │
+       ▼
+http://<minikube-ip>:30080
+       │
+       ▼
+Service (porta 80)
+       │
+       ▼
+Pod (porta 8080)
+```
+
+---
+
+## 🔍 Entendendo cada campo
+
+| Campo             | Onde fica                           | O que faz                                              | Exemplo |
+| ----------------- | ----------------------------------- | ------------------------------------------------------ | ------- |
+| **containerPort** | no Pod                              | Porta **interna do container** onde a aplicação escuta | `8080`  |
+| **targetPort**    | no Service                          | Porta **no Pod** para onde o tráfego será enviado      | `8080`  |
+| **port**          | no Service                          | Porta **dentro do Service** (acessada por outros Pods) | `80`    |
+| **nodePort**      | no Service (só se `type: NodePort`) | Porta **no nó/host** (acessada externamente)           | `30080` |
+
+---
+
+## 💡 Analogia simples
+
+Imagine o **Service** como uma central telefônica:
+
+| Nível                            | Representação              | Porta                   |
+| -------------------------------- | -------------------------- | ----------------------- |
+| **Mundo externo (host)**         | o número da central        | `nodePort` (ex: 30080)  |
+| **Service (a central)**          | a linha interna da empresa | `port` (ex: 80)         |
+| **Pod (o ramal do funcionário)** | o ramal final              | `targetPort` (ex: 8080) |
+
+Quando alguém liga para `30080`, o Kubernetes redireciona para o Service (`80`), que conecta ao Pod (`8080`).
+
+---
+
+## 🧩 Quando usar cada um
+
+| Situação                       | Campos usados                    | Explicação                                    |
+| ------------------------------ | -------------------------------- | --------------------------------------------- |
+| Comunicação interna entre Pods | `port`, `targetPort`             | Não precisa de `nodePort` nem Ingress         |
+| Acesso externo (ex: navegador) | `port`, `targetPort`, `nodePort` | Usa `type: NodePort`                          |
+| Domínio e HTTPS                | `port`, `targetPort` + Ingress   | Ingress faz o papel do “NodePort inteligente” |
+
+---
+
+## 🔎 Exemplo prático no seu caso
+
+Seu WildFly escuta em **8080** → é o `targetPort` (porta no Pod).
+Você escolheu `port: 80` → é a porta "pública" do Service dentro do cluster.
+E com `nodePort: 30080` → você consegue acessar de fora do cluster (ex: do navegador).
+
+Assim:
+
+```
+http://<minikube-ip>:30080  →  encaminha para 8080 no Pod
+```
+
+---
+
+## ✅ Resumo final
+
+| Campo           | Local   | Significado                                                    | Exemplo | Necessário para             |
+| --------------- | ------- | -------------------------------------------------------------- | ------- | --------------------------- |
+| `containerPort` | Pod     | Onde a app escuta                                              | 8080    | Sempre                      |
+| `targetPort`    | Service | Porta do Pod onde o Service envia o tráfego                    | 8080    | Sempre                      |
+| `port`          | Service | Porta exposta dentro do cluster (outros Pods acessam por aqui) | 80      | Sempre                      |
+| `nodePort`      | Service | Porta exposta fora do cluster (para o host externo)            | 30080   | Só se quiser acesso externo |
+
+---
+
+

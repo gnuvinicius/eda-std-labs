@@ -22,4 +22,12 @@ public class LegacyService {
         // In a real scenario, you would implement logic to retrieve users from the repository.
         return userRepository.findAllUsers();
     }
+
+    private void processPaymentNotification(String notificationData) {
+        try (PaymentNotificationHandler handler = new PaymentNotificationHandler()) {
+            handler.handleNotification(notificationData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
