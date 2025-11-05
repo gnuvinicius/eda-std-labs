@@ -12,7 +12,7 @@
           <a class="nav-link" href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="${pageContext.request.contextPath}/users">Usuários</a>
+          <a class="nav-link" href="${pageContext.request.contextPath}/users?action=list">Usuarios</a>
         </li>
       </ul>
     </div>

@@ -24,6 +24,25 @@ public class UserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
 
+        if (action == null) {
+            req.getRequestDispatcher("/WEB-INF/views/notFound.jsp").forward(req, resp);
+        } else {
+            switch (action) {
+                case "list":
+                    listUsers(req, resp);
+                    break;
+                case "form":
+                    req.getRequestDispatcher("/WEB-INF/views/user-form.jsp").forward(req, resp);
+                    break;
+                default:
+                    req.getRequestDispatcher("/WEB-INF/views/notFound.jsp").forward(req, resp);
+                    break;
+            }
+        }
+    }
+
+    private void listUsers(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         List<User> users = repository.findAllUsers();
 
         req.setAttribute("users", users);
