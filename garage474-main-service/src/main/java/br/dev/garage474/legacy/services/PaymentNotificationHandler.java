@@ -9,7 +9,7 @@ package br.dev.garage474.legacy.services;
  * | ------------------------------ | ---------------------------------------------------------------------- |
  * | `try ( ... )`                  | Bloco especial para recursos que precisam ser fechados automaticamente |
  * | Interface exigida              | `AutoCloseable` (ou `Closeable`)                                       |
- * | Método chamado automaticamente | `close()`                                                              |
+ * | Metodo chamado automaticamente | `close()`                                                              |
  * | Benefício                      | Código mais limpo, seguro e sem vazamento de recursos                  |
  *
  */

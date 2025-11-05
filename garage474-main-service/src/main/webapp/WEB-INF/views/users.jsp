@@ -1,41 +1,68 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page import="br.dev.garage474.legacy.models.User, java.util.List" %>
-
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List, br.dev.garage474.legacy.models.User" %>
+<%@ include file="includes/navbar.jsp" %>
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
-    <title>Lista de Usuários (Server-Side)</title>
-    <style>
-        body { font-family: Arial; margin: 40px; }
-        table { border-collapse: collapse; width: 60%; margin: auto; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background-color: #f0f0f0; }
-    </style>
+    <meta charset="UTF-8">
+    <title>Usuários</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-<h2 style="text-align:center;">Usuários renderizados no servidor</h2>
+<body class="bg-light">
+<div class="container mt-4">
 
-<table>
-    <thead>
-        <tr><th>ID</th><th>Nome</th><th>Email</th></tr>
-    </thead>
-    <tbody>
-    <%
-        List<User> users = (List<User>) request.getAttribute("users");
-        if (users != null) {
-            for (User u : users) {
-    %>
-        <tr>
-            <td><%= u.getId() %></td>
-            <td><%= u.getName() %></td>
-            <td><%= u.getEmail() %></td>
-        </tr>
-    <%
-            }
-        }
-    %>
-    </tbody>
-</table>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Lista de Usuários</h1>
+        <a href="#" class="btn btn-primary btn-sm">Novo Usuário</a>
+    </div>
 
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-striped table-hover mb-0 align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Ativo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <%
+                    List<User> users = (List<User>) request.getAttribute("users");
+                    if (users != null && !users.isEmpty()) {
+                        for (User u : users) {
+                %>
+                    <tr>
+                        <td><%= u.getId() %></td>
+                        <td><%= u.getName() %></td>
+                        <td><%= u.getEmail() %></td>
+                        <td>
+                            <% if (u.isActive()) { %>
+                                <span class="badge bg-success">Sim</span>
+                            <% } else { %>
+                                <span class="badge bg-secondary">Não</span>
+                            <% } %>
+                        </td>
+                    </tr>
+                <%
+                        }
+                    } else {
+                %>
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-3">
+                            Nenhum usuário encontrado.
+                        </td>
+                    </tr>
+                <%
+                    }
+                %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

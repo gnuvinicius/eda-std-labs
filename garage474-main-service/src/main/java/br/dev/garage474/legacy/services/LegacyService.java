@@ -2,8 +2,8 @@ package br.dev.garage474.legacy.services;
 
 import br.dev.garage474.legacy.models.User;
 import br.dev.garage474.legacy.repositories.UserRepository;
-import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebService;
 
@@ -13,7 +13,7 @@ import java.util.List;
 @WebService(serviceName = "LegacyService", targetNamespace = "http://legacy.garage474.dev.br:8080/")
 public class LegacyService {
 
-    @EJB
+    @Inject
     private UserRepository userRepository;
 
     @WebMethod

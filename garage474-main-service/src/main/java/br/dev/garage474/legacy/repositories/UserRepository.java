@@ -1,13 +1,13 @@
 package br.dev.garage474.legacy.repositories;
 
 import br.dev.garage474.legacy.models.User;
-import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 import java.util.List;
 
-@Stateless
+@RequestScoped
 public class UserRepository {
 
     @PersistenceContext(unitName = "legacyPU")

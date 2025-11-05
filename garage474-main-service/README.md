@@ -585,5 +585,3 @@ Dicas / ajustes finais
 Quer que eu:
 - gere um Dockerfile ajustado para uma tag WildFly específica (por exemplo 29.0.0.Final) e para a sua versão do driver PostgreSQL?
 - ou gere o script JBoss CLI para adicionar o datasource em tempo de startup (em vez de substituir standalone.xml)?
-
-Diga qual opção prefere que eu gere a seguir e eu preparo os arquivos prontos para você copiar.
