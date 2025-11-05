@@ -1,5 +1,8 @@
 package br.dev.garage474.legacy.controller;
 
+import java.io.IOException;
+import java.util.List;
+
 import br.dev.garage474.legacy.models.User;
 import br.dev.garage474.legacy.repositories.UserRepository;
 import jakarta.inject.Inject;
@@ -9,9 +12,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
-import java.util.List;
 
 @WebServlet("/users")
 public class UserServlet extends HttpServlet {
@@ -25,18 +25,12 @@ public class UserServlet extends HttpServlet {
         String action = req.getParameter("action");
 
         if (action == null) {
-            req.getRequestDispatcher("/WEB-INF/views/notFound.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/views/not-found.jsp").forward(req, resp);
         } else {
             switch (action) {
-                case "list":
-                    listUsers(req, resp);
-                    break;
-                case "form":
-                    req.getRequestDispatcher("/WEB-INF/views/user-form.jsp").forward(req, resp);
-                    break;
-                default:
-                    req.getRequestDispatcher("/WEB-INF/views/notFound.jsp").forward(req, resp);
-                    break;
+                case "list" -> listUsers(req, resp);
+                case "form" -> req.getRequestDispatcher("/WEB-INF/views/user-form.jsp").forward(req, resp);
+                default -> req.getRequestDispatcher("/WEB-INF/views/not-found.jsp").forward(req, resp);
             }
         }
     }
