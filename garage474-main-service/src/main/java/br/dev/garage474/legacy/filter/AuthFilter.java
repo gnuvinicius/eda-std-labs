@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 
-@WebFilter("/*")
+//@WebFilter("/*")
 public class AuthFilter implements Filter {
 
     @Override
@@ -26,10 +26,10 @@ public class AuthFilter implements Filter {
         boolean loggedIn = req.getSession().getAttribute("user") != null;
         boolean isLoginPage = path.equals("/auth") || path.startsWith("/resources");
 
-        if (!loggedIn && !isLoginPage) {
-            resp.sendRedirect(req.getContextPath() + "/auth");
-        } else {
-            chain.doFilter(request, response);
-        }
+//        if (!loggedIn && !isLoginPage) {
+//            resp.sendRedirect(req.getContextPath() + "/auth");
+//        } else {
+//            chain.doFilter(request, response);
+//        }
     }
 }

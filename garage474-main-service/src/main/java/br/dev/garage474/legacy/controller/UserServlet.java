@@ -19,7 +19,6 @@ public class UserServlet extends HttpServlet {
     @Inject
     private UserRepository repository;
 
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
@@ -37,7 +36,7 @@ public class UserServlet extends HttpServlet {
 
     private void listUsers(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        List<User> users = repository.findAllUsers();
+        List<User> users = repository.findAllUsers(1, 10);
 
         req.setAttribute("users", users);
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/users.jsp");

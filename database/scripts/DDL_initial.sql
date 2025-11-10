@@ -1,0 +1,68 @@
+-- Sequence para User
+CREATE SEQUENCE users_seq START WITH 1 INCREMENT BY 1;
+
+-- Tabela User
+CREATE TABLE users (
+    id BIGINT NOT NULL PRIMARY KEY DEFAULT nextval('users_seq'),
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    cpf VARCHAR(14) NOT NULL,
+    birthDate DATE NOT NULL,
+    phone VARCHAR(20),
+    createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    active BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE SEQUENCE addresses_seq START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE addresses (
+    id BIGINT NOT NULL PRIMARY KEY DEFAULT nextval('addresses_seq'),
+    userId BIGINT NOT NULL,
+    street VARCHAR(255) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    state VARCHAR(100) NOT NULL,
+    zipCode VARCHAR(20) NOT NULL,
+    country VARCHAR(100) NOT NULL,
+    createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE SEQUENCE plans_seq START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE plans (
+    id BIGINT NOT NULL PRIMARY KEY DEFAULT nextval('plans_seq'),
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2) NOT NULL,
+    durationInDays INT NOT NULL
+);
+
+CREATE SEQUENCE subscriptions_seq START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE subscriptions (
+    id BIGINT NOT NULL PRIMARY KEY DEFAULT nextval('subscriptions_seq'),
+    userId BIGINT NOT NULL,
+    planId BIGINT NOT NULL,
+    startDate TIMESTAMP,
+    endDate TIMESTAMP,
+    status VARCHAR(20),
+    createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (planId) REFERENCES plans(id) ON DELETE CASCADE
+);
+
+-- Sequence para OutboxEvent
+CREATE SEQUENCE outbox_event_seq START WITH 1 INCREMENT BY 1;
+
+-- Tabela OutboxEvent
+CREATE TABLE outbox_event (
+    id BIGINT NOT NULL PRIMARY KEY DEFAULT nextval('outbox_event_seq'),
+    type VARCHAR(255) NOT NULL,
+    payload TEXT NOT NULL,
+    published BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+
