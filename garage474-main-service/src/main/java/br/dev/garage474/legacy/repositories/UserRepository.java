@@ -1,12 +1,12 @@
 package br.dev.garage474.legacy.repositories;
 
+import java.util.List;
+
 import br.dev.garage474.legacy.models.User;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
-
-import java.util.List;
 
 @RequestScoped
 public class UserRepository {
@@ -31,5 +31,11 @@ public class UserRepository {
         query.setMaxResults(perPage);
 
         return query.getResultList();
+    }
+
+    public int countAllUsers() {
+        String sql = "SELECT COUNT(u) FROM User u";
+        Long count = em.createQuery(sql, Long.class).getSingleResult();
+        return count.intValue();
     }
 }

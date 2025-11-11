@@ -36,9 +36,15 @@ public class UserServlet extends HttpServlet {
 
     private void listUsers(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        List<User> users = repository.findAllUsers(1, 10);
+
+        String page = req.getParameter("currentPage");
+        String perPage = req.getParameter("perPage");
+
+        List<User> users = repository.findAllUsers(Integer.valueOf(page), Integer.valueOf(perPage));
+        int totalUsers = repository.countAllUsers();
 
         req.setAttribute("users", users);
+        req.setAttribute("totalUsers", totalUsers);
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/users.jsp");
         dispatcher.forward(req, resp);
     }
