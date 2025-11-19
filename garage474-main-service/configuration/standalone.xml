@@ -100,6 +100,9 @@
             <logger category="sun.rmi">
                 <level name="WARN"/>
             </logger>
+            <logger category="org.jboss.resteasy">
+                <level name="DEBUG"/>
+            </logger>
             <root-logger>
                 <level name="INFO"/>
                 <handlers>
@@ -136,7 +139,7 @@
                     <security user-name="sa" password="sa"/>
                 </datasource>
                 <datasource jndi-name="java:jboss/datasources/PostgreDS" pool-name="PostgreDS" enabled="true" use-java-context="true">
-                    <connection-url>jdbc:postgresql://postgres:5432/garage474_db</connection-url>
+                    <connection-url>jdbc:postgresql://localhost:5432/garage474_db</connection-url>
                     <driver>postgresql</driver>
                     <security user-name="postgres" password="2AkByM4NfHFkeJz"/>
                     <validation>

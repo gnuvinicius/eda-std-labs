@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="14c48357-38b3-4e81-8765-81cc4a2444c2" activeEnvironment="Default" name="LegacyService?wsdl" resourceRoot="" soapui-version="5.9.1" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="0be2ab39-b5d4-4e4a-8ff9-bf8b505695d4" wsaVersion="NONE" name="LegacyServiceSoapBinding" type="wsdl" bindingName="{http://legacy.garage474.dev.br:8080/}LegacyServiceSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/legacy-soap-app/LegacyService/LegacyService?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/legacy-soap-app/LegacyService/LegacyService?wsdl"><con:part><con:url>http://localhost:8080/legacy-soap-app/LegacyService/LegacyService?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="LegacyService" targetNamespace="http://legacy.garage474.dev.br:8080/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://legacy.garage474.dev.br:8080/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://legacy.garage474.dev.br:8080/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="listUsers" type="tns:listUsers"/>
+      <xs:element name="listUsersResponse" type="tns:listUsersResponse"/>
+      <xs:element name="user" type="tns:userDTO"/>
+      <xs:complexType name="listUsers">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="page" type="xs:int"/>
+          <xs:element minOccurs="0" name="perPage" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listUsersResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:userListResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="userListResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="page" type="xs:int"/>
+          <xs:element minOccurs="0" name="perPage" type="xs:int"/>
+          <xs:element minOccurs="0" name="total" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="userDTO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="id" type="xs:long"/>
+          <xs:element minOccurs="0" name="name" type="xs:string"/>
+          <xs:element minOccurs="0" name="email" type="xs:string"/>
+          <xs:element minOccurs="0" name="cpf" type="xs:string"/>
+          <xs:element minOccurs="0" name="birthDate" type="tns:localDate"/>
+          <xs:element minOccurs="0" name="phone" type="xs:string"/>
+          <xs:element minOccurs="0" name="createdAt" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="updatedAt" type="xs:dateTime"/>
+          <xs:element name="active" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType final="extension restriction" name="localDate">
+        <xs:sequence/>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="listUsersResponse">
+    <wsdl:part element="tns:listUsersResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listUsers">
+    <wsdl:part element="tns:listUsers" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="LegacyService">
+    <wsdl:operation name="listUsers">
+      <wsdl:input message="tns:listUsers" name="listUsers"></wsdl:input>
+      <wsdl:output message="tns:listUsersResponse" name="listUsersResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="LegacyServiceSoapBinding" type="tns:LegacyService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="listUsers">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="listUsers">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="listUsersResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="LegacyService">
+    <wsdl:port binding="tns:LegacyServiceSoapBinding" name="LegacyServicePort">
+      <soap:address location="http://localhost:8080/legacy-soap-app/LegacyService/LegacyService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/legacy-soap-app/LegacyService/LegacyService</con:endpoint></con:endpoints><con:operation id="dbe5af18-7a4a-4b7b-9a20-3bb761b9df0a" isOneWay="false" action="" name="listUsers" bindingOperationName="listUsers" type="Request-Response" outputName="listUsersResponse" inputName="listUsers" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="dd639d38-7324-47fa-baa8-b92e069dd69c" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/legacy-soap-app/LegacyService/LegacyService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:leg="http://legacy.garage474.dev.br:8080/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <leg:listUsers>
+         <!--Optional:-->
+         <page>?</page>
+         <!--Optional:-->
+         <perPage>?</perPage>
+      </leg:listUsers>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://legacy.garage474.dev.br:8080/LegacyService/listUsers"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/></con:soapui-project>

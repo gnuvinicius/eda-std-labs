@@ -1,9 +1,8 @@
 package br.dev.garage474.legacy.services;
 
-import java.util.List;
-
 import br.dev.garage474.legacy.repositories.UserRepository;
 import br.dev.garage474.legacy.services.dto.UserDTO;
+import br.dev.garage474.legacy.services.dto.UserListResponse;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.jws.WebMethod;
@@ -18,14 +17,19 @@ public class LegacyService {
     private UserRepository userRepository;
 
     @WebMethod
-    public List<UserDTO> listUsers(
+    public UserListResponse listUsers(
             @WebParam(name = "page") Integer page,
             @WebParam(name = "perPage") Integer perPage
     ) {
-        return userRepository.findAllUsers(page, perPage)
+        return new UserListResponse(
+            userRepository.findAllUsers(page, perPage)
                 .stream()
                 .map(UserDTO::fromEntity)
-                .toList();
+                .toList(),
+                userRepository.countAllUsers(),
+                page,
+                perPage
+        );
     }
 
     private void processPaymentNotification(String notificationData) {

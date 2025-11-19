@@ -56,8 +56,8 @@ services:
     ports:
       - "8083:8083"
 
-  kafdrop:
-    image: obsidiandynamics/kafdrop
+  kafdrop:  # O Kafdrop é uma interface web para visualizar e gerenciar, de forma simples, clusters do Apache Kafka.
+    image: obsidiandynamics/kafdrop 
     container_name: kafdrop
     depends_on:
       - kafka
