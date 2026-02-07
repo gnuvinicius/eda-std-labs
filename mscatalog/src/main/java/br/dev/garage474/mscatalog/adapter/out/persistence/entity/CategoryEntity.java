@@ -1,4 +1,4 @@
-package br.dev.garage474.mscatalog.adapter.out.persistence;
+package br.dev.garage474.mscatalog.adapter.out.persistence.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -28,3 +28,4 @@ public class CategoryEntity extends BaseEntity {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CategoryEntity> subCategories = new ArrayList<>();
 }
+

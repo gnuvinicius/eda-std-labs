@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.dev.garage474</groupId>
-	<artifactId>mscatalogo</artifactId>
+	<artifactId>mscatalog</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>msestoque</name>
 	<description>Demo project for Spring Boot</description>
@@ -95,6 +95,7 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
 		</plugins>
 	</build>
 

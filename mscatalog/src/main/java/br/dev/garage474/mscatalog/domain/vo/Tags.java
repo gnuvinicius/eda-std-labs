@@ -1,4 +1,4 @@
-package br.dev.garage474.mscatalog.domain.entity;
+package br.dev.garage474.mscatalog.domain.vo;
 
 import jakarta.persistence.*;
 

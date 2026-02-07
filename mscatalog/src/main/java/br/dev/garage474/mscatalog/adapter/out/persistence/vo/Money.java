@@ -1,8 +1,7 @@
-package br.dev.garage474.mscatalog.domain.entity;
+package br.dev.garage474.mscatalog.adapter.out.persistence.vo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-
 import java.math.BigDecimal;
 
 @Embeddable
@@ -15,3 +14,4 @@ public record Money(
         return new Money(amount, currency);
     }
 }
+

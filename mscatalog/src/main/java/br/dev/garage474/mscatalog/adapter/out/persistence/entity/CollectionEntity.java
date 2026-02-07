@@ -1,4 +1,4 @@
-package br.dev.garage474.mscatalog.adapter.out.persistence;
+package br.dev.garage474.mscatalog.adapter.out.persistence.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,12 +8,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
-public class BrandEntity extends BaseEntity {
+public class CollectionEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -21,4 +22,11 @@ public class BrandEntity extends BaseEntity {
 
     @NotNull
     private String name;
+
+    @NotNull
+    private LocalDateTime startDate;
+
+    @NotNull
+    private LocalDateTime endDate;
 }
+

@@ -1,5 +1,7 @@
 package br.dev.garage474.mscatalog.domain.entity;
 
+import br.dev.garage474.mscatalog.domain.vo.Dimensions;
+import br.dev.garage474.mscatalog.domain.vo.Money;
 import lombok.Getter;
 import lombok.Setter;
 

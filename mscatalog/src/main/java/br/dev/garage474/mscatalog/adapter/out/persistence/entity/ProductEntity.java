@@ -1,5 +1,6 @@
-package br.dev.garage474.mscatalog.adapter.out.persistence;
+package br.dev.garage474.mscatalog.adapter.out.persistence.entity;
 
+import br.dev.garage474.mscatalog.adapter.out.persistence.vo.Tags;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -40,6 +41,7 @@ public class ProductEntity extends BaseEntity {
     @Embedded
     private Tags tags;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "productEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductVariantEntity> variants = new ArrayList<>();
 }
+

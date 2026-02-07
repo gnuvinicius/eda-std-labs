@@ -1,4 +1,4 @@
-package br.dev.garage474.mscatalog.adapter.out.persistence;
+package br.dev.garage474.mscatalog.adapter.out.persistence.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -33,3 +33,4 @@ public class AttributeValueEntity extends BaseEntity {
     @JoinColumn(name = "attribute_id")
     private AttributeEntity attributeEntity;
 }
+

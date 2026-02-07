@@ -1,4 +1,4 @@
-package br.dev.garage474.mscatalog.adapter.out.persistence;
+package br.dev.garage474.mscatalog.adapter.out.persistence.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
@@ -36,3 +36,4 @@ public abstract class BaseEntity {
         this.updatedAt = LocalDateTime.now();
     }
 }
+

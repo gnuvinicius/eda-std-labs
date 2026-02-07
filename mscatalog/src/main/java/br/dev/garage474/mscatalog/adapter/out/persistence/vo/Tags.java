@@ -1,4 +1,4 @@
-package br.dev.garage474.mscatalog.adapter.out.persistence;
+package br.dev.garage474.mscatalog.adapter.out.persistence.vo;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -15,3 +15,4 @@ public record Tags(
     List<String> values
 ) {
 }
+

@@ -1,5 +1,7 @@
-package br.dev.garage474.mscatalog.adapter.out.persistence;
+package br.dev.garage474.mscatalog.adapter.out.persistence.entity;
 
+import br.dev.garage474.mscatalog.adapter.out.persistence.vo.Dimensions;
+import br.dev.garage474.mscatalog.adapter.out.persistence.vo.Money;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -55,3 +57,4 @@ public class ProductVariantEntity extends BaseEntity {
     )
     private List<AttributeValueEntity> attributeValueEntities = new ArrayList<>();
 }
+
