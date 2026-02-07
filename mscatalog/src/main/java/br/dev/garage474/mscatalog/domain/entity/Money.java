@@ -1,7 +1,8 @@
-package br.dev.garage474.mscatalog.infrastructure.repository;
+package br.dev.garage474.mscatalog.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+
 import java.math.BigDecimal;
 
 @Embeddable

@@ -1,6 +1,6 @@
-package br.dev.garage474.mscatalog.infrastructure.repository;
+package br.dev.garage474.mscatalog.adapter.out.persistence;
 
-import br.dev.garage474.mscatalog.domain.CatalogRepository;
+import br.dev.garage474.mscatalog.domain.repository.CatalogRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,24 +11,24 @@ import java.util.List;
 @Repository
 public class JpaCatalogRepository implements CatalogRepository {
 
-    private final SpringDataProductRepository repository;
+    private final ProductJpaRepository repository;
 
-    public JpaCatalogRepository(SpringDataProductRepository repository) {
+    public JpaCatalogRepository(ProductJpaRepository repository) {
         this.repository = repository;
     }
 
-    public List<Product> findAllByTenant(UUID tenantId) {
+    public List<ProductEntity> findAllByTenant(UUID tenantId) {
         // Mocked as infrastructure is not the focus now
         return List.of();
     }
 
-    public Optional<Product> findByIdAndTenant(UUID id, UUID tenantId) {
+    public Optional<ProductEntity> findByIdAndTenant(UUID id, UUID tenantId) {
         return Optional.empty();
     }
 
     @Transactional
-    public Product save(Product product) {
-        return product;
+    public ProductEntity save(ProductEntity productEntity) {
+        return productEntity;
     }
 
     @Transactional

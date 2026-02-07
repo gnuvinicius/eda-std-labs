@@ -1,4 +1,4 @@
-package br.dev.garage474.mscatalog.infrastructure.repository;
+package br.dev.garage474.mscatalog.adapter.out.persistence;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;

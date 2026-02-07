@@ -1,4 +1,4 @@
-package br.dev.garage474.mscatalog.infrastructure.repository;
+package br.dev.garage474.mscatalog.adapter.out.persistence;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,7 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-public class Attribute extends BaseEntity {
+public class AttributeEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

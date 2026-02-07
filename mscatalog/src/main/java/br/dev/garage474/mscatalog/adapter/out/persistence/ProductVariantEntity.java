@@ -1,4 +1,4 @@
-package br.dev.garage474.mscatalog.infrastructure.repository;
+package br.dev.garage474.mscatalog.adapter.out.persistence;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-public class ProductVariant extends BaseEntity {
+public class ProductVariantEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -45,7 +45,7 @@ public class ProductVariant extends BaseEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
-    private Product product;
+    private ProductEntity productEntity;
 
     @ManyToMany
     @JoinTable(
@@ -53,5 +53,5 @@ public class ProductVariant extends BaseEntity {
         joinColumns = @JoinColumn(name = "variant_id"),
         inverseJoinColumns = @JoinColumn(name = "attribute_value_id")
     )
-    private List<AttributeValue> attributeValues = new ArrayList<>();
+    private List<AttributeValueEntity> attributeValueEntities = new ArrayList<>();
 }

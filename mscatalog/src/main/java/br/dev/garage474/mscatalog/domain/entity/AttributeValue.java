@@ -1,7 +1,5 @@
-package br.dev.garage474.mscatalog.infrastructure.repository;
+package br.dev.garage474.mscatalog.domain.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,18 +16,9 @@ import java.util.UUID;
  */
 @Getter
 @Setter
-@Entity
-public class AttributeValue extends BaseEntity {
+public class AttributeValue {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    @NotNull
     private String value;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "attribute_id")
     private Attribute attribute;
 }
