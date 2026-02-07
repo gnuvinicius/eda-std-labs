@@ -1,0 +1,74 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - msdelivery-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.0.1
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      # Quando o cliente estiver dentro de outro container, use 'kafka:9092'.
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - msdelivery-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - msdelivery-network
+
+  suplementos:
+    image: eclipse-temurin:21-jdk
+    container_name: suplementos
+    depends_on:
+      - kafka
+      - rabbitmq
+    ports:
+      - "8080:8080"
+    volumes:
+      # Espera-se que o build produza target/suplementos-0.0.1-SNAPSHOT.jar
+      - ./target/suplementos-0.0.1-SNAPSHOT.jar:/app/suplementos.jar:ro
+    environment:
+      # Spring Boot mapeia VARS em maiúsculas com '_' para propriedades com '.'
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: "5672"
+      SPRING_RABBITMQ_USERNAME: user
+      SPRING_RABBITMQ_PASSWORD: password
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      # Caso precise conectar a um banco de dados externo, defina SPRING_DATASOURCE_URL/USERNAME/PASSWORD
+    command: ["sh", "-c", "java -Dspring.profiles.active=docker -jar /app/suplementos.jar"]
+    restart: on-failure
+    networks:
+      - msdelivery-network
+
+# Observações:
+# - Construa o jar localmente antes de subir: mvn -DskipTests package
+# - Para subir: docker compose up -d
+# - Se quiser expor o Kafka para ferramentas no host, conecte-se em localhost:29092 (advertised listener acima).
+
+networks:
+  msdelivery-network:
+    external: true
