@@ -1,1 +1,0 @@
-ALTER TABLE produtos ADD COLUMN quantidade INT NOT NULL DEFAULT 0;
