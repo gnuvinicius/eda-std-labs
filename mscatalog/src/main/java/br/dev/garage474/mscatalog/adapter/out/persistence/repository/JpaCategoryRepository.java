@@ -1,0 +1,111 @@
+package br.dev.garage474.mscatalog.adapter.out.persistence.repository;
+
+import br.dev.garage474.mscatalog.adapter.out.persistence.entity.CategoryEntity;
+import br.dev.garage474.mscatalog.domain.entity.Category;
+import br.dev.garage474.mscatalog.domain.repository.CategoryRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+/**
+ * Implementação JPA do repositório {@link CategoryRepository}.
+ *
+ * Responsável pela persistência do agregado Category com suporte a hierarquia.
+ */
+@Repository
+public class JpaCategoryRepository implements CategoryRepository {
+
+    private final CategoryJpaRepository categoryJpaRepository;
+
+    public JpaCategoryRepository(CategoryJpaRepository categoryJpaRepository) {
+        this.categoryJpaRepository = categoryJpaRepository;
+    }
+
+    @Override
+    public Category saveCategory(Category category) {
+        CategoryEntity entity = convertCategoryToDomain(category);
+        CategoryEntity savedEntity = categoryJpaRepository.save(entity);
+        return convertCategoryToEntity(savedEntity);
+    }
+
+    @Override
+    public Optional<Category> findCategoryById(UUID id) {
+        return categoryJpaRepository.findById(id).map(this::convertCategoryToEntity);
+    }
+
+    @Override
+    public List<Category> findAllCategories() {
+        return categoryJpaRepository.findAll().stream()
+                .map(this::convertCategoryToEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Category> findAllRootCategories() {
+        return categoryJpaRepository.findByParentIsNull().stream()
+                .map(this::convertCategoryToEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Category> findCategoryByName(String name) {
+        return categoryJpaRepository.findByName(name).map(this::convertCategoryToEntity);
+    }
+
+    @Override
+    public List<Category> findSubcategoriesByCategoryId(UUID categoryId) {
+        return categoryJpaRepository.findByParentId(categoryId).stream()
+                .map(this::convertCategoryToEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteCategory(UUID id) {
+        categoryJpaRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existsCategory(UUID id) {
+        return categoryJpaRepository.existsById(id);
+    }
+
+    @Override
+    public long countCategories() {
+        return categoryJpaRepository.count();
+    }
+
+    // ==================== CONVERSION METHODS ====================
+
+    private Category convertCategoryToEntity(CategoryEntity entity) {
+        Category category = new Category();
+        category.setId(entity.getId());
+        category.setName(entity.getName());
+
+        if (entity.getParent() != null) {
+            category.setParent(convertCategoryToEntity(entity.getParent()));
+        }
+        if (entity.getSubCategories() != null) {
+            category.setSubCategories(entity.getSubCategories().stream()
+                    .map(this::convertCategoryToEntity)
+                    .collect(Collectors.toList()));
+        }
+
+        return category;
+    }
+
+    private CategoryEntity convertCategoryToDomain(Category category) {
+        CategoryEntity entity = new CategoryEntity();
+        entity.setId(category.getId());
+        entity.setName(category.getName());
+
+        if (category.getParent() != null && category.getParent().getId() != null) {
+            entity.setParent(categoryJpaRepository.findById(category.getParent().getId()).orElse(null));
+        }
+
+        return entity;
+    }
+}
+
