@@ -37,8 +37,8 @@ public class JpaBrandRepository implements BrandRepository {
     }
 
     @Override
-    public List<Brand> findAllBrands() {
-        return brandJpaRepository.findAll().stream()
+    public List<Brand> findAllBrands(UUID tenantId) {
+        return brandJpaRepository.findAllByTenantId(tenantId).stream()
                 .map(this::convertBrandToEntity)
                 .collect(Collectors.toList());
     }
@@ -74,8 +74,8 @@ public class JpaBrandRepository implements BrandRepository {
 
     private BrandEntity convertBrandToDomain(Brand brand) {
         BrandEntity entity = new BrandEntity();
-        entity.setId(brand.getId());
         entity.setName(brand.getName());
+        entity.setTenantId(brand.getTenantId());
         return entity;
     }
 }

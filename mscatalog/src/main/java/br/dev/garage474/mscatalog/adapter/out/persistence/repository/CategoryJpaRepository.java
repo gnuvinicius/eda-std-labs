@@ -16,6 +16,8 @@ public interface CategoryJpaRepository extends JpaRepository<CategoryEntity, UUI
 
     Optional<CategoryEntity> findByIdAndTenantId(UUID id, UUID tenantId);
 
+    List<CategoryEntity> findAllByTenantId(UUID tenantId);
+
     void deleteByIdAndTenantId(UUID id, UUID tenantId);
 }
 

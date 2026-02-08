@@ -46,8 +46,8 @@ public class CreateBrandUseCase {
 
         // 2. Criar entidade Brand
         Brand brand = new Brand();
-        brand.setId(UUID.randomUUID());
         brand.setName(command.name());
+        brand.setTenantId(command.tenantId());
 
         // 3. Persistir
         Brand savedBrand = brandRepository.saveBrand(brand);

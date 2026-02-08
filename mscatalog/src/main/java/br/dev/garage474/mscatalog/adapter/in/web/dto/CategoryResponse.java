@@ -1,5 +1,7 @@
 package br.dev.garage474.mscatalog.adapter.in.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;

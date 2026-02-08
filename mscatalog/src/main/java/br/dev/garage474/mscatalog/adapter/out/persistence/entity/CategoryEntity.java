@@ -12,6 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@Table(name = "category")
 public class CategoryEntity extends BaseEntity {
 
     @Id

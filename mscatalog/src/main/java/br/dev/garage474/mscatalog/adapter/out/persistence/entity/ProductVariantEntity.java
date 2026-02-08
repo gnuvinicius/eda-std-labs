@@ -14,6 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@Table(name = "product_variant")
 public class ProductVariantEntity extends BaseEntity {
 
     @Id

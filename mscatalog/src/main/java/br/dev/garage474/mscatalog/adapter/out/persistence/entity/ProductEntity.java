@@ -13,6 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@Table(name = "product")
 public class ProductEntity extends BaseEntity {
 
     @Id

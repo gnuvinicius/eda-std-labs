@@ -38,7 +38,7 @@ public class ListBrandsByTenantUseCase {
     @Transactional(readOnly = true)
     public List<BrandResponse> execute(ListBrandsQuery query) {
         // 1. Buscar marcas do tenant (por enquanto todos)
-        List<Brand> brands = brandRepository.findAllBrands();
+        List<Brand> brands = brandRepository.findAllBrands(query.tenantId);
 
         // 2. Converter e retornar como resposta
         return brands.stream()

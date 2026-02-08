@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Implementação JPA do repositório {@link CategoryRepository}.
@@ -37,8 +39,8 @@ public class JpaCategoryRepository implements CategoryRepository {
     }
 
     @Override
-    public List<Category> findAllCategories() {
-        return categoryJpaRepository.findAll().stream()
+    public List<Category> findAllCategories(UUID tenantId) {
+        return categoryJpaRepository.findAllByTenantId(tenantId).stream()
                 .map(this::convertCategoryToEntity)
                 .collect(Collectors.toList());
     }
@@ -79,17 +81,37 @@ public class JpaCategoryRepository implements CategoryRepository {
 
     // ==================== CONVERSION METHODS ====================
 
+    // Use a cache to avoid infinite recursion when entities reference each other (parent/subcategories).
     private Category convertCategoryToEntity(CategoryEntity entity) {
+        return convertCategoryToEntity(entity, new HashMap<>());
+    }
+
+    private Category convertCategoryToEntity(CategoryEntity entity, Map<UUID, Category> cache) {
+        if (entity == null) return null;
+
+        UUID id = entity.getId();
+        if (id != null && cache.containsKey(id)) {
+            return cache.get(id);
+        }
+
         Category category = new Category();
         category.setId(entity.getId());
         category.setName(entity.getName());
 
-        if (entity.getParent() != null) {
-            category.setParent(convertCategoryToEntity(entity.getParent()));
+        // Put in cache BEFORE converting relations to break cycles
+        if (id != null) {
+            cache.put(id, category);
         }
+
+        // Convert parent (may return an already-cached instance)
+        if (entity.getParent() != null) {
+            category.setParent(convertCategoryToEntity(entity.getParent(), cache));
+        }
+
+        // Convert subcategories (each will consult/insert into the same cache)
         if (entity.getSubCategories() != null) {
             category.setSubCategories(entity.getSubCategories().stream()
-                    .map(this::convertCategoryToEntity)
+                    .map(e -> convertCategoryToEntity(e, cache))
                     .collect(Collectors.toList()));
         }
 
@@ -98,8 +120,8 @@ public class JpaCategoryRepository implements CategoryRepository {
 
     private CategoryEntity convertCategoryToDomain(Category category) {
         CategoryEntity entity = new CategoryEntity();
-        entity.setId(category.getId());
         entity.setName(category.getName());
+        entity.setTenantId(category.getTenantId());
 
         if (category.getParent() != null && category.getParent().getId() != null) {
             entity.setParent(categoryJpaRepository.findById(category.getParent().getId()).orElse(null));
@@ -108,4 +130,3 @@ public class JpaCategoryRepository implements CategoryRepository {
         return entity;
     }
 }
-

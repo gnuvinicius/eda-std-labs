@@ -38,7 +38,7 @@ public class ListCategoriesByTenantUseCase {
     @Transactional(readOnly = true)
     public List<CategoryResponse> execute(ListCategoriesQuery query) {
         // 1. Buscar categorias do tenant (por enquanto todos)
-        List<Category> categories = categoryRepository.findAllCategories();
+        List<Category> categories = categoryRepository.findAllCategories(query.tenantId);
 
         // 2. Converter e retornar como resposta
         return categories.stream()
@@ -53,11 +53,20 @@ public class ListCategoriesByTenantUseCase {
         return new CategoryResponse(
             category.getId(),
             category.getName(),
-            category.getParent() != null ? convertToResponse(category.getParent()) : null,
+            category.getParent() != null ? convertParentOrSubCategoryToResponse(category.getParent()) : null,
             category.getSubCategories() != null ?
                 category.getSubCategories().stream()
-                    .map(this::convertToResponse)
+                    .map(this::convertParentOrSubCategoryToResponse)
                     .collect(Collectors.toList()) : null
+        );
+    }
+
+    private CategoryResponse convertParentOrSubCategoryToResponse(Category category) {
+        return new CategoryResponse(
+                category.getId(),
+                category.getName(),
+            null, // Não precisamos do pai do pai
+            null  // Não precisamos das subcategorias do pai
         );
     }
 

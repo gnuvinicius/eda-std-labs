@@ -54,9 +54,9 @@ public class CreateCategoryUseCase {
 
         // 3. Criar entidade Category
         Category category = new Category();
-        category.setId(UUID.randomUUID());
         category.setName(command.name());
         category.setParent(parentCategory);
+        category.setTenantId(command.tenantId());
 
         // 4. Persistir
         Category savedCategory = categoryRepository.saveCategory(category);

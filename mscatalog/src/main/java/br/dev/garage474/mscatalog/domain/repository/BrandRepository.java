@@ -32,7 +32,7 @@ public interface BrandRepository {
     /**
      * Obtém todas as marcas.
      */
-    List<Brand> findAllBrands();
+    List<Brand> findAllBrands(UUID tenantId);
 
     /**
      * Obtém uma marca por nome.

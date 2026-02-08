@@ -32,7 +32,7 @@ public interface CategoryRepository {
     /**
      * Obtém todas as categorias.
      */
-    List<Category> findAllCategories();
+    List<Category> findAllCategories(UUID tenantId);
 
     /**
      * Obtém todas as categorias raíz (sem categoria pai).

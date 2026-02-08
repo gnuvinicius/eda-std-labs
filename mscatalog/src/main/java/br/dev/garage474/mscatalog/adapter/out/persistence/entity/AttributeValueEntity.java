@@ -19,6 +19,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@Table(name = "attribute_value")
 public class AttributeValueEntity extends BaseEntity {
 
     @Id

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class Brand {
+public class Brand extends Entity {
 
     private UUID id;
     private String name;
