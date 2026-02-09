@@ -103,5 +103,41 @@ public interface ProductRepository {
      * Conta o total de variantes de um produto.
      */
     long countProductVariantsByProductId(UUID productId);
+
+    // ==================== SHOWCASE / FILTRO ====================
+
+    /**
+     * Busca produtos com paginação por tenant, com suporte a filtros de busca, brand e categoria.
+     *
+     * @param tenantId ID do tenant
+     * @param searchTerm Termo de busca (busca em name e description)
+     * @param brandId ID da brand para filtro (opcional, null para ignorar)
+     * @param categoryId ID da categoria para filtro (opcional, null para ignorar)
+     * @param page Número da página (0-based)
+     * @param size Tamanho da página
+     * @return Página com produtos que atendem aos critérios
+     */
+    ShowcasePageable findProductsByTenantWithFilters(
+        UUID tenantId,
+        String searchTerm,
+        UUID brandId,
+        UUID categoryId,
+        int page,
+        int size
+    );
+
+    // ==================== DTO for Showcase ====================
+
+    /**
+     * DTO interno para encapsular resultado paginado do Showcase.
+     * Utilizado entre repositório e use case.
+     */
+    record ShowcasePageable(
+        List<Product> content,
+        int page,
+        int size,
+        int totalPages,
+        long totalElements
+    ) {}
 }
 

@@ -26,7 +26,24 @@ public class JpaBrandRepository implements BrandRepository {
 
     @Override
     public Brand saveBrand(Brand brand) {
-        BrandEntity entity = convertBrandToDomain(brand);
+        // If brand has an id, try to load existing entity and update it to avoid detached/unsaved-value issues
+        BrandEntity entity;
+        if (brand.getId() != null) {
+            // try to find by id and tenantId to ensure we don't accidentally create duplicates
+            Optional<BrandEntity> existing = brandJpaRepository.findByIdAndTenantId(brand.getId(), brand.getTenantId());
+            if (existing.isPresent()) {
+                entity = existing.get();
+                entity.setName(brand.getName());
+                // ensure tenantId remains set (should already be set)
+                entity.setTenantId(brand.getTenantId());
+            } else {
+                // Not found -> create new entity but preserve tenantId
+                entity = convertBrandToDomain(brand);
+            }
+        } else {
+            entity = convertBrandToDomain(brand);
+        }
+
         BrandEntity savedEntity = brandJpaRepository.save(entity);
         return convertBrandToEntity(savedEntity);
     }
@@ -69,14 +86,18 @@ public class JpaBrandRepository implements BrandRepository {
         Brand brand = new Brand();
         brand.setId(entity.getId());
         brand.setName(entity.getName());
+        brand.setTenantId(entity.getTenantId());
         return brand;
     }
 
     private BrandEntity convertBrandToDomain(Brand brand) {
         BrandEntity entity = new BrandEntity();
+        // If domain provided an id, set it on entity so JPA knows it's an update candidate
+        if (brand.getId() != null) {
+            entity.setId(brand.getId());
+        }
         entity.setName(brand.getName());
         entity.setTenantId(brand.getTenantId());
         return entity;
     }
 }
-

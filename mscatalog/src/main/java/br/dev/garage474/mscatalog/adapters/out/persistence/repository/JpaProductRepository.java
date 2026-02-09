@@ -8,6 +8,9 @@ import br.dev.garage474.mscatalog.adapters.out.persistence.vo.Tags;
 import br.dev.garage474.mscatalog.domain.entities.Product;
 import br.dev.garage474.mscatalog.domain.entities.ProductVariant;
 import br.dev.garage474.mscatalog.domain.repositories.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -129,6 +132,43 @@ public class JpaProductRepository implements ProductRepository {
     @Override
     public long countProductVariantsByProductId(UUID productId) {
         return productVariantJpaRepository.countByProductEntityId(productId);
+    }
+
+    // ==================== SHOWCASE / FILTRO ====================
+
+    @Override
+    public ShowcasePageable findProductsByTenantWithFilters(
+            UUID tenantId,
+            String searchTerm,
+            UUID brandId,
+            UUID categoryId,
+            int page,
+            int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        // Usar termo de busca vazio se nulo
+        String search = searchTerm != null ? searchTerm : "";
+
+        Page<ProductEntity> pageResult = productJpaRepository.findProductsByTenantWithFilters(
+            tenantId,
+            search,
+            brandId,
+            categoryId,
+            pageable
+        );
+
+        List<Product> content = pageResult.getContent().stream()
+                .map(this::convertProductToEntity)
+                .collect(Collectors.toList());
+
+        return new ShowcasePageable(
+            content,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            pageResult.getTotalPages(),
+            pageResult.getTotalElements()
+        );
     }
 
     // ==================== CONVERSION METHODS ====================

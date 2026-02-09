@@ -28,7 +28,26 @@ public class JpaCategoryRepository implements CategoryRepository {
 
     @Override
     public Category saveCategory(Category category) {
-        CategoryEntity entity = convertCategoryToDomain(category);
+        CategoryEntity entity;
+        if (category.getId() != null) {
+            Optional<CategoryEntity> existing = categoryJpaRepository.findById(category.getId());
+            if (existing.isPresent()) {
+                entity = existing.get();
+                entity.setName(category.getName());
+                entity.setTenantId(category.getTenantId());
+                // update parent reference if provided
+                if (category.getParent() != null && category.getParent().getId() != null) {
+                    entity.setParent(categoryJpaRepository.findById(category.getParent().getId()).orElse(null));
+                } else {
+                    entity.setParent(null);
+                }
+            } else {
+                entity = convertCategoryToDomain(category);
+            }
+        } else {
+            entity = convertCategoryToDomain(category);
+        }
+
         CategoryEntity savedEntity = categoryJpaRepository.save(entity);
         return convertCategoryToEntity(savedEntity);
     }
@@ -97,6 +116,7 @@ public class JpaCategoryRepository implements CategoryRepository {
         Category category = new Category();
         category.setId(entity.getId());
         category.setName(entity.getName());
+        category.setTenantId(entity.getTenantId());
 
         // Put in cache BEFORE converting relations to break cycles
         if (id != null) {
@@ -120,6 +140,9 @@ public class JpaCategoryRepository implements CategoryRepository {
 
     private CategoryEntity convertCategoryToDomain(Category category) {
         CategoryEntity entity = new CategoryEntity();
+        if (category.getId() != null) {
+            entity.setId(category.getId());
+        }
         entity.setName(category.getName());
         entity.setTenantId(category.getTenantId());
 
