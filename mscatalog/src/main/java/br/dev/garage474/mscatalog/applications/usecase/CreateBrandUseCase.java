@@ -1,6 +1,6 @@
 package br.dev.garage474.mscatalog.applications.usecase;
 
-import br.dev.garage474.mscatalog.adapters.in.web.dto.BrandResponse;
+import br.dev.garage474.mscatalog.adapters.in.dto.BrandResponse;
 import br.dev.garage474.mscatalog.domain.entities.Brand;
 import br.dev.garage474.mscatalog.domain.repositories.BrandRepository;
 import br.dev.garage474.mscatalog.domain.services.BrandService;

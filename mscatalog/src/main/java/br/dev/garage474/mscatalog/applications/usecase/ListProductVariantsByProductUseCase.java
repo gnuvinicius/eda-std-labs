@@ -1,6 +1,6 @@
 package br.dev.garage474.mscatalog.applications.usecase;
 
-import br.dev.garage474.mscatalog.adapters.in.web.dto.ProductVariantResponse;
+import br.dev.garage474.mscatalog.adapters.in.dto.ProductVariantResponse;
 import br.dev.garage474.mscatalog.domain.entities.ProductVariant;
 import br.dev.garage474.mscatalog.domain.repositories.ProductRepository;
 import org.springframework.stereotype.Service;

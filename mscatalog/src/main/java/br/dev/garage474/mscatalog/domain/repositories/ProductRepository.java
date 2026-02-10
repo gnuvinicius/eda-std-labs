@@ -9,10 +9,10 @@ import java.util.UUID;
 
 /**
  * Repository para o Aggregate Root Product no bounded context mscatalog.
- *
+ * <p>
  * Define os contratos para operações CRUD do agregado Product e suas entidades filhas (ProductVariant).
  * Esta interface segue o padrão DDD onde cada Aggregate Root possui seu próprio repositório.
- *
+ * <p>
  * Responsabilidades:
  * - Persistência do Product (Aggregate Root)
  * - Persistência de ProductVariant (Child Entity)
@@ -109,21 +109,21 @@ public interface ProductRepository {
     /**
      * Busca produtos com paginação por tenant, com suporte a filtros de busca, brand e categoria.
      *
-     * @param tenantId ID do tenant
+     * @param tenantId   ID do tenant
      * @param searchTerm Termo de busca (busca em name e description)
-     * @param brandId ID da brand para filtro (opcional, null para ignorar)
+     * @param brandId    ID da brand para filtro (opcional, null para ignorar)
      * @param categoryId ID da categoria para filtro (opcional, null para ignorar)
-     * @param page Número da página (0-based)
-     * @param size Tamanho da página
+     * @param page       Número da página (0-based)
+     * @param size       Tamanho da página
      * @return Página com produtos que atendem aos critérios
      */
     ShowcasePageable findProductsByTenantWithFilters(
-        UUID tenantId,
-        String searchTerm,
-        UUID brandId,
-        UUID categoryId,
-        int page,
-        int size
+            UUID tenantId,
+            String searchTerm,
+            UUID brandId,
+            UUID categoryId,
+            int page,
+            int size
     );
 
     // ==================== DTO for Showcase ====================
@@ -133,11 +133,12 @@ public interface ProductRepository {
      * Utilizado entre repositório e use case.
      */
     record ShowcasePageable(
-        List<Product> content,
-        int page,
-        int size,
-        int totalPages,
-        long totalElements
-    ) {}
+            List<Product> content,
+            int page,
+            int size,
+            int totalPages,
+            long totalElements
+    ) {
+    }
 }
 

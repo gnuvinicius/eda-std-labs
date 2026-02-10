@@ -1,7 +1,7 @@
 package br.dev.garage474.mscatalog.adapters.in.web.controller;
 
-import br.dev.garage474.mscatalog.adapters.in.web.dto.BrandResponse;
-import br.dev.garage474.mscatalog.adapters.in.web.dto.CreateBrandRequest;
+import br.dev.garage474.mscatalog.adapters.in.dto.BrandResponse;
+import br.dev.garage474.mscatalog.adapters.in.dto.CreateBrandRequest;
 import br.dev.garage474.mscatalog.applications.usecase.CreateBrandUseCase;
 import br.dev.garage474.mscatalog.applications.usecase.ListBrandsByTenantUseCase;
 import org.springframework.http.HttpStatus;

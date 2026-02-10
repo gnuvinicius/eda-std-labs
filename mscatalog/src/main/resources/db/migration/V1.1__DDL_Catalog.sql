@@ -39,7 +39,7 @@ CREATE TABLE attribute_value (
 );
 
 -- Product Aggregate Root
-CREATE TABLE productEntity (
+CREATE TABLE product (
     id UUID PRIMARY KEY,
     tenant_id UUID NOT NULL,
     name VARCHAR(255) NOT NULL,
@@ -57,7 +57,7 @@ CREATE TABLE productEntity (
 CREATE TABLE product_tags (
     product_id UUID NOT NULL,
     tag VARCHAR(255) NOT NULL,
-    CONSTRAINT fk_product_tags_product FOREIGN KEY (product_id) REFERENCES productEntity(id)
+    CONSTRAINT fk_product_tags_product FOREIGN KEY (product_id) REFERENCES product(id)
 );
 
 -- ProductVariant Entity
@@ -77,7 +77,7 @@ CREATE TABLE product_variant (
     product_id UUID NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP,
-    CONSTRAINT fk_variant_product FOREIGN KEY (product_id) REFERENCES productEntity(id)
+    CONSTRAINT fk_variant_product FOREIGN KEY (product_id) REFERENCES product(id)
 );
 
 -- Relationship between Variant and AttributeValues (Many-to-Many)

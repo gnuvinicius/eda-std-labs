@@ -1,6 +1,6 @@
 package br.dev.garage474.mscatalog.applications.usecase;
 
-import br.dev.garage474.mscatalog.adapters.in.web.dto.ShowcaseProductResponse;
+import br.dev.garage474.mscatalog.adapters.in.dto.ShowcaseProductResponse;
 import br.dev.garage474.mscatalog.domain.entities.Product;
 import br.dev.garage474.mscatalog.domain.repositories.ProductRepository;
 import lombok.extern.slf4j.Slf4j;

@@ -1,7 +1,7 @@
 package br.dev.garage474.mscatalog.adapters.in.web.controller;
 
-import br.dev.garage474.mscatalog.adapters.in.web.dto.CategoryResponse;
-import br.dev.garage474.mscatalog.adapters.in.web.dto.CreateCategoryRequest;
+import br.dev.garage474.mscatalog.adapters.in.dto.CategoryResponse;
+import br.dev.garage474.mscatalog.adapters.in.dto.CreateCategoryRequest;
 import br.dev.garage474.mscatalog.applications.usecase.CreateCategoryUseCase;
 import br.dev.garage474.mscatalog.applications.usecase.ListCategoriesByTenantUseCase;
 import org.springframework.http.HttpStatus;

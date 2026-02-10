@@ -1,9 +1,9 @@
 package br.dev.garage474.mscatalog.adapters.in.web.controller;
 
-import br.dev.garage474.mscatalog.adapters.in.web.dto.CreateProductRequest;
-import br.dev.garage474.mscatalog.adapters.in.web.dto.CreateProductVariantRequest;
-import br.dev.garage474.mscatalog.adapters.in.web.dto.ProductResponse;
-import br.dev.garage474.mscatalog.adapters.in.web.dto.ProductVariantResponse;
+import br.dev.garage474.mscatalog.adapters.in.dto.CreateProductRequest;
+import br.dev.garage474.mscatalog.adapters.in.dto.CreateProductVariantRequest;
+import br.dev.garage474.mscatalog.adapters.in.dto.ProductResponse;
+import br.dev.garage474.mscatalog.adapters.in.dto.ProductVariantResponse;
 import br.dev.garage474.mscatalog.applications.usecase.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,7 @@
 package br.dev.garage474.mscatalog.adapters.in.web.controller;
 
-import br.dev.garage474.mscatalog.adapters.in.web.dto.ShowcasePageResponse;
-import br.dev.garage474.mscatalog.adapters.in.web.dto.ShowcaseProductResponse;
+import br.dev.garage474.mscatalog.adapters.in.dto.ShowcasePageResponse;
+import br.dev.garage474.mscatalog.adapters.in.dto.ShowcaseProductResponse;
 import br.dev.garage474.mscatalog.applications.usecase.GetShowcaseProductDetailsUseCase;
 import br.dev.garage474.mscatalog.applications.usecase.ListShowcaseProductsUseCase;
 import lombok.extern.slf4j.Slf4j;
@@ -12,23 +12,23 @@ import java.util.UUID;
 
 /**
  * Controller REST para operações de Showcase de Produtos.
- *
+ * <p>
  * Endpoints disponíveis (apenas GETs para frontend/mobile):
  * - GET /api/v1/showcase/products - Listar produtos paginados com filtros opcionais
  * - GET /api/v1/showcase/products/{id} - Obter detalhes de um produto específico
- *
+ * <p>
  * Parâmetros de Query:
  * - page: número da página (default: 0)
  * - size: tamanho da página (default: 20)
  * - search: termo de busca em nome e descrição (optional)
  * - brandId: filtro por brand (optional, UUID)
  * - categoryId: filtro por categoria (optional, UUID)
- *
+ * <p>
  * Implementação de Clean Architecture:
  * - Controller recebe requisições HTTP
  * - Delegação para Use Cases
  * - Conversão DTO ← Domain
- *
+ * <p>
  * Sem autenticação/autorização: dados públicos para qualquer cliente frontend/mobile
  */
 @RestController
@@ -48,15 +48,15 @@ public class ShowcaseController {
 
     /**
      * GET /api/v1/showcase/products
-     *
+     * <p>
      * Lista produtos com paginação e filtros opcionais.
      * Sempre requer tenantId do header para isolar dados por cliente.
      *
-     * @param tenantId ID do tenant (obtido do header X-Tenant-ID)
-     * @param page Número da página (0-based, default: 0)
-     * @param size Tamanho da página (default: 20)
-     * @param search Termo de busca em nome e descrição (optional)
-     * @param brandId ID da brand para filtrar (optional)
+     * @param tenantId   ID do tenant (obtido do header X-Tenant-ID)
+     * @param page       Número da página (0-based, default: 0)
+     * @param size       Tamanho da página (default: 20)
+     * @param search     Termo de busca em nome e descrição (optional)
+     * @param brandId    ID da brand para filtrar (optional)
      * @param categoryId ID da categoria para filtrar (optional)
      * @return Página com produtos que atendem aos critérios
      */
@@ -80,12 +80,12 @@ public class ShowcaseController {
             UUID category = categoryId != null ? UUID.fromString(categoryId) : null;
 
             var query = new ListShowcaseProductsUseCase.ListShowcaseProductsQuery(
-                tenantId,
-                search,
-                brand,
-                category,
-                page,
-                size
+                    tenantId,
+                    search,
+                    brand,
+                    category,
+                    page,
+                    size
             );
 
             var response = listShowcaseProductsUseCase.execute(query);
@@ -101,7 +101,7 @@ public class ShowcaseController {
 
     /**
      * GET /api/v1/showcase/products/{id}
-     *
+     * <p>
      * Obtém detalhes completos de um produto específico.
      * Inclui todas as variantes e preços.
      *

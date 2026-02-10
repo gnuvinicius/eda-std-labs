@@ -1,7 +1,7 @@
 package br.dev.garage474.mscatalog.adapters.in.web.controller;
 
-import br.dev.garage474.mscatalog.adapters.in.web.dto.CreateProductVariantRequest;
-import br.dev.garage474.mscatalog.adapters.in.web.dto.ProductVariantResponse;
+import br.dev.garage474.mscatalog.adapters.in.dto.CreateProductVariantRequest;
+import br.dev.garage474.mscatalog.adapters.in.dto.ProductVariantResponse;
 import br.dev.garage474.mscatalog.applications.usecase.CreateProductVariantUseCase;
 import br.dev.garage474.mscatalog.applications.usecase.ListProductVariantsByProductUseCase;
 import br.dev.garage474.mscatalog.applications.usecase.UpdateProductVariantUseCase;

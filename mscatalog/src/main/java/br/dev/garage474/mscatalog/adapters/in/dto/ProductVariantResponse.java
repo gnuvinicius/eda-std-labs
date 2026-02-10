@@ -1,4 +1,4 @@
-package br.dev.garage474.mscatalog.adapters.in.web.dto;
+package br.dev.garage474.mscatalog.adapters.in.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

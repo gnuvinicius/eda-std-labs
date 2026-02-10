@@ -26,17 +26,17 @@ public interface ProductJpaRepository extends JpaRepository<ProductEntity, UUID>
      * Utilizado para o Showcase com suporte a busca por termo, brand e categoria.
      */
     @Query("SELECT p FROM ProductEntity p " +
-           "WHERE p.tenantId = :tenantId " +
-           "AND (LOWER(p.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-           "     OR LOWER(p.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) " +
-           "AND (:brandId IS NULL OR p.brandEntity.id = :brandId) " +
-           "AND (:categoryId IS NULL OR p.categoryEntity.id = :categoryId)")
+            "WHERE p.tenantId = :tenantId " +
+            "AND (LOWER(p.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
+            "     OR LOWER(p.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) " +
+            "AND (:brandId IS NULL OR p.brandEntity.id = :brandId) " +
+            "AND (:categoryId IS NULL OR p.categoryEntity.id = :categoryId)")
     Page<ProductEntity> findProductsByTenantWithFilters(
-        @Param("tenantId") UUID tenantId,
-        @Param("searchTerm") String searchTerm,
-        @Param("brandId") UUID brandId,
-        @Param("categoryId") UUID categoryId,
-        Pageable pageable
+            @Param("tenantId") UUID tenantId,
+            @Param("searchTerm") String searchTerm,
+            @Param("brandId") UUID brandId,
+            @Param("categoryId") UUID categoryId,
+            Pageable pageable
     );
 }
 

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 /**
  * Implementação JPA do repositório {@link ProductRepository}.
- *
+ * <p>
  * Responsável pela persistência do agregado Product e suas entidades filhas (ProductVariant).
  */
 @Repository
@@ -151,11 +151,11 @@ public class JpaProductRepository implements ProductRepository {
         String search = searchTerm != null ? searchTerm : "";
 
         Page<ProductEntity> pageResult = productJpaRepository.findProductsByTenantWithFilters(
-            tenantId,
-            search,
-            brandId,
-            categoryId,
-            pageable
+                tenantId,
+                search,
+                brandId,
+                categoryId,
+                pageable
         );
 
         List<Product> content = pageResult.getContent().stream()
@@ -163,11 +163,11 @@ public class JpaProductRepository implements ProductRepository {
                 .collect(Collectors.toList());
 
         return new ShowcasePageable(
-            content,
-            pageResult.getNumber(),
-            pageResult.getSize(),
-            pageResult.getTotalPages(),
-            pageResult.getTotalElements()
+                content,
+                pageResult.getNumber(),
+                pageResult.getSize(),
+                pageResult.getTotalPages(),
+                pageResult.getTotalElements()
         );
     }
 
