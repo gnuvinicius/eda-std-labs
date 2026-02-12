@@ -1,82 +1,63 @@
 package br.dev.garage474.mscatalog.adapters.in.web.controller;
 
-import br.dev.garage474.mscatalog.adapters.in.dto.BrandResponse;
-import br.dev.garage474.mscatalog.adapters.in.dto.CreateBrandRequest;
-import br.dev.garage474.mscatalog.applications.usecase.CreateBrandUseCase;
-import br.dev.garage474.mscatalog.applications.usecase.ListBrandsByTenantUseCase;
-import org.springframework.http.HttpStatus;
+import br.dev.garage474.mscatalog.dto.BrandCreateDto;
+import br.dev.garage474.mscatalog.dto.BrandDto;
+import br.dev.garage474.mscatalog.services.BrandService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import jakarta.validation.Valid;
+import java.net.URI;
 import java.util.UUID;
 
-/**
- * Controller REST para operações com Marcas.
- *
- * Endpoints:
- * - POST /api/v1/brands - Criar nova marca
- * - GET /api/v1/brands - Listar marcas por tenant
- *
- * Implementação de Clean Architecture:
- * - Recebe requisições HTTP
- * - Delegação para Use Cases
- * - Conversão DTO ↔ Domain
- */
 @RestController
 @RequestMapping("/api/v1/brands")
+@Validated
 public class BrandController {
 
-    private final CreateBrandUseCase createBrandUseCase;
-    private final ListBrandsByTenantUseCase listBrandsByTenantUseCase;
+    private static final Logger log = LoggerFactory.getLogger(BrandController.class);
 
-    public BrandController(
-            CreateBrandUseCase createBrandUseCase,
-            ListBrandsByTenantUseCase listBrandsByTenantUseCase) {
-        this.createBrandUseCase = createBrandUseCase;
-        this.listBrandsByTenantUseCase = listBrandsByTenantUseCase;
+    private final BrandService brandService;
+
+    @Autowired
+    public BrandController(BrandService brandService) {
+        this.brandService = brandService;
     }
 
-    /**
-     * POST /api/v1/brands
-     *
-     * Cria uma nova marca para um tenant específico.
-     *
-     * @param tenantId ID do tenant (obtido do header X-Tenant-ID)
-     * @param request Dados da marca a ser criada
-     * @return Resposta com dados da marca criada
-     */
     @PostMapping
-    public ResponseEntity<BrandResponse> createBrand(
-            @RequestHeader("X-Tenant-ID") UUID tenantId,
-            @RequestBody CreateBrandRequest request) {
-
-        var command = new CreateBrandUseCase.CreateBrandCommand(
-            tenantId,
-            request.name()
-        );
-
-        var response = createBrandUseCase.execute(command);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<BrandDto> create(@RequestHeader("tenantId") UUID tenantId, @Valid @RequestBody BrandCreateDto dto) {
+        BrandDto created = brandService.create(tenantId, dto);
+        return ResponseEntity.created(URI.create("/api/v1/brands/" + created.getId())).body(created);
     }
 
-    /**
-     * GET /api/v1/brands
-     *
-     * Lista todas as marcas de um tenant específico.
-     *
-     * @param tenantId ID do tenant (obtido do header X-Tenant-ID)
-     * @return Lista de marcas do tenant
-     */
     @GetMapping
-    public ResponseEntity<List<BrandResponse>> listBrandsByTenant(
-            @RequestHeader("X-Tenant-ID") UUID tenantId) {
+    public ResponseEntity<Page<BrandDto>> list(@RequestHeader("tenantId") UUID tenantId, Pageable pageable) {
+        Page<BrandDto> page = brandService.list(tenantId, pageable);
+        return ResponseEntity.ok(page);
+    }
 
-        var query = new ListBrandsByTenantUseCase.ListBrandsQuery(tenantId);
-        var brands = listBrandsByTenantUseCase.execute(query);
+    @GetMapping("/{id}")
+    public ResponseEntity<BrandDto> get(@RequestHeader("tenantId") UUID tenantId, @PathVariable UUID id) {
+        BrandDto dto = brandService.getById(tenantId, id);
+        return ResponseEntity.ok(dto);
+    }
 
-        return ResponseEntity.ok(brands);
+    @PutMapping("/{id}")
+    public ResponseEntity<BrandDto> update(@RequestHeader("tenantId") UUID tenantId, @PathVariable UUID id, @Valid @RequestBody BrandCreateDto dto) {
+        BrandDto updated = brandService.update(tenantId, id, dto);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@RequestHeader("tenantId") UUID tenantId, @PathVariable UUID id) {
+        brandService.delete(tenantId, id);
+        return ResponseEntity.noContent().build();
     }
 }
 

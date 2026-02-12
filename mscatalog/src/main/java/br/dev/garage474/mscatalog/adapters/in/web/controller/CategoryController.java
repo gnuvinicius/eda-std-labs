@@ -1,83 +1,63 @@
 package br.dev.garage474.mscatalog.adapters.in.web.controller;
 
-import br.dev.garage474.mscatalog.adapters.in.dto.CategoryResponse;
-import br.dev.garage474.mscatalog.adapters.in.dto.CreateCategoryRequest;
-import br.dev.garage474.mscatalog.applications.usecase.CreateCategoryUseCase;
-import br.dev.garage474.mscatalog.applications.usecase.ListCategoriesByTenantUseCase;
-import org.springframework.http.HttpStatus;
+import br.dev.garage474.mscatalog.dto.CategoryCreateDto;
+import br.dev.garage474.mscatalog.dto.CategoryDto;
+import br.dev.garage474.mscatalog.services.CategoryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import jakarta.validation.Valid;
+import java.net.URI;
 import java.util.UUID;
 
-/**
- * Controller REST para operações com Categorias.
- *
- * Endpoints:
- * - POST /api/v1/categories - Criar nova categoria
- * - GET /api/v1/categories - Listar categorias por tenant
- *
- * Implementação de Clean Architecture:
- * - Recebe requisições HTTP
- * - Delegação para Use Cases
- * - Conversão DTO ↔ Domain
- */
 @RestController
 @RequestMapping("/api/v1/categories")
+@Validated
 public class CategoryController {
 
-    private final CreateCategoryUseCase createCategoryUseCase;
-    private final ListCategoriesByTenantUseCase listCategoriesByTenantUseCase;
+    private static final Logger log = LoggerFactory.getLogger(CategoryController.class);
 
-    public CategoryController(
-            CreateCategoryUseCase createCategoryUseCase,
-            ListCategoriesByTenantUseCase listCategoriesByTenantUseCase) {
-        this.createCategoryUseCase = createCategoryUseCase;
-        this.listCategoriesByTenantUseCase = listCategoriesByTenantUseCase;
+    private final CategoryService categoryService;
+
+    @Autowired
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
-    /**
-     * POST /api/v1/categories
-     *
-     * Cria uma nova categoria para um tenant específico.
-     *
-     * @param tenantId ID do tenant (obtido do header X-Tenant-ID)
-     * @param request Dados da categoria a ser criada
-     * @return Resposta com dados da categoria criada
-     */
     @PostMapping
-    public ResponseEntity<CategoryResponse> createCategory(
-            @RequestHeader("X-Tenant-ID") UUID tenantId,
-            @RequestBody CreateCategoryRequest request) {
-
-        var command = new CreateCategoryUseCase.CreateCategoryCommand(
-            tenantId,
-            request.name(),
-            request.parentCategoryId() != null ? UUID.fromString(request.parentCategoryId()) : null
-        );
-
-        var response = createCategoryUseCase.execute(command);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<CategoryDto> create(@RequestHeader("tenantId") UUID tenantId, @Valid @RequestBody CategoryCreateDto dto) {
+        CategoryDto created = categoryService.create(tenantId, dto);
+        return ResponseEntity.created(URI.create("/api/v1/categories/" + created.getId())).body(created);
     }
 
-    /**
-     * GET /api/v1/categories
-     *
-     * Lista todas as categorias de um tenant específico.
-     *
-     * @param tenantId ID do tenant (obtido do header X-Tenant-ID)
-     * @return Lista de categorias do tenant
-     */
     @GetMapping
-    public ResponseEntity<List<CategoryResponse>> listCategoriesByTenant(
-            @RequestHeader("X-Tenant-ID") UUID tenantId) {
+    public ResponseEntity<Page<CategoryDto>> list(@RequestHeader("tenantId") UUID tenantId, Pageable pageable) {
+        Page<CategoryDto> page = categoryService.list(tenantId, pageable);
+        return ResponseEntity.ok(page);
+    }
 
-        var query = new ListCategoriesByTenantUseCase.ListCategoriesQuery(tenantId);
-        var categories = listCategoriesByTenantUseCase.execute(query);
+    @GetMapping("/{id}")
+    public ResponseEntity<CategoryDto> get(@RequestHeader("tenantId") UUID tenantId, @PathVariable UUID id) {
+        CategoryDto dto = categoryService.getById(tenantId, id);
+        return ResponseEntity.ok(dto);
+    }
 
-        return ResponseEntity.ok(categories);
+    @PutMapping("/{id}")
+    public ResponseEntity<CategoryDto> update(@RequestHeader("tenantId") UUID tenantId, @PathVariable UUID id, @Valid @RequestBody CategoryCreateDto dto) {
+        CategoryDto updated = categoryService.update(tenantId, id, dto);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@RequestHeader("tenantId") UUID tenantId, @PathVariable UUID id) {
+        categoryService.delete(tenantId, id);
+        return ResponseEntity.noContent().build();
     }
 }
 
