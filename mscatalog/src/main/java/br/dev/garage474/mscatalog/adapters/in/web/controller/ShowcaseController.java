@@ -30,12 +30,17 @@ public class ShowcaseController {
 
     @GetMapping
     public ResponseEntity<Page<ShowcaseDto>> list(@RequestHeader("tenantId") UUID tenantId,
-                                                   @RequestParam(required = false) String q,
-                                                   @RequestParam(required = false) UUID brandId,
-                                                   @RequestParam(required = false) UUID categoryId,
-                                                   @RequestParam(required = false) String platform,
-                                                   Pageable pageable) {
-        ShowcaseFilterDto filter = ShowcaseFilterDto.builder().q(q).brandId(brandId).categoryId(categoryId).platform(platform).build();
+                                                  @RequestParam(required = false) String q,
+                                                  @RequestParam(required = false) UUID brandId,
+                                                  @RequestParam(required = false) UUID categoryId,
+                                                  @RequestParam(required = false) String platform,
+                                                  Pageable pageable) {
+        ShowcaseFilterDto filter = ShowcaseFilterDto.builder()
+                .q(q)
+                .brandId(brandId)
+                .categoryId(categoryId)
+                .platform(platform)
+                .build();
         Page<ShowcaseDto> page = showcaseService.list(tenantId, filter, pageable);
         return ResponseEntity.ok(page);
     }
