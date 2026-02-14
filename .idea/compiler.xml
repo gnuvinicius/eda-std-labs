@@ -3,6 +3,12 @@
   <component name="CompilerConfiguration">
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="msregister" />
+      </profile>
       <profile name="Annotation profile for mspedido" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -12,13 +18,17 @@
         </processorPath>
         <module name="mspagamento" />
         <module name="mspedido" />
-        <module name="mscatalog" />
         <module name="msdelivery" />
+        <module name="mscatalog" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="mscadastro" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="mscadastro" options="-parameters" />
       <module name="mscatalog" options="-parameters" />
       <module name="msdelivery" options="-parameters" />
       <module name="mspagamento" options="-parameters" />
