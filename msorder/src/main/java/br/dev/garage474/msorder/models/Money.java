@@ -1,0 +1,25 @@
+package br.dev.garage474.msorder.models;
+
+import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+/**
+ * Value Object para representar um valor monetário.
+ */
+@Embeddable
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Money implements Serializable {
+
+    private BigDecimal amount;
+    private String currency;
+}
+

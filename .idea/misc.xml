@@ -11,6 +11,8 @@
         <option value="$PROJECT_DIR$/mscatalog/pom.xml" />
         <option value="$PROJECT_DIR$/mscadastro/pom.xml" />
         <option value="$PROJECT_DIR$/msregister/pom.xml" />
+        <option value="$PROJECT_DIR$/msorder/pom.xml" />
+        <option value="$PROJECT_DIR$/mspayment/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

@@ -9,16 +9,25 @@
         <outputRelativeToContentRoot value="true" />
         <module name="msregister" />
       </profile>
-      <profile name="Annotation profile for mspedido" enabled="true">
+      <profile name="Annotation profile for mspayment" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
         </processorPath>
-        <module name="mspagamento" />
-        <module name="mspedido" />
         <module name="msdelivery" />
+        <module name="mspayment" />
+        <module name="msorder" />
+      </profile>
+      <profile name="Annotation profile for mscatalog" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
+        </processorPath>
         <module name="mscatalog" />
       </profile>
     </annotationProcessing>
@@ -31,8 +40,8 @@
       <module name="mscadastro" options="-parameters" />
       <module name="mscatalog" options="-parameters" />
       <module name="msdelivery" options="-parameters" />
-      <module name="mspagamento" options="-parameters" />
-      <module name="mspedido" options="-parameters" />
+      <module name="msorder" options="-parameters" />
+      <module name="mspayment" options="-parameters" />
     </option>
   </component>
 </project>
