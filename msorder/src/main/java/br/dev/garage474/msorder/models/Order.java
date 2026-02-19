@@ -38,13 +38,17 @@ public class Order extends BaseEntity {
     private OrderStatus status;
 
     @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "amount", column = @Column(name = "total_amount")),
+            @AttributeOverride(name = "currency", column = @Column(name = "total_currency"))
+    })
     private Money total;
 
     @OneToMany(
-        mappedBy = "order",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true,
-        fetch = FetchType.LAZY
+            mappedBy = "order",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
     )
     private List<OrderItem> items = new ArrayList<>();
 
@@ -69,12 +73,12 @@ public class Order extends BaseEntity {
      */
     public void calculateTotal() {
         BigDecimal totalAmount = this.items.stream()
-            .map(item -> item.getUnitPrice().getAmount()
-                .multiply(new BigDecimal(item.getQuantity())))
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(item -> item.getUnitPrice().getAmount()
+                        .multiply(new BigDecimal(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         String currency = this.items.isEmpty() ? "BRL" :
-            this.items.get(0).getUnitPrice().getCurrency();
+                this.items.get(0).getUnitPrice().getCurrency();
 
         this.total = new Money(totalAmount, currency);
     }
@@ -84,8 +88,8 @@ public class Order extends BaseEntity {
      */
     public int getTotalItems() {
         return this.items.stream()
-            .mapToInt(OrderItem::getQuantity)
-            .sum();
+                .mapToInt(OrderItem::getQuantity)
+                .sum();
     }
 
     public void cancel() {

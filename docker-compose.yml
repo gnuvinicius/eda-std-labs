@@ -1,4 +1,5 @@
 services:
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
     container_name: zookeeper
@@ -40,29 +41,20 @@ services:
     networks:
       - msdelivery-network
 
-  suplementos:
-    image: eclipse-temurin:21-jdk
-    container_name: suplementos
-    depends_on:
-      - kafka
-      - rabbitmq
+  msregister:
+    build:
+      context: ./msregister
+      dockerfile: Dockerfile
+    container_name: msregister
     ports:
-      - "8080:8080"
-    volumes:
-      # Espera-se que o build produza target/suplementos-0.0.1-SNAPSHOT.jar
-      - ./target/suplementos-0.0.1-SNAPSHOT.jar:/app/suplementos.jar:ro
+      - "8085:8080"
     environment:
-      # Spring Boot mapeia VARS em maiúsculas com '_' para propriedades com '.'
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_PORT: "5672"
-      SPRING_RABBITMQ_USERNAME: user
-      SPRING_RABBITMQ_PASSWORD: password
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      # Caso precise conectar a um banco de dados externo, defina SPRING_DATASOURCE_URL/USERNAME/PASSWORD
-    command: ["sh", "-c", "java -Dspring.profiles.active=docker -jar /app/suplementos.jar"]
-    restart: on-failure
+      - JAVA_OPTS=-Xmx512m -Xms256m
     networks:
       - msdelivery-network
+    restart: unless-stopped
+
+
 
 # Observações:
 # - Construa o jar localmente antes de subir: mvn -DskipTests package

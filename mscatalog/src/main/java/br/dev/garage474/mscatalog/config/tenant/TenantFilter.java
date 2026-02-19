@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -57,11 +58,13 @@ public class TenantFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain)
             throws ServletException, IOException {
-        String tenantHeader = request.getHeader(TENANT_HEADER);
-
         try {
+            String tenantHeader = request.getHeader(TENANT_HEADER);
+
             // Allow preflight requests and explicitly excluded endpoints to bypass tenant validation
             if (isExcluded(request) || "OPTIONS".equalsIgnoreCase(request.getMethod())) {
                 log.debug("TenantFilter - skipping tenant validation for excluded path {} {}", request.getMethod(), request.getRequestURI());
