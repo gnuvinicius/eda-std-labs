@@ -2,6 +2,6 @@
 <endpoints xmlns="http://java.sun.com/xml/ns/jax-ws/ri/runtime"
            version="2.0">
     <endpoint name="CustomerService"
-              implementation="br.dev.garage474.service.CustomerServiceImpl"
+              implementation="br.dev.garage474.service.CustomerService"
               url-pattern="/ws/customer"/>
 </endpoints>

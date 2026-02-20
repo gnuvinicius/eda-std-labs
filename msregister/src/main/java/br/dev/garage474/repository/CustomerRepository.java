@@ -4,6 +4,11 @@ import br.dev.garage474.entity.Customer;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.UUID;
 
 @Stateless
 public class CustomerRepository {
@@ -11,16 +16,35 @@ public class CustomerRepository {
     @PersistenceContext(unitName = "msregisterPU")
     private EntityManager em;
 
+    private static final Logger log = LoggerFactory.getLogger(CustomerRepository.class);
 
     public Customer save(Customer customer) {
         try {
             em.persist(customer);
             return customer;
-        } catch (Exception ex) {
-            // Lidar com a exceção, por exemplo, logando o erro
-            System.err.println("Erro ao salvar o cliente: " + ex.getMessage());
-            // Você pode lançar uma exceção personalizada ou lidar de outra forma
-            throw ex;
+        } catch (Exception e) {
+            log.error("Erro ao cadastrar cliente: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    public Customer findById(UUID customerId) {
+        try {
+            return em.find(Customer.class, customerId);
+        } catch (Exception e) {
+            log.error("Erro ao buscar clientes por customerId: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    public List<Customer> findAllByTenantId(UUID tenantId) {
+        try {
+            return em.createQuery("SELECT c FROM Customer c WHERE c.tenantId = :tenantId", Customer.class)
+                    .setParameter("tenantId", tenantId)
+                    .getResultList();
+        } catch (Exception e) {
+            log.error("Erro ao buscar clientes por tenantId: {}", e.getMessage(), e);
+            throw e;
         }
     }
 }
