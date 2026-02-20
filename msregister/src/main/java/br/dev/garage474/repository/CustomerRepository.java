@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Stateless
@@ -28,9 +29,10 @@ public class CustomerRepository {
         }
     }
 
-    public Customer findById(UUID customerId) {
+    public Optional<Customer> findById(UUID customerId) {
         try {
-            return em.find(Customer.class, customerId);
+            Customer customer = em.find(Customer.class, customerId);
+            return customer != null ? Optional.of(customer) : Optional.empty();
         } catch (Exception e) {
             log.error("Erro ao buscar clientes por customerId: {}", e.getMessage(), e);
             throw e;

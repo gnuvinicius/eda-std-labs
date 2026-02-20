@@ -8,6 +8,7 @@ import jakarta.inject.Inject;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,30 +43,20 @@ public class CustomerService {
 
     @WebMethod(operationName = "getCustomerById")
     public CustomerDto getCustomerById(@WebParam(name = "customerId") UUID customerId) {
-        try {
-            Customer customer = repository.findById(customerId);
-            if (customer != null) {
-                return CustomerDto.mapToDto(customer);
-            } else {
-                log.warn("Cliente com ID {} não encontrado", customerId);
-                return null; // Ou lançar uma exceção personalizada
-            }
-        } catch (Exception ex) {
-            log.error("Erro ao buscar cliente por ID: {}", ex.getMessage(), ex);
-            throw ex;
-        }
+        return repository.findById(customerId)
+                .map(CustomerDto::mapToDto)
+                .orElseThrow(EntityNotFoundException::new);
     }
 
     @WebMethod(operationName = "getAllCustomers")
     public List<CustomerDto> getAllCustomers(@WebParam(name = "tenantId") UUID tenantId) {
         try {
-            List<Customer> customers = repository.findAllByTenantId(tenantId);
-            return customers.stream()
+            return repository.findAllByTenantId(tenantId).stream()
                     .map(CustomerDto::mapToDto)
                     .toList();
-        } catch (Exception ex) {
-            log.error("Erro ao buscar todos os clientes: {}", ex.getMessage(), ex);
-            throw ex;
+        } catch (Exception e) {
+            log.error("Erro ao buscar todos os clientes: {}", e.getMessage(), e);
+            throw e;
         }
     }
 }
