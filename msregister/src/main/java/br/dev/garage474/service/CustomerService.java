@@ -18,8 +18,7 @@ import java.util.UUID;
 @WebService(
         serviceName = "CustomerService",
         portName = "CustomerServicePort",
-        targetNamespace = "http://service.garage474.dev.br/",
-        endpointInterface = "br.dev.garage474.service.CustomerService"
+        targetNamespace = "http://service.garage474.dev.br/"
 )
 public class CustomerService {
 
