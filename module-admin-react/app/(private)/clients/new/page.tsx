@@ -2,9 +2,9 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '../../../../lib/api/clients'
-import Button from '../../../../../components/ui/button'
-import Input from '../../../../../components/ui/input'
-import Card from '../../../../../components/ui/card'
+import Button from '../../../../components/ui/button'
+import Input from '../../../../components/ui/input'
+import Card from '../../../../components/ui/card'
 
 export default function NewClientPage() {
   const [name, setName] = useState('')

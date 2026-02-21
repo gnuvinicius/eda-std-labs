@@ -1,11 +1,11 @@
 "use client"
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { AuthService } from '../../lib/services/authService'
-import Button from '../../components/ui/button'
-import Input from '../../components/ui/input'
-import GarageLogo from '../../components/logo/GarageLogo'
-import Card from '../../components/ui/card'
+import { AuthService } from '../../../lib/services/authService'
+import Button from '../../../components/ui/button'
+import Input from '../../../components/ui/input'
+import GarageLogo from '../../../components/logo/GarageLogo'
+import Card from '../../../components/ui/card'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -18,7 +18,7 @@ export default function LoginPage() {
     setError(null)
     try {
       await AuthService.login(username, password)
-      router.push('/admin/dashboard')
+      router.push('/dashboard')
     } catch (err: any) {
       setError(err?.message || 'Network error')
     }
