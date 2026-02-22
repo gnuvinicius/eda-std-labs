@@ -16,7 +16,7 @@
 
   <servlet-mapping>
     <servlet-name>jaxws-servlet</servlet-name>
-    <url-pattern>/ws/*</url-pattern>
+    <url-pattern>/msregister/*</url-pattern>
   </servlet-mapping>
 
 </web-app>

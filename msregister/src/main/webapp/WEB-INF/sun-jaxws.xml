@@ -3,5 +3,5 @@
            version="2.0">
     <endpoint name="CustomerService"
               implementation="br.dev.garage474.service.CustomerService"
-              url-pattern="/ws/customer"/>
+              url-pattern="/msregister/CustomerService"/>
 </endpoints>

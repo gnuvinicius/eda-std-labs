@@ -24,6 +24,8 @@ public class Customer {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    public Customer() {}
+
     public Customer(String name, String email, String password, UUID tenantId) {
         this.name = name;
         this.email = email;
@@ -31,5 +33,17 @@ public class Customer {
         this.tenantId = tenantId;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", tenantId=" + tenantId +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }

@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { AuthService } from '../../../lib/services/authService'
+import { AuthService } from '../../../services/authService'
 import Button from '../../../components/ui/button'
 import Input from '../../../components/ui/input'
 import GarageLogo from '../../../components/logo/GarageLogo'
