@@ -1,4 +1,4 @@
-package br.dev.garage474.config;
+package br.dev.garage474.utils;
 
 import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 

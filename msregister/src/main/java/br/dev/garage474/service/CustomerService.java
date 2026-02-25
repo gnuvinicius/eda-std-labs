@@ -5,6 +5,8 @@ import br.dev.garage474.dto.CustomerDto;
 import br.dev.garage474.dto.GetAllCustomersResponse;
 import br.dev.garage474.entity.Customer;
 import br.dev.garage474.repository.CustomerRepository;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
@@ -15,15 +17,17 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.UUID;
 
+
 @WebService(
         serviceName = "CustomerService",
         portName = "CustomerServicePort",
-        targetNamespace = "http://service.garage474.dev.br/",
-        endpointInterface = "br.dev.garage474.service.CustomerService"
+        targetNamespace = "http://service.garage474.dev.br/"
 )
+@ApplicationScoped
 public class CustomerService {
 
-    private final CustomerRepository repository = new CustomerRepository();
+    @Inject
+    private CustomerRepository repository;
 
     private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
 

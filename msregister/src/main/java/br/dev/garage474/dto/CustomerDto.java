@@ -1,6 +1,6 @@
 package br.dev.garage474.dto;
 
-import br.dev.garage474.config.LocalDateTimeAdapter;
+import br.dev.garage474.utils.LocalDateTimeAdapter;
 import br.dev.garage474.entity.Customer;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 

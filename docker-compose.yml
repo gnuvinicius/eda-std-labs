@@ -55,13 +55,14 @@ services:
       - "8085:8080"
       - "9990:9990"     # Admin Console port
     environment:
-      - JAVA_OPTS=-Xmx200m -Xms128m
+      - JAVA_OPTS=-Xmx512m -Xms256m
+      - JBOSS_PERSIST_SERVER_HISTORY=false
     extra_hosts:
       - "host.docker.internal:host-gateway"
     deploy:
       resources:
         limits:
-          memory: 256M
+          memory: 512M
     networks:
       - msdelivery-network
     restart: unless-stopped # Reinicia o container automaticamente se ele falhar, mas não reinicia se for parado manualmente.
