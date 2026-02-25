@@ -2,6 +2,7 @@ package br.dev.garage474.repository;
 
 import br.dev.garage474.entity.Customer;
 import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.slf4j.Logger;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Stateless
+@ApplicationScoped
 public class CustomerRepository {
 
     @PersistenceContext(unitName = "msregisterPU")

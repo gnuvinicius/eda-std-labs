@@ -2,8 +2,10 @@ package br.dev.garage474.service;
 
 import br.dev.garage474.dto.CreateCustomerDto;
 import br.dev.garage474.dto.CustomerDto;
+import br.dev.garage474.dto.GetAllCustomersResponse;
 import br.dev.garage474.entity.Customer;
 import br.dev.garage474.repository.CustomerRepository;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
@@ -15,11 +17,13 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.UUID;
 
+
 @WebService(
         serviceName = "CustomerService",
         portName = "CustomerServicePort",
         targetNamespace = "http://service.garage474.dev.br/"
 )
+@ApplicationScoped
 public class CustomerService {
 
     @Inject
@@ -48,11 +52,13 @@ public class CustomerService {
     }
 
     @WebMethod(operationName = "getAllCustomers")
-    public List<CustomerDto> getAllCustomers(@WebParam(name = "tenantId") UUID tenantId) {
+    public GetAllCustomersResponse getAllCustomers(@WebParam(name = "tenantId") UUID tenantId) {
+        log.info("Buscando todos os customers: {}", tenantId);
         try {
-            return repository.findAllByTenantId(tenantId).stream()
+            List<CustomerDto> result = repository.findAllByTenantId(tenantId).stream()
                     .map(CustomerDto::mapToDto)
                     .toList();
+            return new GetAllCustomersResponse(result);
         } catch (Exception e) {
             log.error("Erro ao buscar todos os clientes: {}", e.getMessage(), e);
             throw e;
