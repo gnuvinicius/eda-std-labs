@@ -44,16 +44,14 @@ services:
     networks:
       - msdelivery-network
 
-
-  # docker compose down msregister && docker rmi eda-std-labs-msregister && docker compose up -d --build msregister && docker compose logs -f msregister
-  msregister:
+  msorder:
     build:
-      context: ./msregister
+      context: ./msorder
       dockerfile: Dockerfile
-    container_name: msregister
+    container_name: msorder
     ports:
-      - "8085:8080"
-      - "9990:9990"     # Admin Console port
+      - "8086:8080"
+      - "9991:9990"     # Admin Console port
     environment:
       - JAVA_OPTS=-Xmx512m -Xms256m
       - JBOSS_PERSIST_SERVER_HISTORY=false
@@ -62,7 +60,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 1G
     networks:
       - msdelivery-network
     restart: unless-stopped # Reinicia o container automaticamente se ele falhar, mas não reinicia se for parado manualmente.

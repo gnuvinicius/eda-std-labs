@@ -1,60 +1,27 @@
 package br.dev.garage474.msorder.services;
 
-import br.dev.garage474.msorder.dto.CreateOrderDto;
-import br.dev.garage474.msorder.dto.OrderDto;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import br.dev.garage474.msorder.dtos.CreateOrderDto;
+import br.dev.garage474.msorder.repositories.OrderRepository;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
 
-import java.util.UUID;
+@WebService(
+        serviceName = "OrderService",
+        portName = "OrderServicePort",
+        targetNamespace = "http://service.garage474.dev.br/"
+)
+@ApplicationScoped
+public class OrderService {
 
-/**
- * Interface de serviço para gerenciamento de pedidos.
- */
-public interface OrderService {
+    @Inject
+    private OrderRepository orderRepository;
 
-    /**
-     * Cria um novo pedido a partir do carrinho.
-     */
-    OrderDto createOrder(CreateOrderDto dto);
-
-    /**
-     * Busca um pedido por ID.
-     */
-    OrderDto getOrderById(UUID orderId);
-
-    /**
-     * Lista os pedidos de um cliente.
-     */
-    Page<OrderDto> listCustomerOrders(UUID customerId, Pageable pageable);
-
-    /**
-     * Lista todos os pedidos.
-     */
-    Page<OrderDto> listOrders(Pageable pageable);
-
-    /**
-     * Lista pedidos por status.
-     */
-    Page<OrderDto> listOrdersByStatus(String status, Pageable pageable);
-
-    /**
-     * Confirma um pedido.
-     */
-    OrderDto confirmOrder(UUID orderId);
-
-    /**
-     * Cancela um pedido.
-     */
-    OrderDto cancelOrder(UUID orderId);
-
-    /**
-     * Envia um pedido para a fila de processamento.
-     */
-    void sendOrderToQueue(UUID orderId);
-
-    /**
-     * Finaliza um pedido e envia para a fila.
-     */
-    OrderDto finalizeOrder(UUID orderId);
+    @WebMethod(operationName = "createOrder")
+    public void createOrder(@WebParam(name = "orderDto") CreateOrderDto orderDto) {
+        orderRepository.save(orderDto);
+    }
+    
 }
-
