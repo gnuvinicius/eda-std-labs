@@ -16,46 +16,46 @@ public interface CartService {
     /**
      * Cria um novo carrinho.
      */
-    CartDto createCart(UUID tenantId, CreateCartDto dto);
+    CartDto createCart(CreateCartDto dto);
 
     /**
      * Busca um carrinho por ID.
      */
-    CartDto getCartById(UUID tenantId, UUID cartId);
+    CartDto getCartById(UUID cartId);
 
     /**
      * Lista os carrinhos ativos de um cliente.
      */
-    Page<CartDto> listCustomerCarts(UUID tenantId, UUID customerId, Pageable pageable);
+    Page<CartDto> listCustomerCarts(UUID customerId, Pageable pageable);
 
     /**
-     * Lista todos os carrinhos de um tenant.
+     * Lista todos os carrinhos.
      */
-    Page<CartDto> listCarts(UUID tenantId, Pageable pageable);
+    Page<CartDto> listCarts(Pageable pageable);
 
     /**
      * Adiciona um item ao carrinho.
      */
-    CartDto addItem(UUID tenantId, UUID cartId, CreateCartItemDto itemDto);
+    CartDto addItem(UUID cartId, CreateCartItemDto itemDto);
 
     /**
      * Remove um item do carrinho.
      */
-    CartDto removeItem(UUID tenantId, UUID cartId, UUID itemId);
+    CartDto removeItem(UUID cartId, UUID itemId);
 
     /**
      * Atualiza a quantidade de um item no carrinho.
      */
-    CartDto updateItemQuantity(UUID tenantId, UUID cartId, UUID itemId, Integer quantity);
+    CartDto updateItemQuantity(UUID cartId, UUID itemId, Integer quantity);
 
     /**
      * Limpa todos os itens do carrinho.
      */
-    CartDto clearCart(UUID tenantId, UUID cartId);
+    CartDto clearCart(UUID cartId);
 
     /**
      * Remove um carrinho.
      */
-    void deleteCart(UUID tenantId, UUID cartId);
+    void deleteCart(UUID cartId);
 }
 

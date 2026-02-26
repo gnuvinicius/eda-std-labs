@@ -17,28 +17,29 @@ import java.util.UUID;
 public interface OrderRepository extends JpaRepository<Order, UUID> {
 
     /**
-     * Lista todos os pedidos de um tenant.
+     * Lista todos os pedidos.
      */
-    Page<Order> findByTenantId(UUID tenantId, Pageable pageable);
+    Page<Order> findBy(Pageable pageable);
 
     /**
-     * Lista todos os pedidos de um cliente e tenant.
+     * Lista todos os pedidos de um cliente.
      */
-    Page<Order> findByTenantIdAndCustomerId(UUID tenantId, UUID customerId, Pageable pageable);
+    Page<Order> findByCustomerId(UUID customerId, Pageable pageable);
 
     /**
-     * Busca um pedido por id e tenant.
+     * Busca um pedido por id.
      */
-    Optional<Order> findByIdAndTenantId(UUID id, UUID tenantId);
+    Optional<Order> findById(UUID id);
 
     /**
-     * Busca um pedido por cart_id e tenant.
+     * Busca um pedido por cart_id.
+
      */
-    Optional<Order> findByCartIdAndTenantId(UUID cartId, UUID tenantId);
+    Optional<Order> findByCartId(UUID cartId);
 
     /**
-     * Lista pedidos por status e tenant.
+     * Lista pedidos por status.
      */
-    Page<Order> findByTenantIdAndStatus(UUID tenantId, OrderStatus status, Pageable pageable);
+    Page<Order> findByStatus(OrderStatus status, Pageable pageable);
 }
 

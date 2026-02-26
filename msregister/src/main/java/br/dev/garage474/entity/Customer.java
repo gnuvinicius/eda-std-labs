@@ -19,18 +19,16 @@ public class Customer {
     private String name;
     private String email;
     private String password;
-    private UUID tenantId;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public Customer() {}
 
-    public Customer(String name, String email, String password, UUID tenantId) {
+    public Customer(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.tenantId = tenantId;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -41,7 +39,6 @@ public class Customer {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
-                ", tenantId=" + tenantId +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

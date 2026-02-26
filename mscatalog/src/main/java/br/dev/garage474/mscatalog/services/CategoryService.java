@@ -8,14 +8,14 @@ import org.springframework.data.domain.Pageable;
 import java.util.UUID;
 
 public interface CategoryService {
-    CategoryDto create(UUID tenantId, CategoryCreateDto dto);
+    CategoryDto create(CategoryCreateDto dto);
 
-    CategoryDto getById(UUID tenantId, UUID id);
+    CategoryDto getById(UUID id);
 
-    Page<CategoryDto> list(UUID tenantId, Pageable pageable);
+    Page<CategoryDto> list(Pageable pageable);
 
-    CategoryDto update(UUID tenantId, UUID id, CategoryCreateDto dto);
+    CategoryDto update(UUID id, CategoryCreateDto dto);
 
-    void delete(UUID tenantId, UUID id);
+    void delete(UUID id);
 }
 

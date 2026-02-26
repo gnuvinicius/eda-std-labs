@@ -2,7 +2,6 @@
 
 CREATE TABLE cart (
     id UUID PRIMARY KEY,
-    tenant_id UUID NOT NULL,
     customer_id UUID,
     status VARCHAR(30) NOT NULL,
     created_at TIMESTAMP NOT NULL,
@@ -11,7 +10,6 @@ CREATE TABLE cart (
 
 CREATE TABLE cart_item (
     id UUID PRIMARY KEY,
-    tenant_id UUID NOT NULL,
     cart_id UUID NOT NULL,
     product_id UUID NOT NULL,
     product_variant_id UUID NOT NULL,
@@ -25,7 +23,6 @@ CREATE TABLE cart_item (
 
 CREATE TABLE orders (
     id UUID PRIMARY KEY,
-    tenant_id UUID NOT NULL,
     cart_id UUID,
     customer_id UUID,
     status VARCHAR(30) NOT NULL,
@@ -37,7 +34,6 @@ CREATE TABLE orders (
 
 CREATE TABLE order_item (
     id UUID PRIMARY KEY,
-    tenant_id UUID NOT NULL,
     order_id UUID NOT NULL,
     product_id UUID NOT NULL,
     product_variant_id UUID NOT NULL,

@@ -8,14 +8,14 @@ import org.springframework.data.domain.Pageable;
 import java.util.UUID;
 
 public interface ProductService {
-    ProductDto create(UUID tenantId, ProductCreateDto dto);
+    ProductDto create(ProductCreateDto dto);
 
-    ProductDto getById(UUID tenantId, UUID id);
+    ProductDto getById(UUID id);
 
-    Page<ProductDto> list(UUID tenantId, Pageable pageable);
+    Page<ProductDto> list(Pageable pageable);
 
-    ProductDto update(UUID tenantId, UUID id, ProductCreateDto dto);
+    ProductDto update(UUID id, ProductCreateDto dto);
 
-    void delete(UUID tenantId, UUID id);
+    void delete(UUID id);
 }
 

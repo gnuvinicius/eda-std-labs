@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface BrandRepository extends JpaRepository<Brand, UUID> {
 
-    Optional<Brand> findByIdAndTenantId(UUID id, UUID tenantId);
+    Optional<Brand> findById(UUID id);
 
-    Page<Brand> findAllByTenantId(UUID tenantId, Pageable pageable);
+    Page<Brand> findAll(Pageable pageable);
 }

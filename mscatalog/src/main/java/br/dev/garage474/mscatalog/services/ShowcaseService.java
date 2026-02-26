@@ -8,8 +8,8 @@ import org.springframework.data.domain.Pageable;
 import java.util.UUID;
 
 public interface ShowcaseService {
-    Page<ShowcaseDto> list(UUID tenantId, ShowcaseFilterDto filter, Pageable pageable);
+    Page<ShowcaseDto> list(ShowcaseFilterDto filter, Pageable pageable);
 
-    ShowcaseDto getById(UUID tenantId, UUID id);
+    ShowcaseDto getById(UUID id);
 }
 

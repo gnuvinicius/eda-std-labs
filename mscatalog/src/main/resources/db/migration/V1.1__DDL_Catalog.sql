@@ -3,7 +3,6 @@
 -- Tables for Brand and Category
 CREATE TABLE brand (
     id UUID PRIMARY KEY,
-    tenant_id UUID NOT NULL,
     name VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP
@@ -11,7 +10,6 @@ CREATE TABLE brand (
 
 CREATE TABLE category (
     id UUID PRIMARY KEY,
-    tenant_id UUID NOT NULL,
     name VARCHAR(255) NOT NULL,
     parent_id UUID,
     created_at TIMESTAMP NOT NULL,
@@ -22,7 +20,6 @@ CREATE TABLE category (
 -- Tables for Attributes
 CREATE TABLE attribute (
     id UUID PRIMARY KEY,
-    tenant_id UUID NOT NULL,
     name VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP
@@ -30,7 +27,6 @@ CREATE TABLE attribute (
 
 CREATE TABLE attribute_value (
     id UUID PRIMARY KEY,
-    tenant_id UUID NOT NULL,
     value VARCHAR(255) NOT NULL,
     attribute_id UUID NOT NULL,
     created_at TIMESTAMP NOT NULL,
@@ -41,7 +37,6 @@ CREATE TABLE attribute_value (
 -- Product Aggregate Root
 CREATE TABLE product (
     id UUID PRIMARY KEY,
-    tenant_id UUID NOT NULL,
     name VARCHAR(255) NOT NULL,
     description TEXT,
     brand_id UUID NOT NULL,
@@ -63,7 +58,6 @@ CREATE TABLE product_tags (
 -- ProductVariant Entity
 CREATE TABLE product_variant (
     id UUID PRIMARY KEY,
-    tenant_id UUID NOT NULL,
     sku_code VARCHAR(255) NOT NULL UNIQUE,
     barcode VARCHAR(255),
     price_amount DECIMAL(19, 4) NOT NULL,
@@ -92,7 +86,6 @@ CREATE TABLE product_variant_attribute_values (
 -- Collection Entity
 CREATE TABLE collection (
     id UUID PRIMARY KEY,
-    tenant_id UUID NOT NULL,
     name VARCHAR(255) NOT NULL,
     start_date TIMESTAMP NOT NULL,
     end_date TIMESTAMP NOT NULL,

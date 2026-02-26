@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
 
-    Optional<Category> findByIdAndTenantId(UUID id, UUID tenantId);
+    Optional<Category> findById(UUID id);
 
-    Page<Category> findAllByTenantId(UUID tenantId, Pageable pageable);
+    Page<Category> findAll(Pageable pageable);
 }

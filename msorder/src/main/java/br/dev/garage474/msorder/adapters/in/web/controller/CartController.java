@@ -1,13 +1,7 @@
 package br.dev.garage474.msorder.adapters.in.web.controller;
 
-import br.dev.garage474.msorder.dto.CartDto;
-import br.dev.garage474.msorder.dto.CreateCartDto;
-import br.dev.garage474.msorder.dto.CreateCartItemDto;
-import br.dev.garage474.msorder.services.CartService;
-import br.dev.garage474.msorder.tenancy.TenantContext;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
+import br.dev.garage474.msorder.dto.CartDto;
+import br.dev.garage474.msorder.dto.CreateCartDto;
+import br.dev.garage474.msorder.dto.CreateCartItemDto;
+import br.dev.garage474.msorder.services.CartService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Controller para gerenciamento de carrinhos de compras.
@@ -42,9 +42,7 @@ public class CartController {
      */
     @PostMapping
     public ResponseEntity<CartDto> createCart(@Valid @RequestBody CreateCartDto dto) {
-        UUID tenantId = TenantContext.getTenantId();
-        log.info("Criando novo carrinho para tenant: {}", tenantId);
-        CartDto cartDto = cartService.createCart(tenantId, dto);
+        CartDto cartDto = cartService.createCart(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(cartDto);
     }
 
@@ -54,9 +52,7 @@ public class CartController {
      */
     @GetMapping("/{cartId}")
     public ResponseEntity<CartDto> getCart(@PathVariable UUID cartId) {
-        UUID tenantId = TenantContext.getTenantId();
-        log.info("Buscando carrinho: {} para tenant: {}", cartId, tenantId);
-        CartDto cartDto = cartService.getCartById(tenantId, cartId);
+        CartDto cartDto = cartService.getCartById(cartId);
         return ResponseEntity.ok(cartDto);
     }
 
@@ -70,15 +66,14 @@ public class CartController {
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size
     ) {
-        UUID tenantId = TenantContext.getTenantId();
         Pageable pageable = PageRequest.of(page, size);
-        log.info("Listando carrinhos do cliente: {} para tenant: {}", customerId, tenantId);
-        Page<CartDto> cartsDto = cartService.listCustomerCarts(tenantId, customerId, pageable);
+        log.info("Listando carrinhos do cliente: {}", customerId);
+        Page<CartDto> cartsDto = cartService.listCustomerCarts(customerId, pageable);
         return ResponseEntity.ok(cartsDto);
     }
 
     /**
-     * Lista todos os carrinhos do tenant.
+     * Lista todos os carrinhos.
      * GET /api/v1/carts
      */
     @GetMapping
@@ -86,10 +81,9 @@ public class CartController {
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size
     ) {
-        UUID tenantId = TenantContext.getTenantId();
         Pageable pageable = PageRequest.of(page, size);
-        log.info("Listando carrinhos para tenant: {}", tenantId);
-        Page<CartDto> cartsDto = cartService.listCarts(tenantId, pageable);
+        log.info("Listando todos os carrinhos");
+        Page<CartDto> cartsDto = cartService.listCarts(pageable);
         return ResponseEntity.ok(cartsDto);
     }
 
@@ -102,9 +96,8 @@ public class CartController {
         @PathVariable UUID cartId,
         @Valid @RequestBody CreateCartItemDto itemDto
     ) {
-        UUID tenantId = TenantContext.getTenantId();
-        log.info("Adicionando item ao carrinho: {} para tenant: {}", cartId, tenantId);
-        CartDto cartDto = cartService.addItem(tenantId, cartId, itemDto);
+        log.info("Adicionando item ao carrinho: {}", cartId);
+        CartDto cartDto = cartService.addItem(cartId, itemDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(cartDto);
     }
 
@@ -117,9 +110,8 @@ public class CartController {
         @PathVariable UUID cartId,
         @PathVariable UUID itemId
     ) {
-        UUID tenantId = TenantContext.getTenantId();
-        log.info("Removendo item: {} do carrinho: {} para tenant: {}", itemId, cartId, tenantId);
-        CartDto cartDto = cartService.removeItem(tenantId, cartId, itemId);
+        log.info("Removendo item: {} do carrinho: {}", itemId, cartId);
+        CartDto cartDto = cartService.removeItem(cartId, itemId);
         return ResponseEntity.ok(cartDto);
     }
 
@@ -133,9 +125,8 @@ public class CartController {
         @PathVariable UUID itemId,
         @RequestParam Integer quantity
     ) {
-        UUID tenantId = TenantContext.getTenantId();
         log.info("Atualizando quantidade do item: {} no carrinho: {}", itemId, cartId);
-        CartDto cartDto = cartService.updateItemQuantity(tenantId, cartId, itemId, quantity);
+        CartDto cartDto = cartService.updateItemQuantity(cartId, itemId, quantity);
         return ResponseEntity.ok(cartDto);
     }
 
@@ -145,9 +136,8 @@ public class CartController {
      */
     @DeleteMapping("/{cartId}/items")
     public ResponseEntity<CartDto> clearCart(@PathVariable UUID cartId) {
-        UUID tenantId = TenantContext.getTenantId();
-        log.info("Limpando carrinho: {} para tenant: {}", cartId, tenantId);
-        CartDto cartDto = cartService.clearCart(tenantId, cartId);
+        log.info("Limpando carrinho: {}", cartId);
+        CartDto cartDto = cartService.clearCart(cartId);
         return ResponseEntity.ok(cartDto);
     }
 
@@ -157,9 +147,8 @@ public class CartController {
      */
     @DeleteMapping("/{cartId}")
     public ResponseEntity<Void> deleteCart(@PathVariable UUID cartId) {
-        UUID tenantId = TenantContext.getTenantId();
-        log.info("Deletando carrinho: {} para tenant: {}", cartId, tenantId);
-        cartService.deleteCart(tenantId, cartId);
+        log.info("Deletando carrinho: {}", cartId);
+        cartService.deleteCart(cartId);
         return ResponseEntity.noContent().build();
     }
 }

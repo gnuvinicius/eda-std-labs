@@ -22,11 +22,10 @@ public class CreateCartDto {
     @JsonProperty("customer_id")
     private UUID customerId;
 
-    public Cart mapToEntity(UUID tenantId) {
+    public Cart mapToEntity() {
         Cart cart = new Cart();
         cart.setCustomerId(this.customerId);
         cart.setStatus(CartStatus.ACTIVE);
-        cart.setTenantId(tenantId);
         return cart;
     }
 }

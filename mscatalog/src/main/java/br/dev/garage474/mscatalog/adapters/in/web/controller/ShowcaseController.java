@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,8 +28,7 @@ public class ShowcaseController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ShowcaseDto>> list(@RequestHeader("tenantId") UUID tenantId,
-                                                  @RequestParam(required = false) String q,
+    public ResponseEntity<Page<ShowcaseDto>> list(@RequestParam(required = false) String q,
                                                   @RequestParam(required = false) UUID brandId,
                                                   @RequestParam(required = false) UUID categoryId,
                                                   @RequestParam(required = false) String platform,
@@ -41,13 +39,13 @@ public class ShowcaseController {
                 .categoryId(categoryId)
                 .platform(platform)
                 .build();
-        Page<ShowcaseDto> page = showcaseService.list(tenantId, filter, pageable);
+        Page<ShowcaseDto> page = showcaseService.list(filter, pageable);
         return ResponseEntity.ok(page);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ShowcaseDto> get(@RequestHeader("tenantId") UUID tenantId, @PathVariable UUID id) {
-        ShowcaseDto dto = showcaseService.getById(tenantId, id);
+    public ResponseEntity<ShowcaseDto> get(@PathVariable UUID id) {
+        ShowcaseDto dto = showcaseService.getById(id);
         return ResponseEntity.ok(dto);
     }
 }

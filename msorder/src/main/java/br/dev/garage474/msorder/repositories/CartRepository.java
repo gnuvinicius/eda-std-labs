@@ -18,28 +18,23 @@ import java.util.UUID;
 public interface CartRepository extends JpaRepository<Cart, UUID> {
 
     /**
-     * Busca um carrinho ativo por tenant e cliente.
+     * Busca um carrinho ativo por cliente.
      */
-    Optional<Cart> findByTenantIdAndCustomerIdAndStatus(UUID tenantId, UUID customerId, CartStatus status);
+    Optional<Cart> findByCustomerIdAndStatus(UUID customerId, CartStatus status);
 
     /**
-     * Lista todos os carrinhos de um tenant.
+     * Lista todos os carrinhos de um cliente.
      */
-    Page<Cart> findByTenantId(UUID tenantId, Pageable pageable);
+    Page<Cart> findByCustomerId(UUID customerId, Pageable pageable);
 
     /**
-     * Lista todos os carrinhos de um cliente e tenant.
+     * Busca um carrinho por id.
      */
-    Page<Cart> findByTenantIdAndCustomerId(UUID tenantId, UUID customerId, Pageable pageable);
+    Optional<Cart> findById(UUID id);
 
     /**
-     * Busca um carrinho por id e tenant.
+     * Lista carrinhos abandonados por status.
      */
-    Optional<Cart> findByIdAndTenantId(UUID id, UUID tenantId);
-
-    /**
-     * Lista carrinhos abandonados por tenant.
-     */
-    List<Cart> findByTenantIdAndStatus(UUID tenantId, CartStatus status);
+    List<Cart> findByStatus(CartStatus status);
 }
 

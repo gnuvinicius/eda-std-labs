@@ -11,13 +11,13 @@ import java.util.UUID;
 
 public interface ProductRepository extends JpaRepository<Product, UUID> {
 
-    Optional<Product> findByIdAndTenantId(UUID id, UUID tenantId);
+    Optional<Product> findById(UUID id);
 
-    Page<Product> findAllByTenantId(UUID tenantId, Pageable pageable);
+    Page<Product> findAll(Pageable pageable);
 
-    List<Product> findAllByTenantIdAndCategoryId(UUID tenantId, UUID categoryId);
+    List<Product> findAllByCategoryId(UUID categoryId);
 
-    List<Product> findAllByTenantIdAndBrandId(UUID tenantId, UUID brandId);
+    List<Product> findAllByBrandId(UUID brandId);
 
-    boolean existsByIdAndTenantId(UUID id, UUID tenantId);
+    boolean existsById(UUID id);
 }

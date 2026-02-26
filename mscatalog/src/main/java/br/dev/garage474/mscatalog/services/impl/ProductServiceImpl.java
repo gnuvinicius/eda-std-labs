@@ -42,17 +42,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductDto create(UUID tenantId, ProductCreateDto dto) {
+    public ProductDto create(ProductCreateDto dto) {
         try {
             Product p = new Product();
-            p.setTenantId(tenantId);
             p.setName(dto.getName());
             p.setDescription(dto.getDescription());
             p.setSlug(dto.getSlug());
 
-            Brand brand = brandRepository.findByIdAndTenantId(dto.getBrandId(), tenantId)
+            Brand brand = brandRepository.findById(dto.getBrandId())
                     .orElseThrow(() -> new EntityNotFoundException("Brand not found"));
-            Category category = categoryRepository.findByIdAndTenantId(dto.getCategoryId(), tenantId)
+            Category category = categoryRepository.findById(dto.getCategoryId())
                     .orElseThrow(() -> new EntityNotFoundException("Category not found"));
 
             p.setBrand(brand);
@@ -67,33 +66,33 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDto getById(UUID tenantId, UUID id) {
-        Product p = productRepository.findByIdAndTenantId(id, tenantId)
+    public ProductDto getById(UUID id) {
+        Product p = productRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found"));
         return ProductDto.toDto(p);
     }
 
     @Override
-    public Page<ProductDto> list(UUID tenantId, Pageable pageable) {
-        Page<Product> page = productRepository.findAllByTenantId(tenantId, pageable);
+    public Page<ProductDto> list(Pageable pageable) {
+        Page<Product> page = productRepository.findAll(pageable);
         List<ProductDto> dtos = page.getContent().stream().map(ProductDto::toDto).collect(Collectors.toList());
         return new PageImpl<>(dtos, pageable, page.getTotalElements());
     }
 
     @Override
     @Transactional
-    public ProductDto update(UUID tenantId, UUID id, ProductCreateDto dto) {
+    public ProductDto update(UUID id, ProductCreateDto dto) {
         try {
-            Product p = productRepository.findByIdAndTenantId(id, tenantId)
+            Product p = productRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
             p.setName(dto.getName());
             p.setDescription(dto.getDescription());
             p.setSlug(dto.getSlug());
 
-            Brand brand = brandRepository.findByIdAndTenantId(dto.getBrandId(), tenantId)
+            Brand brand = brandRepository.findById(dto.getBrandId())
                     .orElseThrow(() -> new EntityNotFoundException("Brand not found"));
-            Category category = categoryRepository.findByIdAndTenantId(dto.getCategoryId(), tenantId)
+            Category category = categoryRepository.findById(dto.getCategoryId())
                     .orElseThrow(() -> new EntityNotFoundException("Category not found"));
 
             p.setBrand(brand);
@@ -109,9 +108,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public void delete(UUID tenantId, UUID id) {
+    public void delete(UUID id) {
         try {
-            Product p = productRepository.findByIdAndTenantId(id, tenantId)
+            Product p = productRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException("Product not found"));
             productRepository.delete(p);
         } catch (Exception e) {

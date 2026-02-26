@@ -1,12 +1,7 @@
 package br.dev.garage474.msorder.adapters.in.web.controller;
 
-import br.dev.garage474.msorder.dto.CreateOrderDto;
-import br.dev.garage474.msorder.dto.OrderDto;
-import br.dev.garage474.msorder.services.OrderService;
-import br.dev.garage474.msorder.tenancy.TenantContext;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
+import br.dev.garage474.msorder.dto.CreateOrderDto;
+import br.dev.garage474.msorder.dto.OrderDto;
+import br.dev.garage474.msorder.services.OrderService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Controller para gerenciamento de pedidos.
@@ -40,9 +40,7 @@ public class OrderController {
      */
     @PostMapping
     public ResponseEntity<OrderDto> createOrder(@Valid @RequestBody CreateOrderDto dto) {
-        UUID tenantId = TenantContext.getTenantId();
-        log.info("Criando novo pedido para tenant: {}", tenantId);
-        OrderDto orderDto = orderService.createOrder(tenantId, dto);
+        OrderDto orderDto = orderService.createOrder(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(orderDto);
     }
 
@@ -52,9 +50,8 @@ public class OrderController {
      */
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDto> getOrder(@PathVariable UUID orderId) {
-        UUID tenantId = TenantContext.getTenantId();
-        log.info("Buscando pedido: {} para tenant: {}", orderId, tenantId);
-        OrderDto orderDto = orderService.getOrderById(tenantId, orderId);
+        log.info("Buscando pedido: {}", orderId);
+        OrderDto orderDto = orderService.getOrderById(orderId);
         return ResponseEntity.ok(orderDto);
     }
 
@@ -68,15 +65,14 @@ public class OrderController {
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size
     ) {
-        UUID tenantId = TenantContext.getTenantId();
         Pageable pageable = PageRequest.of(page, size);
-        log.info("Listando pedidos do cliente: {} para tenant: {}", customerId, tenantId);
-        Page<OrderDto> ordersDto = orderService.listCustomerOrders(tenantId, customerId, pageable);
+        log.info("Listando pedidos do cliente: {}", customerId);
+        Page<OrderDto> ordersDto = orderService.listCustomerOrders(customerId, pageable);
         return ResponseEntity.ok(ordersDto);
     }
 
     /**
-     * Lista todos os pedidos do tenant.
+     * Lista todos os pedidos.
      * GET /api/v1/orders
      */
     @GetMapping
@@ -84,10 +80,9 @@ public class OrderController {
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size
     ) {
-        UUID tenantId = TenantContext.getTenantId();
         Pageable pageable = PageRequest.of(page, size);
-        log.info("Listando pedidos para tenant: {}", tenantId);
-        Page<OrderDto> ordersDto = orderService.listOrders(tenantId, pageable);
+        log.info("Listando todos os pedidos");
+        Page<OrderDto> ordersDto = orderService.listOrders(pageable);
         return ResponseEntity.ok(ordersDto);
     }
 
@@ -101,10 +96,9 @@ public class OrderController {
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size
     ) {
-        UUID tenantId = TenantContext.getTenantId();
         Pageable pageable = PageRequest.of(page, size);
-        log.info("Listando pedidos com status: {} para tenant: {}", status, tenantId);
-        Page<OrderDto> ordersDto = orderService.listOrdersByStatus(tenantId, status, pageable);
+        log.info("Listando pedidos com status: {}", status);
+        Page<OrderDto> ordersDto = orderService.listOrdersByStatus(status, pageable);
         return ResponseEntity.ok(ordersDto);
     }
 
@@ -114,9 +108,8 @@ public class OrderController {
      */
     @PutMapping("/{orderId}/confirm")
     public ResponseEntity<OrderDto> confirmOrder(@PathVariable UUID orderId) {
-        UUID tenantId = TenantContext.getTenantId();
-        log.info("Confirmando pedido: {} para tenant: {}", orderId, tenantId);
-        OrderDto orderDto = orderService.confirmOrder(tenantId, orderId);
+        log.info("Confirmando pedido: {}", orderId);
+        OrderDto orderDto = orderService.confirmOrder(orderId);
         return ResponseEntity.ok(orderDto);
     }
 
@@ -126,9 +119,8 @@ public class OrderController {
      */
     @PutMapping("/{orderId}/cancel")
     public ResponseEntity<OrderDto> cancelOrder(@PathVariable UUID orderId) {
-        UUID tenantId = TenantContext.getTenantId();
-        log.info("Cancelando pedido: {} para tenant: {}", orderId, tenantId);
-        OrderDto orderDto = orderService.cancelOrder(tenantId, orderId);
+        log.info("Cancelando pedido: {}", orderId);
+        OrderDto orderDto = orderService.cancelOrder(orderId);
         return ResponseEntity.ok(orderDto);
     }
 
@@ -138,9 +130,8 @@ public class OrderController {
      */
     @PutMapping("/{orderId}/finalize")
     public ResponseEntity<OrderDto> finalizeOrder(@PathVariable UUID orderId) {
-        UUID tenantId = TenantContext.getTenantId();
-        log.info("Finalizando pedido: {} para tenant: {}", orderId, tenantId);
-        OrderDto orderDto = orderService.finalizeOrder(tenantId, orderId);
+        log.info("Finalizando pedido: {}", orderId);
+        OrderDto orderDto = orderService.finalizeOrder(orderId);
         return ResponseEntity.ok(orderDto);
     }
 }

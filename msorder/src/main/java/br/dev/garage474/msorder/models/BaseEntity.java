@@ -1,17 +1,15 @@
 package br.dev.garage474.msorder.models;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -19,10 +17,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @MappedSuperclass
 public abstract class BaseEntity {
-
-    @NotNull
-    @Column(nullable = false)
-    protected UUID tenantId;
 
     @Column(nullable = false, updatable = false)
     protected LocalDateTime createdAt;

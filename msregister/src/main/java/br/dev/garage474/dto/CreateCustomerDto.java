@@ -3,8 +3,6 @@ package br.dev.garage474.dto;
 import br.dev.garage474.entity.Customer;
 import lombok.Getter;
 
-import java.util.UUID;
-
 @Getter
 public class CreateCustomerDto {
 
@@ -18,7 +16,7 @@ public class CreateCustomerDto {
         this.password = password;
     }
 
-    public Customer toEntity(UUID tenantId) {
-        return new Customer(this.name, this.email, this.password, tenantId);
+    public Customer toEntity() {
+        return new Customer(this.name, this.email, this.password);
     }
 }

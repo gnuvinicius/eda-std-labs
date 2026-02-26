@@ -39,13 +39,12 @@ public class CustomerRepository {
         }
     }
 
-    public List<Customer> findAllByTenantId(UUID tenantId) {
+    public List<Customer> findAll() {
         try {
-            return em.createQuery("SELECT c FROM Customer c WHERE c.tenantId = :tenantId", Customer.class)
-                    .setParameter("tenantId", tenantId)
+            return em.createQuery("SELECT c FROM Customer c", Customer.class)
                     .getResultList();
         } catch (Exception e) {
-            log.error("Erro ao buscar clientes por tenantId: {}", e.getMessage(), e);
+            log.error("Erro ao buscar todos os clientes: {}", e.getMessage(), e);
             throw e;
         }
     }

@@ -32,13 +32,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public CategoryDto create(UUID tenantId, CategoryCreateDto dto) {
+    public CategoryDto create(CategoryCreateDto dto) {
         try {
             Category c = new Category();
-            c.setTenantId(tenantId);
             c.setName(dto.getName());
             if (dto.getParentId() != null) {
-                Category parent = categoryRepository.findByIdAndTenantId(dto.getParentId(), tenantId)
+                Category parent = categoryRepository.findById(dto.getParentId())
                         .orElseThrow(() -> new EntityNotFoundException("Parent category not found"));
                 c.setParent(parent);
             }
@@ -51,28 +50,28 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto getById(UUID tenantId, UUID id) {
-        Category c = categoryRepository.findByIdAndTenantId(id, tenantId)
+    public CategoryDto getById(UUID id) {
+        Category c = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found"));
         return CategoryDto.toDto(c);
     }
 
     @Override
-    public Page<CategoryDto> list(UUID tenantId, Pageable pageable) {
-        Page<Category> page = categoryRepository.findAllByTenantId(tenantId, pageable);
+    public Page<CategoryDto> list(Pageable pageable) {
+        Page<Category> page = categoryRepository.findAll(pageable);
         List<CategoryDto> dtos = page.getContent().stream().map(CategoryDto::toDto).collect(Collectors.toList());
         return new PageImpl<>(dtos, pageable, page.getTotalElements());
     }
 
     @Override
     @Transactional
-    public CategoryDto update(UUID tenantId, UUID id, CategoryCreateDto dto) {
+    public CategoryDto update(UUID id, CategoryCreateDto dto) {
         try {
-            Category c = categoryRepository.findByIdAndTenantId(id, tenantId)
+            Category c = categoryRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException("Category not found"));
             c.setName(dto.getName());
             if (dto.getParentId() != null) {
-                Category parent = categoryRepository.findByIdAndTenantId(dto.getParentId(), tenantId)
+                Category parent = categoryRepository.findById(dto.getParentId())
                         .orElseThrow(() -> new EntityNotFoundException("Parent category not found"));
                 c.setParent(parent);
             } else {
@@ -88,9 +87,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public void delete(UUID tenantId, UUID id) {
+    public void delete(UUID id) {
         try {
-            Category c = categoryRepository.findByIdAndTenantId(id, tenantId)
+            Category c = categoryRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException("Category not found"));
             categoryRepository.delete(c);
         } catch (Exception e) {

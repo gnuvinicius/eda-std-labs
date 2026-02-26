@@ -29,11 +29,11 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartDto createCart(UUID tenantId, CreateCartDto dto) {
+    public CartDto createCart(CreateCartDto dto) {
         try {
-            log.info("Criando novo carrinho para tenant: {} e customer: {}", tenantId, dto.getCustomerId());
+            log.info("Criando novo carrinho para customer: {}", dto.getCustomerId());
 
-            Cart savedCart = cartRepository.save(dto.mapToEntity(tenantId));
+            Cart savedCart = cartRepository.save(dto.mapToEntity());
             log.info("Carrinho criado com sucesso: {}", savedCart.getId());
 
             return CartDto.mapToDto(savedCart);
@@ -45,11 +45,11 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional(readOnly = true)
-    public CartDto getCartById(UUID tenantId, UUID cartId) {
+    public CartDto getCartById(UUID cartId) {
         try {
-            log.info("Buscando carrinho: {} para tenant: {}", cartId, tenantId);
+            log.info("Buscando carrinho: {}", cartId);
 
-            Cart cart = cartRepository.findByIdAndTenantId(cartId, tenantId)
+            Cart cart = cartRepository.findById(cartId)
                     .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
 
             return CartDto.mapToDto(cart);
@@ -61,11 +61,11 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<CartDto> listCustomerCarts(UUID tenantId, UUID customerId, Pageable pageable) {
+    public Page<CartDto> listCustomerCarts(UUID customerId, Pageable pageable) {
         try {
-            log.info("Listando carrinhos do cliente: {} para tenant: {}", customerId, tenantId);
+            log.info("Listando carrinhos do cliente: {}", customerId);
 
-            return cartRepository.findByTenantIdAndCustomerId(tenantId, customerId, pageable)
+            return cartRepository.findByCustomerId(customerId, pageable)
                     .map(CartDto::mapToDto);
         } catch (Exception e) {
             log.error("Erro ao listar carrinhos do cliente: {}", e.getMessage(), e);
@@ -75,11 +75,11 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<CartDto> listCarts(UUID tenantId, Pageable pageable) {
+    public Page<CartDto> listCarts(Pageable pageable) {
         try {
-            log.info("Listando todos os carrinhos para tenant: {}", tenantId);
+            log.info("Listando todos os carrinhos");
 
-            return cartRepository.findByTenantId(tenantId, pageable)
+            return cartRepository.findAll(pageable)
                     .map(CartDto::mapToDto);
         } catch (Exception e) {
             log.error("Erro ao listar carrinhos: {}", e.getMessage(), e);
@@ -89,11 +89,11 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartDto addItem(UUID tenantId, UUID cartId, CreateCartItemDto itemDto) {
+    public CartDto addItem(UUID cartId, CreateCartItemDto itemDto) {
         try {
             log.info("Adicionando item ao carrinho: {}", cartId);
 
-            Cart cart = cartRepository.findByIdAndTenantId(cartId, tenantId)
+            Cart cart = cartRepository.findById(cartId)
                     .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
 
             CartItem cartItem = new CartItem();
@@ -102,7 +102,6 @@ public class CartServiceImpl implements CartService {
             cartItem.setProductVariantId(itemDto.getProductVariantId());
             cartItem.setQuantity(itemDto.getQuantity());
             cartItem.setUnitPrice(new Money(itemDto.getUnitPriceAmount(), itemDto.getUnitPriceCurrency()));
-            cartItem.setTenantId(tenantId);
 
             cart.addItem(cartItem);
             Cart updatedCart = cartRepository.save(cart);
@@ -117,11 +116,11 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartDto removeItem(UUID tenantId, UUID cartId, UUID itemId) {
+    public CartDto removeItem(UUID cartId, UUID itemId) {
         try {
             log.info("Removendo item: {} do carrinho: {}", itemId, cartId);
 
-            Cart cart = cartRepository.findByIdAndTenantId(cartId, tenantId)
+            Cart cart = cartRepository.findById(cartId)
                     .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
 
             CartItem itemToRemove = cart.getItems().stream()
@@ -142,11 +141,11 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartDto updateItemQuantity(UUID tenantId, UUID cartId, UUID itemId, Integer quantity) {
+    public CartDto updateItemQuantity(UUID cartId, UUID itemId, Integer quantity) {
         try {
             log.info("Atualizando quantidade do item: {} no carrinho: {}", itemId, cartId);
 
-            Cart cart = cartRepository.findByIdAndTenantId(cartId, tenantId)
+            Cart cart = cartRepository.findById(cartId)
                     .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
 
             CartItem item = cart.getItems().stream()
@@ -167,11 +166,11 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartDto clearCart(UUID tenantId, UUID cartId) {
+    public CartDto clearCart(UUID cartId) {
         try {
             log.info("Limpando carrinho: {}", cartId);
 
-            Cart cart = cartRepository.findByIdAndTenantId(cartId, tenantId)
+            Cart cart = cartRepository.findById(cartId)
                     .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
 
             cart.clearItems();
@@ -187,11 +186,11 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public void deleteCart(UUID tenantId, UUID cartId) {
+    public void deleteCart(UUID cartId) {
         try {
             log.info("Deletando carrinho: {}", cartId);
 
-            Cart cart = cartRepository.findByIdAndTenantId(cartId, tenantId)
+            Cart cart = cartRepository.findById(cartId)
                     .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
 
             cartRepository.delete(cart);

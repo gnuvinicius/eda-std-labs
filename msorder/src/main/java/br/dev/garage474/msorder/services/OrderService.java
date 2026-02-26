@@ -15,46 +15,46 @@ public interface OrderService {
     /**
      * Cria um novo pedido a partir do carrinho.
      */
-    OrderDto createOrder(UUID tenantId, CreateOrderDto dto);
+    OrderDto createOrder(CreateOrderDto dto);
 
     /**
      * Busca um pedido por ID.
      */
-    OrderDto getOrderById(UUID tenantId, UUID orderId);
+    OrderDto getOrderById(UUID orderId);
 
     /**
      * Lista os pedidos de um cliente.
      */
-    Page<OrderDto> listCustomerOrders(UUID tenantId, UUID customerId, Pageable pageable);
+    Page<OrderDto> listCustomerOrders(UUID customerId, Pageable pageable);
 
     /**
-     * Lista todos os pedidos de um tenant.
+     * Lista todos os pedidos.
      */
-    Page<OrderDto> listOrders(UUID tenantId, Pageable pageable);
+    Page<OrderDto> listOrders(Pageable pageable);
 
     /**
      * Lista pedidos por status.
      */
-    Page<OrderDto> listOrdersByStatus(UUID tenantId, String status, Pageable pageable);
+    Page<OrderDto> listOrdersByStatus(String status, Pageable pageable);
 
     /**
      * Confirma um pedido.
      */
-    OrderDto confirmOrder(UUID tenantId, UUID orderId);
+    OrderDto confirmOrder(UUID orderId);
 
     /**
      * Cancela um pedido.
      */
-    OrderDto cancelOrder(UUID tenantId, UUID orderId);
+    OrderDto cancelOrder(UUID orderId);
 
     /**
      * Envia um pedido para a fila de processamento.
      */
-    void sendOrderToQueue(UUID tenantId, UUID orderId);
+    void sendOrderToQueue(UUID orderId);
 
     /**
      * Finaliza um pedido e envia para a fila.
      */
-    OrderDto finalizeOrder(UUID tenantId, UUID orderId);
+    OrderDto finalizeOrder(UUID orderId);
 }
 

@@ -1,7 +1,13 @@
 package br.dev.garage474.dto;
 
-import br.dev.garage474.utils.LocalDateTimeAdapter;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.dev.garage474.entity.Customer;
+import br.dev.garage474.utils.LocalDateTimeAdapter;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -11,11 +17,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Builder
 @Getter
@@ -35,10 +36,7 @@ public class CustomerDto {
 
     @XmlElement
     private String email;
-
-    @XmlElement
-    private UUID tenantId;
-
+    
     @XmlElement
     @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
     private LocalDateTime createdAt;
@@ -53,7 +51,6 @@ public class CustomerDto {
                 .id(saved.getId())
                 .name(saved.getName())
                 .email(saved.getEmail())
-                .tenantId(saved.getTenantId())
                 .createdAt(saved.getCreatedAt())
                 .updatedAt(saved.getUpdatedAt())
                 .build();

@@ -27,15 +27,15 @@ public class ShowcaseServiceImpl implements ShowcaseService {
     }
 
     @Override
-    public Page<ShowcaseDto> list(UUID tenantId, ShowcaseFilterDto filter, Pageable pageable) {
+    public Page<ShowcaseDto> list(ShowcaseFilterDto filter, Pageable pageable) {
         // For simplicity create a single showcase per page consisting of filtered products.
         List<Product> products;
         if (filter.getBrandId() != null) {
-            products = productRepository.findAllByTenantIdAndBrandId(tenantId, filter.getBrandId());
+            products = productRepository.findAllByBrandId(filter.getBrandId());
         } else if (filter.getCategoryId() != null) {
-            products = productRepository.findAllByTenantIdAndCategoryId(tenantId, filter.getCategoryId());
+            products = productRepository.findAllByCategoryId(filter.getCategoryId());
         } else {
-            Page<Product> page = productRepository.findAllByTenantId(tenantId, pageable);
+            Page<Product> page = productRepository.findAll(pageable);
             List<ProductDto> pdtos = page.getContent().stream().map(ProductDto::toDto).collect(Collectors.toList());
             ShowcaseDto showcase = ShowcaseDto.create(UUID.randomUUID(), "Default", "Default showcase", pdtos);
             return new PageImpl<>(List.of(showcase), pageable, page.getTotalElements());
@@ -47,7 +47,7 @@ public class ShowcaseServiceImpl implements ShowcaseService {
     }
 
     @Override
-    public ShowcaseDto getById(UUID tenantId, UUID id) {
+    public ShowcaseDto getById(UUID id) {
         // Not backed by persistent Showcase entity in this simple implementation
         throw new EntityNotFoundException("Showcase not implemented");
     }

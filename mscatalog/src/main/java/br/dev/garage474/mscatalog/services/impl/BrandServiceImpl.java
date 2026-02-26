@@ -32,10 +32,9 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @Transactional
-    public BrandDto create(UUID tenantId, BrandCreateDto dto) {
+    public BrandDto create(BrandCreateDto dto) {
         try {
             Brand b = new Brand();
-            b.setTenantId(tenantId);
             b.setName(dto.getName());
             Brand saved = brandRepository.save(b);
             return BrandDto.toDto(saved);
@@ -46,24 +45,24 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public BrandDto getById(UUID tenantId, UUID id) {
-        Brand b = brandRepository.findByIdAndTenantId(id, tenantId)
+    public BrandDto getById(UUID id) {
+        Brand b = brandRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Brand not found"));
         return BrandDto.toDto(b);
     }
 
     @Override
-    public Page<BrandDto> list(UUID tenantId, Pageable pageable) {
-        Page<Brand> page = brandRepository.findAllByTenantId(tenantId, pageable);
+    public Page<BrandDto> list(Pageable pageable) {
+        Page<Brand> page = brandRepository.findAll(pageable);
         List<BrandDto> dtos = page.getContent().stream().map(BrandDto::toDto).collect(Collectors.toList());
         return new PageImpl<>(dtos, pageable, page.getTotalElements());
     }
 
     @Override
     @Transactional
-    public BrandDto update(UUID tenantId, UUID id, BrandCreateDto dto) {
+    public BrandDto update(UUID id, BrandCreateDto dto) {
         try {
-            Brand b = brandRepository.findByIdAndTenantId(id, tenantId)
+            Brand b = brandRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException("Brand not found"));
             b.setName(dto.getName());
             Brand saved = brandRepository.save(b);
@@ -76,9 +75,9 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @Transactional
-    public void delete(UUID tenantId, UUID id) {
+    public void delete(UUID id) {
         try {
-            Brand b = brandRepository.findByIdAndTenantId(id, tenantId)
+            Brand b = brandRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException("Brand not found"));
             brandRepository.delete(b);
         } catch (Exception e) {

@@ -40,12 +40,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderDto createOrder(UUID tenantId, CreateOrderDto dto) {
+    public OrderDto createOrder(CreateOrderDto dto) {
         try {
-            log.info("Criando novo pedido para tenant: {}, carrinho: {}", tenantId, dto.getCartId());
+            log.info("Criando novo pedido para carrinho: {}", dto.getCartId());
 
             // Busca o carrinho
-            Cart cart = cartRepository.findByIdAndTenantId(dto.getCartId(), tenantId)
+            Cart cart = cartRepository.findById(dto.getCartId())
                     .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
 
             if (cart.getItems().isEmpty()) {
@@ -58,7 +58,6 @@ public class OrderServiceImpl implements OrderService {
             order.setCartId(dto.getCartId());
             order.setCustomerId(dto.getCustomerId());
             order.setStatus(OrderStatus.PENDING);
-            order.setTenantId(tenantId);
 
             // Adiciona itens do carrinho ao pedido
             cart.getItems().forEach(cartItem -> {
@@ -68,7 +67,6 @@ public class OrderServiceImpl implements OrderService {
                 orderItem.setProductVariantId(cartItem.getProductVariantId());
                 orderItem.setQuantity(cartItem.getQuantity());
                 orderItem.setUnitPrice(cartItem.getUnitPrice());
-                orderItem.setTenantId(tenantId);
                 order.addItem(orderItem);
             });
 
@@ -91,11 +89,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public OrderDto getOrderById(UUID tenantId, UUID orderId) {
+    public OrderDto getOrderById(UUID orderId) {
         try {
-            log.info("Buscando pedido: {} para tenant: {}", orderId, tenantId);
+            log.info("Buscando pedido: {}", orderId);
 
-            Order order = orderRepository.findByIdAndTenantId(orderId, tenantId)
+            Order order = orderRepository.findById(orderId)
                     .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
 
             return OrderDto.toDto(order);
@@ -107,11 +105,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<OrderDto> listCustomerOrders(UUID tenantId, UUID customerId, Pageable pageable) {
+    public Page<OrderDto> listCustomerOrders(UUID customerId, Pageable pageable) {
         try {
-            log.info("Listando pedidos do cliente: {} para tenant: {}", customerId, tenantId);
+            log.info("Listando pedidos do cliente: {}", customerId);
 
-            return orderRepository.findByTenantIdAndCustomerId(tenantId, customerId, pageable)
+            return orderRepository.findByCustomerId(customerId, pageable)
                     .map(OrderDto::toDto);
         } catch (Exception e) {
             log.error("Erro ao listar pedidos do cliente: {}", e.getMessage(), e);
@@ -121,11 +119,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<OrderDto> listOrders(UUID tenantId, Pageable pageable) {
+    public Page<OrderDto> listOrders(Pageable pageable) {
         try {
-            log.info("Listando todos os pedidos para tenant: {}", tenantId);
+            log.info("Listando todos os pedidos");
 
-            return orderRepository.findByTenantId(tenantId, pageable)
+            return orderRepository.findAll(pageable)
                     .map(OrderDto::toDto);
         } catch (Exception e) {
             log.error("Erro ao listar pedidos: {}", e.getMessage(), e);
@@ -135,12 +133,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<OrderDto> listOrdersByStatus(UUID tenantId, String status, Pageable pageable) {
+    public Page<OrderDto> listOrdersByStatus(String status, Pageable pageable) {
         try {
-            log.info("Listando pedidos com status: {} para tenant: {}", status, tenantId);
+            log.info("Listando pedidos com status: {}", status);
 
             OrderStatus orderStatus = OrderStatus.valueOf(status.toUpperCase());
-            return orderRepository.findByTenantIdAndStatus(tenantId, orderStatus, pageable)
+            return orderRepository.findByStatus(orderStatus, pageable)
                     .map(OrderDto::toDto);
         } catch (Exception e) {
             log.error("Erro ao listar pedidos por status: {}", e.getMessage(), e);
@@ -150,11 +148,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderDto confirmOrder(UUID tenantId, UUID orderId) {
+    public OrderDto confirmOrder(UUID orderId) {
         try {
-            log.info("Confirmando pedido: {} para tenant: {}", orderId, tenantId);
+            log.info("Confirmando pedido: {}", orderId);
 
-            Order order = orderRepository.findByIdAndTenantId(orderId, tenantId)
+            Order order = orderRepository.findById(orderId)
                     .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
 
             order.setStatus(OrderStatus.CONFIRMED);
@@ -170,11 +168,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderDto cancelOrder(UUID tenantId, UUID orderId) {
+    public OrderDto cancelOrder(UUID orderId) {
         try {
-            log.info("Cancelando pedido: {} para tenant: {}", orderId, tenantId);
+            log.info("Cancelando pedido: {}", orderId);
 
-            Order order = orderRepository.findByIdAndTenantId(orderId, tenantId)
+            Order order = orderRepository.findById(orderId)
                     .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
 
             order.cancel();
@@ -190,18 +188,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void sendOrderToQueue(UUID tenantId, UUID orderId) {
+    public void sendOrderToQueue(UUID orderId) {
         try {
-            log.info("Enviando pedido para fila: {} para tenant: {}", orderId, tenantId);
+            log.info("Enviando pedido para fila: {}", orderId);
 
-            Order order = orderRepository.findByIdAndTenantId(orderId, tenantId)
+            Order order = orderRepository.findById(orderId)
                     .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
 
             // Cria a mensagem de pedido
             Map<String, Object> orderMessage = new HashMap<>();
             orderMessage.put("orderId", order.getId().toString());
             orderMessage.put("customerId", order.getCustomerId().toString());
-            orderMessage.put("tenantId", tenantId.toString());
             orderMessage.put("status", order.getStatus().toString());
             orderMessage.put("totalAmount", order.getTotal().getAmount());
             orderMessage.put("totalCurrency", order.getTotal().getCurrency());
@@ -232,11 +229,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderDto finalizeOrder(UUID tenantId, UUID orderId) {
+    public OrderDto finalizeOrder(UUID orderId) {
         try {
-            log.info("Finalizando pedido: {} para tenant: {}", orderId, tenantId);
+            log.info("Finalizando pedido: {}", orderId);
 
-            Order order = orderRepository.findByIdAndTenantId(orderId, tenantId)
+            Order order = orderRepository.findById(orderId)
                     .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
 
             // Atualiza status
@@ -244,7 +241,7 @@ public class OrderServiceImpl implements OrderService {
             Order updatedOrder = orderRepository.save(order);
 
             // Envia para a fila
-            sendOrderToQueue(tenantId, orderId);
+            sendOrderToQueue(orderId);
 
             log.info("Pedido finalizado e enviado para fila com sucesso: {}", orderId);
             return OrderDto.toDto(updatedOrder);

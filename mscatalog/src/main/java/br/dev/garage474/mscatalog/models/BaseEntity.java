@@ -1,24 +1,18 @@
 package br.dev.garage474.mscatalog.models;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @Setter
 @MappedSuperclass
 public abstract class BaseEntity {
-
-    @NotNull
-    @Column(nullable = false)
-    private UUID tenantId;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

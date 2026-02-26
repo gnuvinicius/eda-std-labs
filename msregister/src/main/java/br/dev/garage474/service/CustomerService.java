@@ -32,10 +32,9 @@ public class CustomerService {
     private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
 
     @WebMethod(operationName = "createCustomer")
-    public CustomerDto createCustomer(@WebParam(name = "customerDto") CreateCustomerDto customerDto,
-                                      @WebParam(name = "tenantId") UUID tenantId) {
+    public CustomerDto createCustomer(@WebParam(name = "customerDto") CreateCustomerDto customerDto) {
         try {
-            Customer customer = customerDto.toEntity(tenantId);
+            Customer customer = customerDto.toEntity();
             Customer saved = repository.save(customer);
             return CustomerDto.mapToDto(saved);
         } catch (Exception ex) {
@@ -52,10 +51,10 @@ public class CustomerService {
     }
 
     @WebMethod(operationName = "getAllCustomers")
-    public GetAllCustomersResponse getAllCustomers(@WebParam(name = "tenantId") UUID tenantId) {
-        log.info("Buscando todos os customers: {}", tenantId);
+    public GetAllCustomersResponse getAllCustomers() {
+        log.info("Buscando todos os customers");
         try {
-            List<CustomerDto> result = repository.findAllByTenantId(tenantId).stream()
+            List<CustomerDto> result = repository.findAll().stream()
                     .map(CustomerDto::mapToDto)
                     .toList();
             return new GetAllCustomersResponse(result);
