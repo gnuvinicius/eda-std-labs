@@ -1,23 +1,23 @@
 package br.dev.garage474.mscatalog.services.impl;
 
-import br.dev.garage474.mscatalog.dto.BrandCreateDto;
-import br.dev.garage474.mscatalog.dto.BrandDto;
-import br.dev.garage474.mscatalog.models.Brand;
-import br.dev.garage474.mscatalog.repositories.BrandRepository;
-import br.dev.garage474.mscatalog.services.BrandService;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.dev.garage474.mscatalog.dto.BrandCreateDto;
+import br.dev.garage474.mscatalog.dto.BrandDto;
+import br.dev.garage474.mscatalog.models.Brand;
+import br.dev.garage474.mscatalog.repositories.BrandRepository;
+import br.dev.garage474.mscatalog.services.BrandService;
 import jakarta.persistence.EntityNotFoundException;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class BrandServiceImpl implements BrandService {
@@ -26,7 +26,6 @@ public class BrandServiceImpl implements BrandService {
 
     private final BrandRepository brandRepository;
 
-    @Autowired
     public BrandServiceImpl(BrandRepository brandRepository) {
         this.brandRepository = brandRepository;
     }

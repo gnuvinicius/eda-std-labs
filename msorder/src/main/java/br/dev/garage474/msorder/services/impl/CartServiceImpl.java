@@ -5,7 +5,6 @@ import br.dev.garage474.msorder.dto.CreateCartDto;
 import br.dev.garage474.msorder.dto.CreateCartItemDto;
 import br.dev.garage474.msorder.models.Cart;
 import br.dev.garage474.msorder.models.CartItem;
-import br.dev.garage474.msorder.models.CartStatus;
 import br.dev.garage474.msorder.models.Money;
 import br.dev.garage474.msorder.repositories.CartRepository;
 import br.dev.garage474.msorder.services.CartService;

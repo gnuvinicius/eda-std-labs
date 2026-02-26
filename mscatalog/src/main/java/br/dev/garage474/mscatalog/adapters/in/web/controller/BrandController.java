@@ -3,9 +3,6 @@ package br.dev.garage474.mscatalog.adapters.in.web.controller;
 import br.dev.garage474.mscatalog.dto.BrandCreateDto;
 import br.dev.garage474.mscatalog.dto.BrandDto;
 import br.dev.garage474.mscatalog.services.BrandService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +18,8 @@ import java.util.UUID;
 @Validated
 public class BrandController {
 
-    private static final Logger log = LoggerFactory.getLogger(BrandController.class);
-
     private final BrandService brandService;
 
-    @Autowired
     public BrandController(BrandService brandService) {
         this.brandService = brandService;
     }

@@ -1,29 +1,29 @@
 package br.dev.garage474.mscatalog.adapters.in.web.controller;
 
-import br.dev.garage474.mscatalog.dto.ShowcaseDto;
-import br.dev.garage474.mscatalog.dto.ShowcaseFilterDto;
-import br.dev.garage474.mscatalog.services.ShowcaseService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
+import br.dev.garage474.mscatalog.dto.ShowcaseDto;
+import br.dev.garage474.mscatalog.dto.ShowcaseFilterDto;
+import br.dev.garage474.mscatalog.services.ShowcaseService;
 
 @RestController
 @RequestMapping("/api/v1/showcases")
 @Validated
 public class ShowcaseController {
 
-    private static final Logger log = LoggerFactory.getLogger(ShowcaseController.class);
-
     private final ShowcaseService showcaseService;
 
-    @Autowired
     public ShowcaseController(ShowcaseService showcaseService) {
         this.showcaseService = showcaseService;
     }

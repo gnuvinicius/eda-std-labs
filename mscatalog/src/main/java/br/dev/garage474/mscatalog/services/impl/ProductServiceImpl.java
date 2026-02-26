@@ -1,5 +1,17 @@
 package br.dev.garage474.mscatalog.services.impl;
 
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import br.dev.garage474.mscatalog.dto.ProductCreateDto;
 import br.dev.garage474.mscatalog.dto.ProductDto;
 import br.dev.garage474.mscatalog.models.Brand;
@@ -9,19 +21,7 @@ import br.dev.garage474.mscatalog.repositories.BrandRepository;
 import br.dev.garage474.mscatalog.repositories.CategoryRepository;
 import br.dev.garage474.mscatalog.repositories.ProductRepository;
 import br.dev.garage474.mscatalog.services.ProductService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import jakarta.persistence.EntityNotFoundException;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -32,8 +32,9 @@ public class ProductServiceImpl implements ProductService {
     private final BrandRepository brandRepository;
     private final CategoryRepository categoryRepository;
 
-    @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, BrandRepository brandRepository, CategoryRepository categoryRepository) {
+    public ProductServiceImpl(ProductRepository productRepository,
+            BrandRepository brandRepository,
+            CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
         this.brandRepository = brandRepository;
         this.categoryRepository = categoryRepository;

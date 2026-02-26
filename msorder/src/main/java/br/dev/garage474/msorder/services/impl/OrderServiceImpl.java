@@ -3,10 +3,8 @@ package br.dev.garage474.msorder.services.impl;
 import br.dev.garage474.msorder.config.RabbitMQConfig;
 import br.dev.garage474.msorder.dto.CreateOrderDto;
 import br.dev.garage474.msorder.dto.OrderDto;
-import br.dev.garage474.msorder.dto.OrderItemDto;
 import br.dev.garage474.msorder.models.Cart;
 import br.dev.garage474.msorder.models.CartStatus;
-import br.dev.garage474.msorder.models.Money;
 import br.dev.garage474.msorder.models.Order;
 import br.dev.garage474.msorder.models.OrderItem;
 import br.dev.garage474.msorder.models.OrderStatus;
@@ -22,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

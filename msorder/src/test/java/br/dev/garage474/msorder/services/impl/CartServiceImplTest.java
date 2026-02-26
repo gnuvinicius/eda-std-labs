@@ -1,13 +1,16 @@
 package br.dev.garage474.msorder.services.impl;
 
-import br.dev.garage474.msorder.dto.CartDto;
-import br.dev.garage474.msorder.dto.CreateCartDto;
-import br.dev.garage474.msorder.dto.CreateCartItemDto;
-import br.dev.garage474.msorder.models.Cart;
-import br.dev.garage474.msorder.models.CartItem;
-import br.dev.garage474.msorder.models.CartStatus;
-import br.dev.garage474.msorder.models.Money;
-import br.dev.garage474.msorder.repositories.CartRepository;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,17 +18,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import br.dev.garage474.msorder.dto.CartDto;
+import br.dev.garage474.msorder.dto.CreateCartDto;
+import br.dev.garage474.msorder.models.Cart;
+import br.dev.garage474.msorder.models.CartStatus;
+import br.dev.garage474.msorder.repositories.CartRepository;
 
 /**
  * Testes unitários para o serviço de carrinhos.
