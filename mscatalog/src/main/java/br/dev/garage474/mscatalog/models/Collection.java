@@ -20,6 +20,7 @@ public class Collection extends BaseEntity {
     private UUID id;
 
     @NotNull
+    @Column(name = "name")
     private String title;
 
     @ManyToMany

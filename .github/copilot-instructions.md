@@ -12,27 +12,16 @@
 - Configuração de logging consistente usando SLF4J e Logback
 - Documentação clara e concisa, incluindo JavaDocs para classes e métodos públicos, e README.md para o projeto
 
-## Domain Drive Design (DDD) e multi-tenancy
+## Domain Drive Design (DDD)
 
 - Padrões DDD com separação de domínio, aplicação e infraestrutura
-- Contexto de multi-tenancy integrado desde o início do design, garantindo que cada tenant tenha seus dados isolados e seguros
-- Multi-tenancy com header tenantId UUID obrigatório
-- Configurar o contexto de tenantId para ser acessível em toda a aplicação, garantindo que todas as operações sejam realizadas no contexto correto do tenant
-- Garantir que os repositórios e services sejam projetados para operar com o tenantId, evitando vazamento de dados entre tenants
-
-## Multi-Tenancy
-
-### Regras Críticas
-
-> **CRÍTICO:** O isolamento de dados por tenant é **não-negociável**.  
-> Qualquer falha causa vazamento de dados entre clientes.
+- Entidades, Value Objects e Agregados bem definidos
 
 #### Header Obrigatório
 
 Todo request para o microserviço DEVE incluir:
 
 ```http
-tenantId: f81d4fae-7dec-11d0-a765-00a0c91e6bf6
 Content-Type: application/json
 ```
 
@@ -44,7 +33,6 @@ Content-Type: application/json
 
 ## Exemplos práticos:
 
-- Controller RESTful com validação de tenant
 - Configuração de rotas /api/v1/
 - Boas práticas de testes, DTOs e naming
 - Checklist para PRs garantindo conformidade com padrões

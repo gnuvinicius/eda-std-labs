@@ -3,9 +3,9 @@ import soap from 'soap'
 
 const base = process.env.MSREGISTER_PUBLIC_BASE_URL || `http://localhost:8085/msregister`
 
-export async function getClients(tenantId: string): Promise<any> {
+export async function getClients(): Promise<any> {
   const client = await soap.createClientAsync(`${base}/CustomerService?wsdl`);
-  const [result] = await client.getAllCustomersAsync({tenantId})
+  const [result] = await client.getAllCustomersAsync()
   return result.return?.customers || []
 }
 

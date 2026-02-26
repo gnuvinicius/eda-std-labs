@@ -55,7 +55,7 @@ No pacote domain do projeto mscatalog, os conceitos de Entidade, Value Object e 
 
 Uma Entidade é um objeto que possui uma identidade única que persiste ao longo do tempo, independentemente de seus atributos mudarem. No seu código, as entidades são identificadas pela anotação @Entity e geralmente estendem BaseEntity.
 
-Características no projeto: Possuem um campo id (identidade) e herdam campos de auditoria e multitenancy (tenantId, createdAt) da BaseEntity.
+Características no projeto: Possuem um campo id (identidade) e herdam campos de auditoria (createdAt) da BaseEntity.
 
 Exemplos:
    - Product: Representa um produto. Mesmo que o nome mude, o id permanece o mesmo.
