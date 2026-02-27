@@ -50,7 +50,7 @@ services:
       dockerfile: Dockerfile
     container_name: msorder
     ports:
-      - "8086:8080"
+      - "8085:8080"
       - "9991:9990"     # Admin Console port
     environment:
       - JAVA_OPTS=-Xmx512m -Xms256m

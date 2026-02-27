@@ -1,6 +1,7 @@
 package br.dev.garage474.msorder.services;
 
 import br.dev.garage474.msorder.dtos.CreateOrderDto;
+import br.dev.garage474.msorder.dtos.GetAllOrdersResponse;
 import br.dev.garage474.msorder.repositories.OrderRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -21,7 +22,12 @@ public class OrderService {
 
     @WebMethod(operationName = "createOrder")
     public void createOrder(@WebParam(name = "orderDto") CreateOrderDto orderDto) {
-        orderRepository.save(orderDto);
+        orderRepository.save(orderDto.toEntity());
+    }
+
+    @WebMethod(operationName = "getAllOrders")
+    public GetAllOrdersResponse getAllOrders() {
+        return new GetAllOrdersResponse(orderRepository.findAll());
     }
     
 }

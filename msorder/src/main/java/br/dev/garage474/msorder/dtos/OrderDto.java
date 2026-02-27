@@ -1,36 +1,35 @@
 package br.dev.garage474.msorder.dtos;
 
-import br.dev.garage474.msorder.entities.Order;
+import java.util.UUID;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Builder
 @Getter
-@NoArgsConstructor
+@Setter
 @AllArgsConstructor
-@XmlRootElement(name = "createOrderDto", namespace = "http://service.garage474.dev.br/")
-@XmlType(name = "createOrderDto", namespace = "http://service.garage474.dev.br/", propOrder = {
-    "customerId", "productId", "quantity"
+@NoArgsConstructor
+@XmlRootElement(name = "orderDto", namespace = "http://service.garage474.dev.br/")
+@XmlType(name = "orderDto", namespace = "http://service.garage474.dev.br/", propOrder = {
+    "id", "customerId", "productId", "quantity"
 })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CreateOrderDto {
+public class OrderDto {
     
+    @XmlElement
+    private UUID id;
     @XmlElement
     private String customerId;
     @XmlElement
     private String productId;
     @XmlElement
     private int quantity;
-
-    public Order toEntity() {
-        return new Order(customerId, productId, quantity);
-    }
     
 }
