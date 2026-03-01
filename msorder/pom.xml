@@ -7,7 +7,7 @@
 
     <groupId>br.dev.garage474</groupId>
     <artifactId>msorder</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>war</packaging>
 
     <name>msorder (SOAP Api)</name>
