@@ -3,6 +3,7 @@ package br.dev.garage474.mscatalog.adapters.in.web.controller;
 import java.net.URI;
 import java.util.UUID;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,7 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<CategoryDto>> list(Pageable pageable) {
+    public ResponseEntity<Page<CategoryDto>> list(@ParameterObject Pageable pageable) {
         Page<CategoryDto> page = categoryService.list(pageable);
         return ResponseEntity.ok(page);
     }
@@ -62,4 +63,3 @@ public class CategoryController {
         return ResponseEntity.noContent().build();
     }
 }
-

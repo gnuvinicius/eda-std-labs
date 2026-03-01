@@ -1,0 +1,35 @@
+name: CI - MS Order (WildFly)
+
+on:
+    push:
+        paths:
+            - "ms-order/**" # Só roda se mudar algo neste serviço
+
+jobs:
+    build-and-push:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Set up JDK
+              uses: actions/setup-java@v4
+              with:
+                  java-version: "21" # Ou a versão que seu WildFly exige
+                  distribution: "temurin"
+
+            - name: Build with Maven
+              run: mvn clean package -f ms-order/pom.xml
+
+            - name: Login to GHCR
+              uses: docker/login-action@v3
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Build and Push Docker Image
+              uses: docker/build-push-action@v5
+              with:
+                  context: ./ms-order
+                  push: true
+                  tags: ghcr.io/${{ github.repository }}/ms-order:latest

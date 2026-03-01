@@ -3,6 +3,7 @@ package br.dev.garage474.mscatalog.adapters.in.web.controller;
 import java.net.URI;
 import java.util.UUID;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,7 @@ public class BrandController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<BrandDto>> list(Pageable pageable) {
+    public ResponseEntity<Page<BrandDto>> list(@ParameterObject Pageable pageable) {
         Page<BrandDto> page = brandService.list(pageable);
         return ResponseEntity.ok(page);
     }
@@ -62,4 +63,3 @@ public class BrandController {
         return ResponseEntity.noContent().build();
     }
 }
-
