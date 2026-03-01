@@ -3,7 +3,7 @@ name: CI - MS Order (WildFly)
 on:
     push:
         paths:
-            - "ms-order/**" # Só roda se mudar algo neste serviço
+            - "msorder/**" # Só roda se mudar algo neste serviço
 
 jobs:
     build-and-push:
