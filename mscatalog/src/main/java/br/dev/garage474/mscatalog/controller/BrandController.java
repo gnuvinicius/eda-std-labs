@@ -1,4 +1,4 @@
-package br.dev.garage474.mscatalog.adapters.in.web.controller;
+package br.dev.garage474.mscatalog.controller;
 
 import java.net.URI;
 import java.util.UUID;
@@ -33,12 +33,6 @@ public class BrandController {
         this.brandService = brandService;
     }
 
-    @PostMapping
-    public ResponseEntity<BrandDto> create(@Valid @RequestBody BrandCreateDto dto) {
-        BrandDto created = brandService.create(dto);
-        return ResponseEntity.created(URI.create("/api/v1/brands/" + created.getId())).body(created);
-    }
-
     @GetMapping
     public ResponseEntity<Page<BrandDto>> list(@ParameterObject Pageable pageable) {
         Page<BrandDto> page = brandService.list(pageable);
@@ -51,15 +45,5 @@ public class BrandController {
         return ResponseEntity.ok(dto);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<BrandDto> update(@PathVariable UUID id, @Valid @RequestBody BrandCreateDto dto) {
-        BrandDto updated = brandService.update(id, dto);
-        return ResponseEntity.ok(updated);
-    }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        brandService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
 }

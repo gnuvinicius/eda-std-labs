@@ -78,44 +78,4 @@ public class ProductServiceImpl implements ProductService {
         List<ProductDto> dtos = page.getContent().stream().map(ProductDto::toDto).collect(Collectors.toList());
         return new PageImpl<>(dtos, pageable, page.getTotalElements());
     }
-
-    @Override
-    @Transactional
-    public ProductDto update(UUID id, ProductCreateDto dto) {
-        try {
-            Product p = productRepository.findById(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Product not found"));
-
-            p.setName(dto.getName());
-            p.setDescription(dto.getDescription());
-            p.setSlug(dto.getSlug());
-
-            Brand brand = brandRepository.findById(dto.getBrandId())
-                    .orElseThrow(() -> new EntityNotFoundException("Brand not found"));
-            Category category = categoryRepository.findById(dto.getCategoryId())
-                    .orElseThrow(() -> new EntityNotFoundException("Category not found"));
-
-            p.setBrand(brand);
-            p.setCategory(category);
-
-            Product saved = productRepository.save(p);
-            return ProductDto.toDto(saved);
-        } catch (Exception e) {
-            log.error("error updating product: {}", e.getMessage(), e);
-            throw e;
-        }
-    }
-
-    @Override
-    @Transactional
-    public void delete(UUID id) {
-        try {
-            Product p = productRepository.findById(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Product not found"));
-            productRepository.delete(p);
-        } catch (Exception e) {
-            log.error("error deleting product: {}", e.getMessage(), e);
-            throw e;
-        }
-    }
 }

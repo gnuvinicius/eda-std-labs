@@ -1,4 +1,4 @@
-package br.dev.garage474.mscatalog.adapters.in.web.exception;
+package br.dev.garage474.mscatalog.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;

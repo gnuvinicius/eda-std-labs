@@ -58,31 +58,4 @@ public class BrandServiceImpl implements BrandService {
         return new PageImpl<>(dtos, pageable, page.getTotalElements());
     }
 
-    @Override
-    @Transactional
-    public BrandDto update(UUID id, BrandCreateDto dto) {
-        try {
-            Brand b = brandRepository.findById(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Brand not found"));
-            b.setName(dto.getName());
-            Brand saved = brandRepository.save(b);
-            return BrandDto.toDto(saved);
-        } catch (Exception e) {
-            log.error("error updating brand: {}", e.getMessage(), e);
-            throw e;
-        }
-    }
-
-    @Override
-    @Transactional
-    public void delete(UUID id) {
-        try {
-            Brand b = brandRepository.findById(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Brand not found"));
-            brandRepository.delete(b);
-        } catch (Exception e) {
-            log.error("error deleting brand: {}", e.getMessage(), e);
-            throw e;
-        }
-    }
 }

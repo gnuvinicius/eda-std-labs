@@ -1,4 +1,4 @@
-package br.dev.garage474.mscatalog.adapters.in.web.controller;
+package br.dev.garage474.mscatalog.controller;
 
 import java.util.UUID;
 

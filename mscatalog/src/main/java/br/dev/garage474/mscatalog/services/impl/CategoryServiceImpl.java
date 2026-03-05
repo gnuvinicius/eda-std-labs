@@ -63,38 +63,5 @@ public class CategoryServiceImpl implements CategoryService {
         return new PageImpl<>(dtos, pageable, page.getTotalElements());
     }
 
-    @Override
-    @Transactional
-    public CategoryDto update(UUID id, CategoryCreateDto dto) {
-        try {
-            Category c = categoryRepository.findById(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Category not found"));
-            c.setName(dto.getName());
-            if (dto.getParentId() != null) {
-                Category parent = categoryRepository.findById(dto.getParentId())
-                        .orElseThrow(() -> new EntityNotFoundException("Parent category not found"));
-                c.setParent(parent);
-            } else {
-                c.setParent(null);
-            }
-            Category saved = categoryRepository.save(c);
-            return CategoryDto.toDto(saved);
-        } catch (Exception e) {
-            log.error("error updating category: {}", e.getMessage(), e);
-            throw e;
-        }
-    }
 
-    @Override
-    @Transactional
-    public void delete(UUID id) {
-        try {
-            Category c = categoryRepository.findById(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Category not found"));
-            categoryRepository.delete(c);
-        } catch (Exception e) {
-            log.error("error deleting category: {}", e.getMessage(), e);
-            throw e;
-        }
-    }
 }

@@ -13,9 +13,5 @@ public interface CategoryService {
     CategoryDto getById(UUID id);
 
     Page<CategoryDto> list(Pageable pageable);
-
-    CategoryDto update(UUID id, CategoryCreateDto dto);
-
-    void delete(UUID id);
 }
 

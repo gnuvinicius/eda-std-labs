@@ -13,9 +13,5 @@ public interface BrandService {
     BrandDto getById(UUID id);
 
     Page<BrandDto> list(Pageable pageable);
-
-    BrandDto update(UUID id, BrandCreateDto dto);
-
-    void delete(UUID id);
 }
 
