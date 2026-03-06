@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mscatalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mscatalog
+  template:
+    metadata:
+      labels:
+        app: mscatalog
+    spec:
+      containers:
+        - name: mscatalog
+          image: mscatalog:latest
+          ports:
+            - containerPort: 8080
