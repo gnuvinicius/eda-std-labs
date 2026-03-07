@@ -1,35 +1,67 @@
-name: CI - MS Order (WildFly)
+name: CI/CD - MS Order (Docker Hub)
 
 on:
     push:
         paths:
-            - "msorder/**" # Só roda se mudar algo neste serviço
+            - "msorder/**"
 
 jobs:
     build-and-push:
+        name: Build and Push to Docker Hub
         runs-on: inspirondsv
         steps:
-            - uses: actions/checkout@v4
+            - name: Checkout Repository
+              uses: actions/checkout@v4
 
-            - name: Set up JDK
-              uses: actions/setup-java@v4
-              with:
-                  java-version: "21" # Ou a versão que seu WildFly exige
-                  distribution: "temurin"
-
-            - name: Build with Maven
-              run: mvn clean package -f msorder/pom.xml
-
-            - name: Login to GHCR
+            - name: Login to Docker Hub
               uses: docker/login-action@v3
               with:
-                  registry: ghcr.io
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.GITHUB_TOKEN }}
+                  username: gnuvinicius
+                  password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
             - name: Build and Push Docker Image
-              uses: docker/build-push-action@v5
+              uses: docker/build-push-action@v6
               with:
                   context: ./msorder
                   push: true
-                  tags: ghcr.io/${{ github.repository }}/ms-order:latest
+                  # Usando o repositório específico que você definiu
+                  tags: |
+                      gnuvinicius/msorder:latest
+                      gnuvinicius/msorder:${{ github.sha }}
+
+    deploy:
+        name: Deploy Container
+        needs: build-and-push
+        runs-on: k8s-dsv
+        steps:
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                  username: gnuvinicius
+                  password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+            - name: Deploy and Restart Container
+              run: |
+                  IMAGE_NAME="gnuvinicius/msorder:latest"
+
+                  echo "Baixando nova imagem do Docker Hub..."
+                  docker pull $IMAGE_NAME
+
+                  echo "Limpando container antigo..."
+                  docker stop ms-order-container 2>/dev/null || true
+                  docker rm ms-order-container 2>/dev/null || true
+
+                  echo "Iniciando novo container..."
+                  docker run -d \
+                    --name ms-order-container \
+                    --restart unless-stopped \
+                    -p 8080:8080 \
+                    -p 9990:9990 \
+                    -e DB_HOST=192.168.122.79 \
+                    -e DB_PORT=5432 \
+                    -e DB_NAME=msorder_db \
+                    -e DB_USER=postgres \
+                    -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+                    $IMAGE_NAME
+
+                  echo "Deploy finalizado com sucesso."
