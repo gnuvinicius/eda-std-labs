@@ -10,6 +10,20 @@ RUN curl -L https://jdbc.postgresql.org/download/postgresql-42.7.2.jar -o /opt/j
 # Create customization directory and CLI script
 COPY datasource.cli /opt/jboss/wildfly/customization/execute.cli
 
+# Declare os argumentos que o Docker deve esperar
+ARG DB_HOST
+ARG DB_PORT
+ARG DB_NAME
+ARG DB_USER
+ARG DB_PASSWORD
+
+# O WildFly CLI precisa que as variáveis de ambiente existam para expandi-las
+ENV DB_HOST=$DB_HOST \
+    DB_PORT=$DB_PORT \
+    DB_NAME=$DB_NAME \
+    DB_USER=$DB_USER \
+    DB_PASSWORD=$DB_PASSWORD
+
 # Run the configuration script to set up datasource
 RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/opt/jboss/wildfly/customization/execute.cli
 
