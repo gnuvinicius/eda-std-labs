@@ -38,6 +38,8 @@ jobs:
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
 
       - name: Tag and Push Docker Image to ECR
         run: |
