@@ -44,6 +44,6 @@ jobs:
 
       - name: Tag and Push Docker Image to ECR
         run: |
-          IMAGE_TAG="${{ steps.login-to-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest"
+          IMAGE_TAG="public.ecr.aws/u1o3k2v3/wildfly-soa:latest"
           docker tag wildfly-soa:latest $IMAGE_TAG
           docker push $IMAGE_TAG
