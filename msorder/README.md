@@ -1,3 +1,5 @@
+## msorder
+
 mvn -B archetype:generate \
   -DarchetypeGroupId=org.wildfly.archetype \
   -DarchetypeArtifactId=wildfly-jakartaee-webapp-archetype \

@@ -8,7 +8,7 @@ on:
 jobs:
     build-and-push:
         name: Build and Push to Docker Hub
-        runs-on: inspirondsv
+        runs-on: k8s-dsv
         steps:
             - name: Checkout Repository
               uses: actions/checkout@v4
