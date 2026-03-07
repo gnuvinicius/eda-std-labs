@@ -11,7 +11,7 @@ RUN curl -L https://jdbc.postgresql.org/download/postgresql-42.7.2.jar -o /opt/j
 COPY datasource.cli /opt/jboss/wildfly/customization/execute.cli
 
 # Run the configuration script to set up datasource
-RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/opt/jboss/wildfly/customization/execute.cli --resolve-parameter-values=true
+RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/opt/jboss/wildfly/customization/execute.cli -D-Dinvalid.property.resolution=ignore
 
 # Fix ownership
 RUN chown -R jboss:jboss /opt/jboss/wildfly
