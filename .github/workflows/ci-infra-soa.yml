@@ -1,0 +1,44 @@
+name: Build and Push WildFly SOA Image to ECR
+on:
+  push:
+    paths:
+      - "infraestructure/**"
+
+jobs:
+  build-image:
+    runs-on: k8s-dsv
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Wildfly Image
+        run: |
+          cd infraestructure/images/wildfly-soa
+          docker build -t wildfly-soa:latest .
+
+  push-to-ecr:
+    name: Push to Amazon ECR
+    needs: build-image
+    runs-on: k8s-dsv
+    env:
+      AWS_REGION: us-east-1
+      ECR_REPOSITORY: wildfly-soa
+      REGISTRY_ALIAS: 260761541415.dkr.ecr.us-east-1.amazonaws.com
+
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::260761541415:role/github_actions
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
+      - name: Tag and Push Docker Image to ECR
+        run: |
+          IMAGE_TAG="${{ env.REGISTRY_ALIAS }}/${{ env.ECR_REPOSITORY }}:latest"
+          docker tag wildfly-soa:latest $IMAGE_TAG
+          docker push $IMAGE_TAG

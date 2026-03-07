@@ -17,7 +17,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "orders")
 public class Order {
-    
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
