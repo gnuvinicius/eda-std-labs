@@ -1,4 +1,4 @@
-name: CI/CD - MS Order (Docker Hub)
+name: CI/CD - MS Order (4 Stages)
 
 on:
     push:
@@ -6,62 +6,76 @@ on:
             - "msorder/**"
 
 jobs:
-    build-and-push:
-        name: Build and Push to Docker Hub
+    # JOB 1: Build do Maven
+    maven-build:
         runs-on: k8s-dsv
         steps:
-            - name: Checkout Repository
-              uses: actions/checkout@v4
-
-            - name: Login to Docker Hub
-              uses: docker/login-action@v3
+            - uses: actions/checkout@v4
+            - name: Set up JDK 21
+              uses: actions/setup-java@v4
               with:
-                  username: gnuvinicius
-                  password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+                  java-version: "21"
+                  distribution: "temurin"
+                  cache: "maven"
 
-            - name: Build and Push Docker Image
-              uses: docker/build-push-action@v6
+            - name: Build with Maven
+              run: mvn clean package -DskipTests -f msorder/pom.xml
+
+            - name: Upload WAR Artifact
+              uses: actions/upload-artifact@v4
               with:
-                  context: ./msorder
-                  push: true
-                  # Usando o repositório específico que você definiu
-                  tags: |
-                      gnuvinicius/msorder:latest
-                      gnuvinicius/msorder:${{ github.sha }}
+                  name: msorder-war
+                  path: msorder/target/msorder.war
 
-    deploy:
-        name: Deploy Container
-        needs: build-and-push
+    # JOB 2: Build da Imagem Docker
+    docker-build:
+        needs: maven-build
         runs-on: k8s-dsv
         steps:
-            - name: Login to Docker Hub
-              uses: docker/login-action@v3
+            - uses: actions/checkout@v4
+            - name: Download WAR Artifact
+              uses: actions/download-artifact@v4
               with:
-                  username: gnuvinicius
-                  password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+                  name: msorder-war
+                  path: msorder/target/
 
-            - name: Deploy and Restart Container
+            - name: Build Local Image
               run: |
-                  IMAGE_NAME="gnuvinicius/msorder:latest"
+                  cd msorder
+                  docker build -t gnuvinicius/msorder:latest .
 
-                  echo "Baixando nova imagem do Docker Hub..."
-                  docker pull $IMAGE_NAME
+    # JOB 3: Push para o Docker Hub
+    docker-push:
+        needs: docker-build
+        runs-on: k8s-dsv
+        steps:
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                  username: gnuvinicius
+                  password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-                  echo "Limpando container antigo..."
+            - name: Push Image
+              run: |
+                  docker push gnuvinicius/msorder:latest
+
+    # JOB 4: Deploy and Restart
+    deploy:
+        needs: docker-push
+        runs-on: k8s-dsv
+        steps:
+            - name: Restart Container
+              run: |
+                  docker pull gnuvinicius/msorder:latest
                   docker stop ms-order-container 2>/dev/null || true
                   docker rm ms-order-container 2>/dev/null || true
-
-                  echo "Iniciando novo container..."
                   docker run -d \
                     --name ms-order-container \
                     --restart unless-stopped \
-                    -p 8080:8080 \
-                    -p 9990:9990 \
+                    -p 8080:8080 -p 9990:9990 \
                     -e DB_HOST=192.168.122.79 \
                     -e DB_PORT=5432 \
                     -e DB_NAME=msorder_db \
                     -e DB_USER=postgres \
                     -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-                    $IMAGE_NAME
-
-                  echo "Deploy finalizado com sucesso."
+                    gnuvinicius/msorder:latest

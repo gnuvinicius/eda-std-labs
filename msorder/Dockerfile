@@ -1,17 +1,8 @@
-FROM maven:3.9.9-eclipse-temurin-21 AS build
-WORKDIR /app
-
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
-
-COPY src ./src
-RUN mvn clean package -DskipTests
-
 FROM gnuvinicius/eda-lab-soa:latest
 
 USER jboss
 
-COPY --from=build /app/target/msorder.war /opt/jboss/wildfly/standalone/deployments/
+COPY target/msorder.war /opt/jboss/wildfly/standalone/deployments/
 
 EXPOSE 8080 9990
 
