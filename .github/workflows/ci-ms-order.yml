@@ -1,81 +1,91 @@
 name: CI/CD - MS Order (4 Stages)
 
 on:
-    push:
-        paths:
-            - "msorder/**"
+  push:
+    paths:
+      - "msorder/**"
 
 jobs:
-    # JOB 1: Build do Maven
-    maven-build:
-        runs-on: k8s-dsv
-        steps:
-            - uses: actions/checkout@v4
-            - name: Set up JDK 21
-              uses: actions/setup-java@v4
-              with:
-                  java-version: "21"
-                  distribution: "temurin"
-                  cache: "maven"
+  # JOB 1: Build do Maven
+  maven-build:
+    runs-on: k8s-dsv
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          cache: "maven"
 
-            - name: Build with Maven
-              run: mvn clean package -DskipTests -f msorder/pom.xml
+      - name: Build with Maven
+        run: mvn clean package -DskipTests -f msorder/pom.xml
 
-            - name: Upload WAR Artifact
-              uses: actions/upload-artifact@v4
-              with:
-                  name: msorder-war
-                  path: msorder/target/msorder.war
+      - name: Upload WAR Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: msorder-war
+          path: msorder/target/msorder.war
 
-    # JOB 2: Build da Imagem Docker
-    docker-build:
-        needs: maven-build
-        runs-on: k8s-dsv
-        steps:
-            - uses: actions/checkout@v4
-            - name: Download WAR Artifact
-              uses: actions/download-artifact@v4
-              with:
-                  name: msorder-war
-                  path: msorder/target/
+  # JOB 2: Build da Imagem Docker
+  docker-build:
+    needs: maven-build
+    runs-on: k8s-dsv
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download WAR Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: msorder-war
+          path: msorder/target/
 
-            - name: Build Local Image
-              run: |
-                  cd msorder
-                  docker build -t gnuvinicius/msorder:latest .
+      - name: Build Local Image
+        run: |
+          cd msorder
+          docker build -t gnuvinicius/msorder:latest .
 
-    # JOB 3: Push para o Docker Hub
-    docker-push:
-        needs: docker-build
-        runs-on: k8s-dsv
-        steps:
-            - name: Login to Docker Hub
-              uses: docker/login-action@v3
-              with:
-                  username: gnuvinicius
-                  password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+  # JOB 3: Push para o Docker Hub
+  docker-push:
+    needs: docker-build
+    runs-on: k8s-dsv
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-            - name: Push Image
-              run: |
-                  docker push gnuvinicius/msorder:latest
+      - name: Login to Public ECR
+        id: login-ecr-public
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
 
-    # JOB 4: Deploy and Restart
-    deploy:
-        needs: docker-push
-        runs-on: k8s-dsv
-        steps:
-            - name: Restart Container
-              run: |
-                  docker pull gnuvinicius/msorder:latest
-                  docker stop ms-order-container 2>/dev/null || true
-                  docker rm ms-order-container 2>/dev/null || true
-                  docker run -d \
-                    --name ms-order-container \
-                    --restart unless-stopped \
-                    -p 8080:8080 -p 9990:9990 \
-                    -e DB_HOST=192.168.122.79 \
-                    -e DB_PORT=5432 \
-                    -e DB_NAME=msorder_db \
-                    -e DB_USER=postgres \
-                    -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-                    gnuvinicius/msorder:latest
+      - name: Tag and Push to Public ECR
+        run: |
+          IMAGE_TAG="public.ecr.aws/u1o3k2v3/wildfly-soa:latest"
+
+          docker tag wildfly-soa:latest $IMAGE_TAG
+          docker push $IMAGE_TAG
+
+  # JOB 4: Deploy and Restart
+  deploy:
+    needs: docker-push
+    runs-on: k8s-dsv
+    steps:
+      - name: Restart Container
+        run: |
+          docker pull gnuvinicius/msorder:latest
+          docker stop ms-order-container 2>/dev/null || true
+          docker rm ms-order-container 2>/dev/null || true
+          docker run -d \
+            --name ms-order-container \
+            --restart unless-stopped \
+            -p 8080:8080 -p 9990:9990 \
+            -e DB_HOST=192.168.122.79 \
+            -e DB_PORT=5432 \
+            -e DB_NAME=msorder_db \
+            -e DB_USER=postgres \
+            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            gnuvinicius/msorder:latest
