@@ -3,7 +3,7 @@ name: CI/CD - MS Order (4 Stages)
 on:
   push:
     paths:
-      - "msorder/**"
+      - "ms-order/**"
 
 jobs:
   # JOB 1: Build do Maven
@@ -19,13 +19,13 @@ jobs:
           cache: "maven"
 
       - name: Build with Maven
-        run: mvn clean package -DskipTests -f msorder/pom.xml
+        run: mvn clean package -DskipTests -f ms-order/pom.xml
 
       - name: Upload WAR Artifact
         uses: actions/upload-artifact@v4
         with:
           name: msorder-war
-          path: msorder/target/msorder.war
+          path: ms-order/target/msorder.war
 
   # JOB 2: Build da Imagem Docker
   docker-build:
@@ -37,11 +37,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: msorder-war
-          path: msorder/target/
+          path: ms-order/target/
 
       - name: Build Local Image
         run: |
-          cd msorder
+          cd ms-order
           docker build -t gnuvinicius/msorder:latest .
 
   # JOB 3: Push para o Docker Hub
