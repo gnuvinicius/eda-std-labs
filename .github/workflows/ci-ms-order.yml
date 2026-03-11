@@ -42,7 +42,7 @@ jobs:
       - name: Build Local Image
         run: |
           cd ms-order
-          docker build -t gnuvinicius/msorder:latest .
+          docker build -t msorder:latest .
 
   # JOB 3: Push para o Docker Hub
   docker-push:
@@ -90,4 +90,4 @@ jobs:
             -e DB_NAME=msorder_db \
             -e DB_USER=postgres \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            gnuvinicius/msorder:latest
+            public.ecr.aws/u1o3k2v3/msorder:latest

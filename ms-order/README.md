@@ -1,6 +1,6 @@
 ## msorder
 
-teste 003
+teste 004
 
 mvn -B archetype:generate \
   -DarchetypeGroupId=org.wildfly.archetype \
