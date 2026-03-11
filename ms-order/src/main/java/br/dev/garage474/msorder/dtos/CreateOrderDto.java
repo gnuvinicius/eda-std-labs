@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@XmlRootElement(name = "createOrderDto", namespace = "http://service.garage474.dev.br/")
-@XmlType(name = "createOrderDto", namespace = "http://service.garage474.dev.br/", propOrder = {
+@XmlRootElement(name = "createOrderDto", namespace = "https://service.garage474.dev.br/")
+@XmlType(name = "createOrderDto", namespace = "https://service.garage474.dev.br/", propOrder = {
     "customerId", "productId", "quantity"
 })
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -30,7 +30,7 @@ public class CreateOrderDto {
     private int quantity;
 
     public Order toEntity() {
-        return new Order(customerId, productId, quantity);
+        return new Order();
     }
     
 }

@@ -12,7 +12,7 @@ import jakarta.jws.WebService;
 @WebService(
         serviceName = "OrderService",
         portName = "OrderServicePort",
-        targetNamespace = "http://service.garage474.dev.br/"
+        targetNamespace = "https://service.garage474.dev.br/"
 )
 @ApplicationScoped
 public class OrderService {

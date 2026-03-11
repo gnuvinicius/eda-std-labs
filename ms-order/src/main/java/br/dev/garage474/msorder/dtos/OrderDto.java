@@ -16,8 +16,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@XmlRootElement(name = "orderDto", namespace = "http://service.garage474.dev.br/")
-@XmlType(name = "orderDto", namespace = "http://service.garage474.dev.br/", propOrder = {
+@XmlRootElement(name = "orderDto", namespace = "https://service.garage474.dev.br/")
+@XmlType(name = "orderDto", namespace = "https://service.garage474.dev.br/", propOrder = {
     "id", "customerId", "productId", "quantity"
 })
 @XmlAccessorType(XmlAccessType.FIELD)

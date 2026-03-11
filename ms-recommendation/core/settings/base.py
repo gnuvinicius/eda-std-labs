@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-jd@(i3gmwc4*g9cc9ni7(+d7gd&&i%f5uk$_=3npx8apy36vtj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -49,7 +49,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'src.core.settings.urls'
+ROOT_URLCONF = 'core.urls'
 
 TEMPLATES = [
     {
@@ -66,7 +66,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'recommendation_project.wsgi.application'
+WSGI_APPLICATION = 'core.wsgi.application'
 
 
 # Database
