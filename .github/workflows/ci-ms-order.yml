@@ -80,6 +80,7 @@ jobs:
           docker stop ms-order-container 2>/dev/null || true
           docker rm ms-order-container 2>/dev/null || true
           docker run -d \
+            --pull always \
             --name ms-order-container \
             --restart unless-stopped \
             -p 8080:8080 -p 9990:9990 \
