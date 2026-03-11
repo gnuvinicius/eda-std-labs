@@ -16,7 +16,7 @@ jobs:
           cd infraestructure/images/wildfly-soa
           docker build -t wildfly-soa:latest .
 
-  # JOB 3: Push para o Docker Hub
+  # JOB 3: Push para o ECR
   docker-push:
     needs: build-image
     runs-on: k8s-dsv
