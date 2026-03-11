@@ -49,7 +49,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'recommendation_project.urls'
+ROOT_URLCONF = 'src.core.settings.urls'
 
 TEMPLATES = [
     {
