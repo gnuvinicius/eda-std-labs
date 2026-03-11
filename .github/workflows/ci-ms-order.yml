@@ -4,7 +4,6 @@ on:
   push:
     paths:
       - "ms-order/**"
-#      - "infraestructure/**"
 
 jobs:
   # JOB 1: Build do Maven
