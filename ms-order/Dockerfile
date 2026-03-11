@@ -1,4 +1,4 @@
-FROM gnuvinicius/eda-lab-soa:latest
+FROM public.ecr.aws/u1o3k2v3/wildfly-soa:latest
 
 USER jboss
 

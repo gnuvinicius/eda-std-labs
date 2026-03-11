@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "ms-order/**"
+      - "infraestructure/**"
 
 jobs:
   # JOB 1: Build do Maven
@@ -64,9 +65,9 @@ jobs:
 
       - name: Tag and Push to Public ECR
         run: |
-          IMAGE_TAG="public.ecr.aws/u1o3k2v3/wildfly-soa:latest"
+          IMAGE_TAG="public.ecr.aws/u1o3k2v3/msorder:latest"
 
-          docker tag wildfly-soa:latest $IMAGE_TAG
+          docker tag msorder:latest $IMAGE_TAG
           docker push $IMAGE_TAG
 
   # JOB 4: Deploy and Restart
@@ -76,7 +77,8 @@ jobs:
     steps:
       - name: Restart Container
         run: |
-          docker pull gnuvinicius/msorder:latest
+          docker rmi public.ecr.aws/u1o3k2v3/msorder:latest 2>/dev/null || true
+          docker pull public.ecr.aws/u1o3k2v3/msorder:latest
           docker stop ms-order-container 2>/dev/null || true
           docker rm ms-order-container 2>/dev/null || true
           docker run -d \

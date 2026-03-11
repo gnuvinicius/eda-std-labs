@@ -16,22 +16,27 @@ jobs:
           cd infraestructure/images/wildfly-soa
           docker build -t wildfly-soa:latest .
 
-  push-to-docker-hub:
-    name: Push to Docker Hub
-    needs: build-image
+  # JOB 3: Push para o Docker Hub
+  docker-push:
+    needs: docker-build
     runs-on: k8s-dsv
-    env:
-      DOCKERHUB_REPO: gnuvinicius/eda-lab-soa
-      DOCKERHUB_USERNAME: gnuvinicius
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
     steps:
-      - name: Configure Docker Hub Credentials
-        run: |
-          echo ${{ env.DOCKERHUB_TOKEN }} | docker login -u ${{ env.DOCKERHUB_USERNAME }} --password-stdin
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-      - name: Tag and Push Docker Image to Docker Hub
+      - name: Login to Public ECR
+        id: login-ecr-public
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
+      - name: Tag and Push to Public ECR
         run: |
-          IMAGE_TAG="${{ env.DOCKERHUB_REPO }}:latest"
+          IMAGE_TAG="public.ecr.aws/u1o3k2v3/wildfly-soa:latest"
+
           docker tag wildfly-soa:latest $IMAGE_TAG
           docker push $IMAGE_TAG
