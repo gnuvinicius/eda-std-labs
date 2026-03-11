@@ -8,6 +8,8 @@ import jakarta.inject.Inject;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @WebService(
         serviceName = "OrderService",
@@ -16,6 +18,8 @@ import jakarta.jws.WebService;
 )
 @ApplicationScoped
 public class OrderService {
+
+    private static final Logger log = LoggerFactory.getLogger(OrderService.class);
 
     @Inject
     private OrderRepository orderRepository;
@@ -27,6 +31,7 @@ public class OrderService {
 
     @WebMethod(operationName = "getAllOrders")
     public GetAllOrdersResponse getAllOrders() {
+        log.info("getAllOrders");
         return new GetAllOrdersResponse(orderRepository.findAll());
     }
     
