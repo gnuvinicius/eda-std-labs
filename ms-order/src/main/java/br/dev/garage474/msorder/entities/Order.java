@@ -2,10 +2,6 @@ package br.dev.garage474.msorder.entities;
 
 import br.dev.garage474.msorder.enums.OrderStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,41 +30,33 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @NotNull(message = "ID do cliente é obrigatório")
-    @NotBlank(message = "ID do cliente não pode estar vazio")
-    private String customerId;
+    private UUID customerId;
 
-    @NotNull(message = "Status do pedido é obrigatório")
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.PENDING;
 
-    @NotEmpty(message = "Pedido deve conter ao menos um item")
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "order_items", joinColumns = @JoinColumn(name = "order_id"))
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_id")
     private List<OrderItem> items = new ArrayList<>();
 
-    @Embedded
-    @NotNull(message = "Endereço de entrega é obrigatório")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "shipping_address_id")
     private Address shippingAddress;
 
-    @Embedded
-    @NotNull(message = "Informações de pagamento são obrigatórias")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "payment_id")
     private Payment payment;
 
-    @NotNull(message = "Data de criação é obrigatória")
     private LocalDateTime createdAt = LocalDateTime.now();
 
     private LocalDateTime updatedAt;
 
     private LocalDateTime deliveredAt;
 
-    @NotBlank(message = "Observações do cliente é obrigatório, mesmo que vazio")
     private String customerNotes;
 
-    @PositiveOrZero
     private BigDecimal shippingCost = BigDecimal.ZERO;
 
-    @PositiveOrZero
     private BigDecimal totalDiscount = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
@@ -79,7 +67,7 @@ public class Order {
     /**
      * Construtor simplificado para criação de pedidos.
      */
-    public Order(String customerId, List<OrderItem> items, Address shippingAddress, Payment payment) {
+    public Order(UUID customerId, List<OrderItem> items, Address shippingAddress, Payment payment) {
         this.customerId = customerId;
         this.items = items;
         this.shippingAddress = shippingAddress;

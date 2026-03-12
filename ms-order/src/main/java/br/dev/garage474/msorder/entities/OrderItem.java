@@ -1,9 +1,6 @@
 package br.dev.garage474.msorder.entities;
 
-import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,28 +9,27 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-@Embeddable
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "order_items")
 public class OrderItem {
 
-    @NotNull(message = "ID do produto é obrigatório")
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "order_item_seq", sequenceName = "order_item_seq", initialValue = 1, allocationSize = 1)
+    private Long id;
+
     private UUID productId;
 
-    @NotBlank(message = "Nome do produto é obrigatório")
     private String productName;
 
-    @NotNull(message = "Quantidade é obrigatória")
-    @PositiveOrZero(message = "Quantidade deve ser maior que zero")
     private Integer quantity;
 
-    @NotNull(message = "Preço unitário é obrigatório")
-    @PositiveOrZero(message = "Preço unitário deve ser maior ou igual a zero")
     private BigDecimal unitPrice;
 
-    @PositiveOrZero(message = "Desconto deve ser maior ou igual a zero")
     private BigDecimal discount;
 
     /**

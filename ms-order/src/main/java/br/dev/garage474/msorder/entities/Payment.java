@@ -2,9 +2,7 @@ package br.dev.garage474.msorder.entities;
 
 import br.dev.garage474.msorder.enums.PaymentMethod;
 import br.dev.garage474.msorder.enums.PaymentStatus;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,16 +11,23 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Value Object representando as informações de pagamento de um pedido.
  */
-@Embeddable
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "payments")
 public class Payment {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "payment_seq", sequenceName = "payment_seq", initialValue = 1, allocationSize = 1)
+    private Long id;
 
     @NotNull(message = "Método de pagamento é obrigatório")
     @Enumerated(EnumType.STRING)
