@@ -73,6 +73,9 @@ jobs:
   deploy:
     needs: docker-push
     runs-on: k8s-dsv
+    concurrency:
+      group: ms-order-deploy
+      cancel-in-progress: false
     steps:
       - name: Restart Container
         run: |
