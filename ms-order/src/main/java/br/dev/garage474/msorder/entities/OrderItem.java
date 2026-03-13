@@ -22,12 +22,15 @@ public class OrderItem {
     @SequenceGenerator(name = "order_item_seq", sequenceName = "order_item_seq", initialValue = 1, allocationSize = 1)
     private Long id;
 
+    @Column(name = "product_id")
     private UUID productId;
 
+    @Column(name = "product_name")
     private String productName;
 
     private Integer quantity;
 
+    @Column(name = "unit_price")
     private BigDecimal unitPrice;
 
     private BigDecimal discount;

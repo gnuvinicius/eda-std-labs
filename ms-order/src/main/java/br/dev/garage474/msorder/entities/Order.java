@@ -30,6 +30,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "customer_id")
     private UUID customerId;
 
     @Enumerated(EnumType.STRING)
@@ -47,21 +48,29 @@ public class Order {
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
+    @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "delivered_at")
     private LocalDateTime deliveredAt;
 
+    @Column(name = "customer_notes")
     private String customerNotes;
 
+    @Column(name = "shipping_cost")
     private BigDecimal shippingCost = BigDecimal.ZERO;
 
+    @Column(name = "total_discount")
     private BigDecimal totalDiscount = BigDecimal.ZERO;
 
+    @Column(name = "last_status")
     @Enumerated(EnumType.STRING)
     private OrderStatus lastStatus;
 
+    @Column(name = "cancellation_reason")
     private String cancellationReason;
 
     /**

@@ -29,20 +29,24 @@ public class Payment {
     @SequenceGenerator(name = "payment_seq", sequenceName = "payment_seq", initialValue = 1, allocationSize = 1)
     private Long id;
 
-    @NotNull(message = "Método de pagamento é obrigatório")
     @Enumerated(EnumType.STRING)
+    @Column(name = "payment_method")
     private PaymentMethod paymentMethod;
 
-    @NotNull(message = "Valor total é obrigatório")
+    @Column(name = "total_amount")
     private BigDecimal totalAmount;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "payment_status")
     private PaymentStatus paymentStatus = PaymentStatus.PENDING;
 
+    @Column(name = "transaction_id")
     private String transactionId;
 
+    @Column(name = "payment_date")
     private LocalDateTime paymentDate;
 
+    @Column(name = "payment_notes")
     private String paymentNotes;
 
     /**
