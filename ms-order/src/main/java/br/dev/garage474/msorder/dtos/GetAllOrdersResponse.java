@@ -1,6 +1,7 @@
 package br.dev.garage474.msorder.dtos;
 
 import br.dev.garage474.msorder.entities.Order;
+import br.dev.garage474.msorder.mappers.OrderMapper;
 import jakarta.xml.bind.annotation.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,8 +25,9 @@ public class GetAllOrdersResponse {
     private List<OrderDto> orders;
 
     public GetAllOrdersResponse(List<Order> orders) {
+        OrderMapper mapper = new OrderMapper();
         this.orders = orders.stream()
-                .map(order -> new OrderDto())
+                .map(mapper::toDto)
                 .toList();
     }
 
