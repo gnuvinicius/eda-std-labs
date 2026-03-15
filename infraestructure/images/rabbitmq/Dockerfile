@@ -10,4 +10,3 @@ COPY enabled_plugins /etc/rabbitmq/enabled_plugins
 COPY definitions.json /etc/rabbitmq/definitions.json
 
 EXPOSE 5672 15672
-

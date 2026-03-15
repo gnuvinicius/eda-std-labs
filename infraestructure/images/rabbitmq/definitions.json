@@ -26,17 +26,17 @@
   ],
   "queues": [
     {
-      "name": "order.new.v1.queue",
+      "name": "order.created.v1.queue",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
       "arguments": {
         "x-dead-letter-exchange": "order.events.dlx",
-        "x-dead-letter-routing-key": "order.new.v1.dlq"
+        "x-dead-letter-routing-key": "order.created.v1.dlq"
       }
     },
     {
-      "name": "order.new.v1.dlq",
+      "name": "order.created.v1.dlq",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
@@ -47,17 +47,17 @@
     {
       "source": "order.events.exchange",
       "vhost": "/",
-      "destination": "order.new.v1.queue",
+      "destination": "order.created.v1.queue",
       "destination_type": "queue",
-      "routing_key": "order.new.v1",
+      "routing_key": "order.created.v1",
       "arguments": {}
     },
     {
       "source": "order.events.dlx",
       "vhost": "/",
-      "destination": "order.new.v1.dlq",
+      "destination": "order.created.v1.dlq",
       "destination_type": "queue",
-      "routing_key": "order.new.v1.dlq",
+      "routing_key": "order.created.v1.dlq",
       "arguments": {}
     }
   ]
