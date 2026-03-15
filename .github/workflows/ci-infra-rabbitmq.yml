@@ -1,0 +1,21 @@
+name: Build and run RabbitMQ in DSV Environment
+
+on:
+  push:
+    paths:
+      - "infraestructure/**"
+jobs:
+  build-and-run:
+    runs-on: k8s-dsv
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build RabbitMQ Image
+        run: |
+          cd infraestructure/images/rabbitmq
+          docker build -t rabbitmq:latest .
+
+      - name: Run RabbitMQ Container
+        run: |
+          docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:latest

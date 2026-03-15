@@ -1,0 +1,65 @@
+{
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "order.events.exchange",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "order.events.dlx",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "order.new.v1.queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "order.events.dlx",
+        "x-dead-letter-routing-key": "order.new.v1.dlq"
+      }
+    },
+    {
+      "name": "order.new.v1.dlq",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "order.events.exchange",
+      "vhost": "/",
+      "destination": "order.new.v1.queue",
+      "destination_type": "queue",
+      "routing_key": "order.new.v1",
+      "arguments": {}
+    },
+    {
+      "source": "order.events.dlx",
+      "vhost": "/",
+      "destination": "order.new.v1.dlq",
+      "destination_type": "queue",
+      "routing_key": "order.new.v1.dlq",
+      "arguments": {}
+    }
+  ]
+}
+

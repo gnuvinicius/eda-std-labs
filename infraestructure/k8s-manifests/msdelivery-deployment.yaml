@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: msorder
+  name: msdelivery
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: msorder
+      app: msdelivery
   template:
     metadata:
       labels:
-        app: msorder
+        app: msdelivery
     spec:
       containers:
-        - name: msorder
-          image: seu_usuario/msorder:latest
+        - name: msdelivery
+          image: seu_usuario/msdelivery:latest
           ports:
             - containerPort: 8080
           env:
@@ -23,7 +23,7 @@ spec:
             - name: DB_PORT
               value: "5432"
             - name: DB_NAME
-              value: "msorder_db"
+              value: "msdelivery_db"
             - name: DB_USER
               value: "postgres"
             - name: DB_PASSWORD
@@ -47,3 +47,12 @@ spec:
               value: "order.new.v1.queue"
             - name: ORDER_NEW_ROUTING_KEY
               value: "order.new.v1"
+            - name: ORDER_EVENTS_DLX
+              value: "order.events.dlx"
+            - name: ORDER_NEW_DLQ
+              value: "order.new.v1.dlq"
+            - name: ORDER_NEW_DLQ_ROUTING_KEY
+              value: "order.new.v1.dlq"
+            - name: RABBITMQ_PUBLISH_ENABLED
+              value: "true"
+

@@ -2,20 +2,14 @@
 
 ## Guia de boas práticas para desenvolvimento de microserviços em Java com Spring Boot
 
-- Estrutura de pastas alinhada com three-tier architecture e DDD
+- Estrutura de pastas alinhada com three-tier architecture (controllers, services, repositories)
 - Padrões de nomenclatura para classes, métodos e variáveis, utilize o idioma inglês para nomes de classes, métodos e variáveis, seguindo as convenções de nomenclatura do Java (PascalCase para classes, camelCase para métodos e variáveis)
 - Convenções para endpoints RESTful, incluindo métodos HTTP e status codes
-- Validação de dados de entrada usando Bean Validation (javax.validation)
 - package models para as entidades de domínio, package repositories para os repositórios, package services para a lógica de negócio e package controllers para as APIs REST
 - DTOs para transferência de dados entre camadas, evitando exposição direta das entidades de domínio
 - Testes unitários para serviços e controladores, utilizando JUnit e Mockito
 - Configuração de logging consistente usando SLF4J e Logback
 - Documentação clara e concisa, incluindo JavaDocs para classes e métodos públicos, e README.md para o projeto
-
-## Domain Drive Design (DDD)
-
-- Padrões DDD com separação de domínio, aplicação e infraestrutura
-- Entidades, Value Objects e Agregados bem definidos
 
 #### Header Obrigatório
 

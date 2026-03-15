@@ -1,4 +1,4 @@
-name: CI/CD - MS Order (4 Stages)
+name: ms-order (CI/CD)
 
 on:
   push:
