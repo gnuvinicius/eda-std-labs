@@ -2,7 +2,7 @@ name: Build and Push WildFly SOA Image to ECR
 on:
   push:
     paths:
-      - "infraestructure/wildfly-soa/**"
+      - "infraestructure/images/wildfly-soa/**"
 
 jobs:
   build-image:
@@ -28,15 +28,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Login to Public ECR
-        id: login-ecr-public
+      - name: Login to Private ECR
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-        with:
-          registry-type: public
 
-      - name: Tag and Push to Public ECR
+      - name: Tag and Push to Private ECR
         run: |
-          IMAGE_TAG="public.ecr.aws/u1o3k2v3/wildfly-soa:latest"
+          IMAGE_TAG="260761541415.dkr.ecr.us-east-1.amazonaws.com/wildfly-soa:latest"
 
           docker tag wildfly-soa:latest $IMAGE_TAG
           docker push $IMAGE_TAG
