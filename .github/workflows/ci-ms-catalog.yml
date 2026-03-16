@@ -21,11 +21,11 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests -f ms-catalog/pom.xml
 
-      - name: Upload WAR Artifact
+      - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: mscatalog-war
-          path: ms-catalog/target/mscatalog.war
+          name: mscatalog-jar
+          path: ms-catalog/target/mscatalog-0.0.1-SNAPSHOT.jar
 
   # JOB 2: Build da Imagem Docker
   docker-build:
@@ -33,10 +33,10 @@ jobs:
     runs-on: k8s-dsv
     steps:
       - uses: actions/checkout@v4
-      - name: Download WAR Artifact
+      - name: Download JAR Artifact
         uses: actions/download-artifact@v4
         with:
-          name: mscatalog-war
+          name: mscatalog-jar
           path: ms-catalog/target/
 
       - name: Build Local Image
