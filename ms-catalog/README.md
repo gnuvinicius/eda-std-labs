@@ -1,4 +1,4 @@
-## ms-catalog
+## ms-catalog v1
 
 ### Product (Produto Pai / Modelo)
 

@@ -87,7 +87,7 @@ jobs:
             --pull always \
             --name ms-catalog-container \
             --restart unless-stopped \
-            -p 8080:8080 -p 9990:9990 \
+            -p 8081:8080 -p 9991:9990 \
             -e DB_HOST=192.168.122.79 \
             -e DB_PORT=5432 \
             -e DB_NAME=mscatalog_db \
