@@ -2,7 +2,7 @@ name: Build and Push WildFly SOA Image to ECR
 on:
   push:
     paths:
-      - "infraestructure/**"
+      - "infraestructure/wildfly-soa/**"
 
 jobs:
   build-image:

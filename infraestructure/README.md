@@ -28,5 +28,5 @@ Environment variables expected by `ms-order` and `ms-delivery`:
 - `RABBITMQ_PASSWORD`
 - `RABBITMQ_VHOST`
 - `ORDER_EVENTS_EXCHANGE`
-- `ORDER_NEW_QUEUE`
-- `ORDER_NEW_ROUTING_KEY`
+- `ORDER_CREATED_QUEUE`
+- `ORDER_CREATED_ROUTING_KEY`

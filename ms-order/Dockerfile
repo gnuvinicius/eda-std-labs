@@ -10,8 +10,8 @@ ENV RABBITMQ_HOST=rabbitmq \
 	RABBITMQ_PASSWORD=garage_password \
 	RABBITMQ_VHOST=/ \
 	ORDER_EVENTS_EXCHANGE=order.events.exchange \
-	ORDER_NEW_QUEUE=order.new.v1.queue \
-	ORDER_NEW_ROUTING_KEY=order.new.v1
+	ORDER_CREATED_QUEUE=order.created.v1.queue \
+	ORDER_CREATED_ROUTING_KEY=order.created.v1
 
 EXPOSE 8080 9990
 

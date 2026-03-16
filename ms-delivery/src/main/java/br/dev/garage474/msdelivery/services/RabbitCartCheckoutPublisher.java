@@ -14,18 +14,18 @@ public class RabbitCartCheckoutPublisher implements CartCheckoutPublisher {
 
     private final RabbitTemplate rabbitTemplate;
     private final String orderEventsExchange;
-    private final String newOrderRoutingKey;
+    private final String createdOrderRoutingKey;
     private final boolean publishEnabled;
 
     public RabbitCartCheckoutPublisher(
             RabbitTemplate rabbitTemplate,
             @Value("${delivery.rabbit.exchange}") String orderEventsExchange,
-            @Value("${delivery.rabbit.routing-key}") String newOrderRoutingKey,
+            @Value("${delivery.rabbit.routing-key}") String createdOrderRoutingKey,
             @Value("${delivery.rabbit.publish-enabled:false}") boolean publishEnabled
     ) {
         this.rabbitTemplate = rabbitTemplate;
         this.orderEventsExchange = orderEventsExchange;
-        this.newOrderRoutingKey = newOrderRoutingKey;
+        this.createdOrderRoutingKey = createdOrderRoutingKey;
         this.publishEnabled = publishEnabled;
     }
 
@@ -37,12 +37,12 @@ public class RabbitCartCheckoutPublisher implements CartCheckoutPublisher {
         }
 
         try {
-            rabbitTemplate.convertAndSend(orderEventsExchange, newOrderRoutingKey, event);
+            rabbitTemplate.convertAndSend(orderEventsExchange, createdOrderRoutingKey, event);
             log.info(
                     "checkout event published, cartId={} exchange={} routingKey={}",
                     event.cartId(),
                     orderEventsExchange,
-                    newOrderRoutingKey
+                    createdOrderRoutingKey
             );
         } catch (Exception e) {
             log.error("failed to publish checkout event, cartId={}: {}", event.cartId(), e.getMessage(), e);

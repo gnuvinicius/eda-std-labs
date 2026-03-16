@@ -15,4 +15,3 @@ public record AddCartItemRequest(
         @NotNull @DecimalMin(value = "0.0", inclusive = true) BigDecimal unitPrice
 ) {
 }
-

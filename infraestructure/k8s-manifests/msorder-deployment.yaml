@@ -43,7 +43,7 @@ spec:
               value: "/"
             - name: ORDER_EVENTS_EXCHANGE
               value: "order.events.exchange"
-            - name: ORDER_NEW_QUEUE
-              value: "order.new.v1.queue"
-            - name: ORDER_NEW_ROUTING_KEY
-              value: "order.new.v1"
+            - name: ORDER_CREATED_QUEUE
+              value: "order.created.v1.queue"
+            - name: ORDER_CREATED_ROUTING_KEY
+              value: "order.created.v1"

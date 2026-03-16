@@ -3,6 +3,7 @@ package br.dev.garage474.msdelivery.controllers;
 import br.dev.garage474.msdelivery.dtos.ErrorResponse;
 import br.dev.garage474.msdelivery.exceptions.CartAlreadyCheckedOutException;
 import br.dev.garage474.msdelivery.exceptions.CartNotFoundException;
+import br.dev.garage474.msdelivery.exceptions.CustomerAlreadyExistsException;
 import br.dev.garage474.msdelivery.exceptions.EmptyCartCheckoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,13 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflict(RuntimeException ex) {
         log.error("cart conflict: {}", ex.getMessage(), ex);
+        return toErrorResponse(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(CustomerAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleCustomerConflict(CustomerAlreadyExistsException ex) {
+        log.error("customer conflict: {}", ex.getMessage(), ex);
         return toErrorResponse(HttpStatus.CONFLICT, ex.getMessage());
     }
 

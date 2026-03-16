@@ -13,4 +13,3 @@ public record CartCheckoutEvent(
         List<CartItemResponse> items
 ) {
 }
-

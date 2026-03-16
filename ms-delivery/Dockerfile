@@ -1,0 +1,26 @@
+FROM eclipse-temurin:21-jre-alpine
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+USER appuser
+
+COPY target/msdelivery-0.0.1-SNAPSHOT.jar /app/msdelivery.jar
+
+ENV SPRING_PROFILES_ACTIVE=prod \
+    RABBITMQ_HOST=rabbitmq \
+    RABBITMQ_PORT=5672 \
+    RABBITMQ_USERNAME=garage_user \
+    RABBITMQ_PASSWORD=garage_password \
+    RABBITMQ_VHOST=/ \
+    ORDER_EVENTS_EXCHANGE=order.events.exchange \
+    ORDER_CREATED_QUEUE=order.created.v1.queue \
+    ORDER_CREATED_ROUTING_KEY=order.created.v1 \
+    ORDER_EVENTS_DLX=order.events.dlx \
+    ORDER_CREATED_DLQ=order.created.v1.dlq \
+    ORDER_CREATED_DLQ_ROUTING_KEY=order.created.v1.dlq \
+    RABBITMQ_PUBLISH_ENABLED=true
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-jar", "/app/msdelivery.jar"]
+

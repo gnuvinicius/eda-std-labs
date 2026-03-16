@@ -43,16 +43,16 @@ spec:
               value: "/"
             - name: ORDER_EVENTS_EXCHANGE
               value: "order.events.exchange"
-            - name: ORDER_NEW_QUEUE
-              value: "order.new.v1.queue"
-            - name: ORDER_NEW_ROUTING_KEY
-              value: "order.new.v1"
+            - name: ORDER_CREATED_QUEUE
+              value: "order.created.v1.queue"
+            - name: ORDER_CRATED_ROUTING_KEY
+              value: "order.created.v1"
             - name: ORDER_EVENTS_DLX
               value: "order.events.dlx"
-            - name: ORDER_NEW_DLQ
-              value: "order.new.v1.dlq"
-            - name: ORDER_NEW_DLQ_ROUTING_KEY
-              value: "order.new.v1.dlq"
+            - name: ORDER_CREATED_DLQ
+              value: "order.created.v1.dlq"
+            - name: ORDER_CREATED_DLQ_ROUTING_KEY
+              value: "order.created.v1.dlq"
             - name: RABBITMQ_PUBLISH_ENABLED
               value: "true"
 
