@@ -5,15 +5,9 @@ import br.dev.garage474.msdelivery.dtos.CartResponse;
 import br.dev.garage474.msdelivery.dtos.CheckoutCartResponse;
 import br.dev.garage474.msdelivery.dtos.CreateCartRequest;
 import br.dev.garage474.msdelivery.services.CartService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -27,9 +21,15 @@ public class CartController {
         this.cartService = cartService;
     }
 
+    @GetMapping(path = "/{cartId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public CartResponse getCartById(UUID cartId) {
+        return cartService.getCardById(cartId);
+    }
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public CartResponse createCart(@Valid @RequestBody CreateCartRequest request) {
+    public CartResponse createCart(@RequestBody CreateCartRequest request) {
         return cartService.createCart(request);
     }
 
@@ -37,7 +37,7 @@ public class CartController {
     @ResponseStatus(HttpStatus.OK)
     public CartResponse addItem(
             @PathVariable UUID cartId,
-            @Valid @RequestBody AddCartItemRequest request
+            @RequestBody AddCartItemRequest request
     ) {
         return cartService.addItem(cartId, request);
     }

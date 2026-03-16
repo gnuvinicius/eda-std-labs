@@ -35,6 +35,12 @@ public class CartService {
         this.cartCheckoutPublisher = cartCheckoutPublisher;
     }
 
+    public CartResponse getCardById(UUID cartId) {
+        return cartRepository.findById(cartId)
+                .map(cartMapper::toResponse)
+                .orElseThrow(() -> new CartNotFoundException(cartId));
+    }
+
     @Transactional
     public CartResponse createCart(CreateCartRequest request) {
         try {
