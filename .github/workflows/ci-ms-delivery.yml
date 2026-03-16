@@ -56,15 +56,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Login to Public ECR
-        id: login-ecr-public
+      - name: Login to Private ECR
+        id: login-ecr-private
         uses: aws-actions/amazon-ecr-login@v2
-        with:
-          registry-type: public
 
-      - name: Tag and Push to Public ECR
+      - name: Tag and Push to Private ECR
         run: |
-          IMAGE_TAG="public.ecr.aws/u1o3k2v3/msdelivery:latest"
+          IMAGE_TAG="260761541415.dkr.ecr.us-east-1.amazonaws.com/msdelivery:latest"
 
           docker tag msdelivery:latest $IMAGE_TAG
           docker push $IMAGE_TAG
@@ -77,10 +75,22 @@ jobs:
       group: ms-delivery-deploy
       cancel-in-progress: false
     steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Private ECR
+        id: login-ecr-private
+        uses: aws-actions/amazon-ecr-login@v2
+
       - name: Restart Container
         run: |
-          docker rmi public.ecr.aws/u1o3k2v3/msdelivery:latest 2>/dev/null || true
-          docker pull public.ecr.aws/u1o3k2v3/msdelivery:latest
+          IMAGE_TAG="260761541415.dkr.ecr.us-east-1.amazonaws.com/msdelivery:latest"
+          docker rmi $IMAGE_TAG 2>/dev/null || true
+          docker pull $IMAGE_TAG
           docker stop ms-delivery-container 2>/dev/null || true
           docker rm ms-delivery-container 2>/dev/null || true
           docker run -d \
@@ -93,4 +103,4 @@ jobs:
             -e DB_NAME=msdelivery_db \
             -e DB_USER=postgres \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            public.ecr.aws/u1o3k2v3/msdelivery:latest
+            $IMAGE_TAG
