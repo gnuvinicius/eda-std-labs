@@ -1,4 +1,4 @@
-FROM public.ecr.aws/u1o3k2v3/wildfly-soa:latest
+FROM 260761541415.dkr.ecr.us-east-1.amazonaws.com/wildfly-soa:latest
 
 USER jboss
 

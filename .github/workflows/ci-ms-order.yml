@@ -33,18 +33,30 @@ jobs:
     runs-on: k8s-dsv
     steps:
       - uses: actions/checkout@v4
+
       - name: Download WAR Artifact
         uses: actions/download-artifact@v4
         with:
           name: msorder-war
           path: ms-order/target/
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Private ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
       - name: Build Local Image
         run: |
           cd ms-order
           docker build -t msorder:latest .
 
-  # JOB 3: Push para o Docker Hub
+  # JOB 3: Push para o ECR Privado
   docker-push:
     needs: docker-build
     runs-on: k8s-dsv
@@ -56,15 +68,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Login to Public ECR
-        id: login-ecr-public
+      - name: Login to Private ECR
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-        with:
-          registry-type: public
 
-      - name: Tag and Push to Public ECR
+      - name: Tag and Push to Private ECR
         run: |
-          IMAGE_TAG="public.ecr.aws/u1o3k2v3/msorder:latest"
+          IMAGE_TAG="260761541415.dkr.ecr.us-east-1.amazonaws.com/msorder:latest"
 
           docker tag msorder:latest $IMAGE_TAG
           docker push $IMAGE_TAG
@@ -77,14 +87,26 @@ jobs:
       group: ms-order-deploy
       cancel-in-progress: false
     steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Private ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
       - name: Restart Container
         run: |
-          docker rmi public.ecr.aws/u1o3k2v3/msorder:latest 2>/dev/null || true
-          docker pull public.ecr.aws/u1o3k2v3/msorder:latest
+          IMAGE_TAG="260761541415.dkr.ecr.us-east-1.amazonaws.com/msorder:latest"
+
+          docker rmi $IMAGE_TAG 2>/dev/null || true
+          docker pull $IMAGE_TAG
           docker stop ms-order-container 2>/dev/null || true
           docker rm ms-order-container 2>/dev/null || true
           docker run -d \
-            --pull always \
             --name ms-order-container \
             --restart unless-stopped \
             -p 8080:8080 -p 9990:9990 \
@@ -93,4 +115,4 @@ jobs:
             -e DB_NAME=msorder_db \
             -e DB_USER=postgres \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            public.ecr.aws/u1o3k2v3/msorder:latest
+            $IMAGE_TAG
