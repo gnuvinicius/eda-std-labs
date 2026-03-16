@@ -7,6 +7,10 @@ USER appuser
 COPY target/msdelivery-0.0.1-SNAPSHOT.jar /app/msdelivery.jar
 
 ENV SPRING_PROFILES_ACTIVE=prod \
+    SPRING_PROFILES_ACTIVE=prod \
+    SPRING_DATASOURCE_URL=jdbc:postgresql://192.168.122.79:5432/msdelivery_db \
+    SPRING_DATASOURCE_USERNAME=postgres \
+    SPRING_DATASOURCE_PASSWORD=2AkByM4NfHFkeJz \
     RABBITMQ_HOST=rabbitmq \
     RABBITMQ_PORT=5672 \
     RABBITMQ_USERNAME=garage_user \
