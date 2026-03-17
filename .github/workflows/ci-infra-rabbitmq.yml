@@ -18,9 +18,14 @@ jobs:
 
       - name: Run RabbitMQ Container
         run: |
+          IMAGE_TAG="rabbitmq:latest"
+          docker rmi $IMAGE_TAG 2>/dev/null || true
+          docker pull $IMAGE_TAG
+          docker stop rabbitmq 2>/dev/null || true
+          docker rm rabbitmq 2>/dev/null || true
           docker run -d \
             --name rabbitmq \
             -p 5672:5672 \
             -p 15672:15672 \
             --restart unless-stopped \
-            rabbitmq:latest
+            $IMAGE_TAG
