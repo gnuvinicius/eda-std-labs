@@ -3,7 +3,7 @@ name: Build and run RabbitMQ in DSV Environment
 on:
   push:
     paths:
-      - "infraestructure/rabbitmq/**"
+      - "infraestructure/images/rabbitmq/**"
 jobs:
   build-and-run:
     runs-on: k8s-dsv
