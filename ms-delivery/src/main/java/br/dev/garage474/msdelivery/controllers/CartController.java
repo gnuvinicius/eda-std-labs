@@ -23,7 +23,7 @@ public class CartController {
 
     @GetMapping(path = "/{cartId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public CartResponse getCartById(UUID cartId) {
+    public CartResponse getCartById(@PathVariable UUID cartId) {
         return cartService.getCardById(cartId);
     }
 
