@@ -5,6 +5,9 @@ on:
     paths:
       - "ms-catalog/**"
 
+env:
+  SHARED_NETWORK: garage-shared-net
+
 jobs:
   # JOB 1: Build do Maven
   maven-build:
@@ -89,6 +92,7 @@ jobs:
       - name: Restart Container
         run: |
           IMAGE_TAG="260761541415.dkr.ecr.us-east-1.amazonaws.com/mscatalog:latest"
+          docker network inspect "$SHARED_NETWORK" >/dev/null 2>&1 || docker network create "$SHARED_NETWORK"
           docker rmi $IMAGE_TAG 2>/dev/null || true
           docker pull $IMAGE_TAG
           docker stop ms-catalog-container 2>/dev/null || true
@@ -96,6 +100,7 @@ jobs:
           docker run -d \
             --pull always \
             --name ms-catalog-container \
+            --network "$SHARED_NETWORK" \
             --restart unless-stopped \
             -p 8081:8080 -p 9991:9990 \
             -e DB_HOST=192.168.122.79 \

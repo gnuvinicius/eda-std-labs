@@ -5,6 +5,11 @@ on:
     paths:
       - "ms-delivery/**"
 
+env:
+  SHARED_NETWORK: garage-shared-net
+  RABBITMQ_CONTAINER_NAME: rabbitmq
+  RABBITMQ_HOST: rabbitmq
+
 jobs:
   # JOB 1: Build do Maven
   maven-build:
@@ -89,6 +94,24 @@ jobs:
       - name: Restart Container
         run: |
           IMAGE_TAG="260761541415.dkr.ecr.us-east-1.amazonaws.com/msdelivery:latest"
+
+          docker network inspect "$SHARED_NETWORK" >/dev/null 2>&1 || docker network create "$SHARED_NETWORK"
+
+          if ! docker inspect "$RABBITMQ_CONTAINER_NAME" >/dev/null 2>&1; then
+            echo "RabbitMQ container '$RABBITMQ_CONTAINER_NAME' is not running on this runner."
+            echo "Run workflow ci-infra-rabbitmq.yml first."
+            exit 1
+          fi
+
+          docker network connect "$SHARED_NETWORK" "$RABBITMQ_CONTAINER_NAME" 2>/dev/null || true
+
+          RABBIT_STATUS=$(docker inspect -f '{{.State.Health.Status}}' "$RABBITMQ_CONTAINER_NAME" 2>/dev/null || echo "unknown")
+          if [ "$RABBIT_STATUS" = "unhealthy" ]; then
+            echo "RabbitMQ is unhealthy."
+            docker logs "$RABBITMQ_CONTAINER_NAME" || true
+            exit 1
+          fi
+
           docker rmi $IMAGE_TAG 2>/dev/null || true
           docker pull $IMAGE_TAG
           docker stop ms-delivery-container 2>/dev/null || true
@@ -96,6 +119,7 @@ jobs:
           docker run -d \
             --pull always \
             --name ms-delivery-container \
+            --network "$SHARED_NETWORK" \
             --restart unless-stopped \
             -p 8082:8080 -p 9992:9990 \
             -e DB_HOST=192.168.122.79 \
@@ -103,4 +127,9 @@ jobs:
             -e DB_NAME=msdelivery_db \
             -e DB_USER=postgres \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e RABBITMQ_HOST=${{ env.RABBITMQ_HOST }} \
+            -e RABBITMQ_PORT=5672 \
+            -e RABBITMQ_USERNAME=garage_user \
+            -e RABBITMQ_PASSWORD=garage_password \
+            -e RABBITMQ_VHOST=/ \
             $IMAGE_TAG

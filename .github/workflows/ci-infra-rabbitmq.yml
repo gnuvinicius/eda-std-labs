@@ -4,6 +4,12 @@ on:
   push:
     paths:
       - "infraestructure/images/rabbitmq/**"
+
+env:
+  SHARED_NETWORK: garage-shared-net
+  RABBITMQ_CONTAINER_NAME: rabbitmq
+  RABBITMQ_ALIAS: rabbitmq
+
 jobs:
   build-and-run:
     runs-on: k8s-dsv
@@ -16,16 +22,40 @@ jobs:
           cd infraestructure/images/rabbitmq
           docker build -t rabbitmq:latest .
 
+      - name: Ensure shared Docker network
+        run: |
+          docker network inspect "$SHARED_NETWORK" >/dev/null 2>&1 || docker network create "$SHARED_NETWORK"
+
       - name: Run RabbitMQ Container
         run: |
           IMAGE_TAG="rabbitmq:latest"
-          docker rmi $IMAGE_TAG 2>/dev/null || true
-          docker pull $IMAGE_TAG
-          docker stop rabbitmq 2>/dev/null || true
-          docker rm rabbitmq 2>/dev/null || true
+          docker stop "$RABBITMQ_CONTAINER_NAME" 2>/dev/null || true
+          docker rm "$RABBITMQ_CONTAINER_NAME" 2>/dev/null || true
           docker run -d \
-            --name rabbitmq \
+            --name "$RABBITMQ_CONTAINER_NAME" \
+            --hostname "$RABBITMQ_ALIAS" \
+            --network "$SHARED_NETWORK" \
+            --network-alias "$RABBITMQ_ALIAS" \
             -p 5672:5672 \
             -p 15672:15672 \
             --restart unless-stopped \
+            --health-cmd "rabbitmq-diagnostics -q ping" \
+            --health-interval 10s \
+            --health-timeout 5s \
+            --health-retries 12 \
             $IMAGE_TAG
+
+      - name: Wait for RabbitMQ health
+        run: |
+          for i in $(seq 1 30); do
+            STATUS=$(docker inspect -f '{{.State.Health.Status}}' "$RABBITMQ_CONTAINER_NAME" 2>/dev/null || echo "unknown")
+            if [ "$STATUS" = "healthy" ]; then
+              echo "RabbitMQ is healthy"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "RabbitMQ did not become healthy in time"
+          docker logs "$RABBITMQ_CONTAINER_NAME" || true
+          exit 1
+

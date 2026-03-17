@@ -5,6 +5,10 @@ on:
     paths:
       - "ms-order/**"
 
+env:
+  SHARED_NETWORK: garage-shared-net
+  RABBITMQ_HOST: rabbitmq
+
 jobs:
   # JOB 1: Build do Maven
   maven-build:
@@ -102,12 +106,15 @@ jobs:
         run: |
           IMAGE_TAG="260761541415.dkr.ecr.us-east-1.amazonaws.com/msorder:latest"
 
+          docker network inspect "$SHARED_NETWORK" >/dev/null 2>&1 || docker network create "$SHARED_NETWORK"
+
           docker rmi $IMAGE_TAG 2>/dev/null || true
           docker pull $IMAGE_TAG
           docker stop ms-order-container 2>/dev/null || true
           docker rm ms-order-container 2>/dev/null || true
           docker run -d \
             --name ms-order-container \
+            --network "$SHARED_NETWORK" \
             --restart unless-stopped \
             -p 8080:8080 -p 9990:9990 \
             -e DB_HOST=192.168.122.79 \
@@ -115,4 +122,9 @@ jobs:
             -e DB_NAME=msorder_db \
             -e DB_USER=postgres \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e RABBITMQ_HOST=${{ env.RABBITMQ_HOST }} \
+            -e RABBITMQ_PORT=5672 \
+            -e RABBITMQ_USERNAME=garage_user \
+            -e RABBITMQ_PASSWORD=garage_password \
+            -e RABBITMQ_VHOST=/ \
             $IMAGE_TAG
