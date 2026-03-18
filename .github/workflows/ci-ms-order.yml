@@ -104,16 +104,36 @@ jobs:
 
       - name: Restart Container
         run: |
+          set -euo pipefail
+
           IMAGE_TAG="260761541415.dkr.ecr.us-east-1.amazonaws.com/msorder:latest"
+          CONTAINER_NAME="ms-order-container"
 
           docker network inspect "$SHARED_NETWORK" >/dev/null 2>&1 || docker network create "$SHARED_NETWORK"
 
           docker rmi $IMAGE_TAG 2>/dev/null || true
           docker pull $IMAGE_TAG
-          docker stop ms-order-container 2>/dev/null || true
-          docker rm ms-order-container 2>/dev/null || true
+
+          if docker container inspect "$CONTAINER_NAME" >/dev/null 2>&1; then
+            docker stop "$CONTAINER_NAME"
+            docker rm "$CONTAINER_NAME"
+
+            for i in $(seq 1 15); do
+              if ! docker container inspect "$CONTAINER_NAME" >/dev/null 2>&1; then
+                break
+              fi
+              sleep 2
+            done
+          fi
+
+          if docker container inspect "$CONTAINER_NAME" >/dev/null 2>&1; then
+            echo "Container '$CONTAINER_NAME' still exists after waiting for removal."
+            docker ps -a --filter "name=^/${CONTAINER_NAME}$"
+            exit 1
+          fi
+
           docker run -d \
-            --name ms-order-container \
+            --name "$CONTAINER_NAME" \
             --network "$SHARED_NETWORK" \
             --restart unless-stopped \
             -p 8080:8080 -p 9990:9990 \
