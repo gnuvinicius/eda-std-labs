@@ -6,31 +6,31 @@
 
 ## Sobre o Projeto
 
-O **EDA Study Labs** e um laboratorio pratico para estudo de **Arquitetura Orientada a Eventos (EDA)** com foco principal em **DevOps** para microsservicos.
+O **EDA Study Labs** é um laboratório prático para estudo de **Arquitetura Orientada a Eventos (EDA)** com foco principal em **DevOps** para microsserviços.
 
 O projeto prioriza:
 
 - pipeline de **CI/CD** com **GitHub Actions**;
-- **dockerizacao** dos microsservicos;
+- **dockerização** dos microsserviços;
 - fluxo de **push** e **pull** de imagens Docker no **Amazon Elastic Container Registry (ECR)**;
-- integracao entre servicos via **API Gateway** e **mensageria**.
+- integração entre serviços via **API Gateway** e **mensageria**.
 
-## Arquitetura e Praticas
+## Arquitetura e Práticas
 
-As aplicacoes seguem:
+As aplicações seguem:
 
-- principios de **Clean Code**;
+- princípios de **Clean Code**;
 - modelo de **Three-tier architecture** (controllers, services e repositories);
-- comunicacao assincrona baseada em eventos e filas;
-- exposicao de APIs por meio de **API Gateway**.
+- comunicação assíncrona baseada em eventos e filas;
+- exposição de APIs por meio de **API Gateway**.
 
-## Stack Tecnologico
+## Stack Tecnológico
 
 ### Servidores
 
-- **Virtualização localhost com KVM/Qemu**
+- **Virtualização local com KVM/QEMU**
 - **VMs Debian 13 com Docker**
-- **Github Self-runners**
+- **GitHub Self-hosted Runners**
 
 ### Back-end
 
@@ -43,41 +43,35 @@ As aplicacoes seguem:
 
 - **Vue.js**
 
-### Persistencia e Cache
+### Persistência e Cache
 
 - **PostgreSQL**
 - **MongoDB**
 - **Redis**
 
-### DevOps e Entrega Continua
+### DevOps e Entrega Contínua
 
 - **GitHub Actions** para CI/CD
 - **Docker** e **Docker Compose**
-- **Amazon ECR** para versionamento e distribuicao de imagens
+- **Amazon ECR** para versionamento e distribuição de imagens
 
-## Servicos do Dominio
+## Serviços do Domínio
 
 1. **Order Service**: gerenciamento do ciclo de vida de pedidos.
-2. **Catalog Service**: catalogo de produtos e estoque.
+2. **Catalog Service**: catálogo de produtos e estoque.
 3. **Payment Service**: processamento de pagamentos.
 4. **Delivery Service**: fluxo de entrega.
-5. **Recommendation Service**: recomendacao de produtos.
+5. **Recommendation Service**: recomendação de produtos.
 
 ## Objetivo de Estudo
 
-Este repositorio existe para praticar, de ponta a ponta, o ciclo de desenvolvimento e operacao de microsservicos:
+Este repositório existe para praticar, de ponta a ponta, o ciclo de desenvolvimento e operação de microsserviços:
 
-- desenvolvimento de servicos desacoplados;
-- automacao de build e deploy;
-- publicacao de imagens em registry privado;
-- execucao de ambientes locais para validacao funcional.
+- desenvolvimento de serviços desacoplados;
+- automação de build e deploy;
+- publicação de imagens em registry privado;
+- execução de ambientes locais para validação funcional.
 
-## Como Executar (base local)
+## Contribuição
 
-```bash
-docker compose up -d
-```
-
-## Contribuicao
-
-Projeto de estudo aberto para colaboracao. Sugestoes, issues e pull requests sao bem-vindos.
+Projeto de estudo aberto para colaboração. Sugestões, issues e pull requests são bem-vindos.
