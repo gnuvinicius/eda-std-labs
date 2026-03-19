@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'msrecomendation_db'),
+        'NAME': os.getenv('DB_NAME', 'msrecommendation_db'),
         'USER': os.getenv('DB_USER', 'postgres'),
         'PASSWORD': os.getenv('DB_PASSWORD', '2AkByM4NfHFkeJz'),
         'HOST': os.getenv('DB_HOST', '192.168.122.79'),
