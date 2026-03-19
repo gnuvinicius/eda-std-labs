@@ -4,87 +4,80 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Status](https://img.shields.io/badge/status-development-orange)
 
-## 📖 Sobre o Projeto
+## Sobre o Projeto
 
-**EDA Study Labs** é um projeto de laboratório focado no estudo e implementação de uma **Arquitetura Orientada a Eventos (EDA)** e **Microsserviços**. O sistema simula um **SaaS de Delivery de Produtos** completo, projetado para ser escalável, resiliente e desacoplado.
+O **EDA Study Labs** e um laboratorio pratico para estudo de **Arquitetura Orientada a Eventos (EDA)** com foco principal em **DevOps** para microsservicos.
 
-O objetivo principal é explorar cenários complexos de engenharia de software, como consistência eventual, transações distribuídas, tolerância a falhas e observabilidade em sistemas distribuídos.
+O projeto prioriza:
 
-## 🏗️ Arquitetura e Design
+- pipeline de **CI/CD** com **GitHub Actions**;
+- **dockerizacao** dos microsservicos;
+- fluxo de **push** e **pull** de imagens Docker no **Amazon Elastic Container Registry (ECR)**;
+- integracao entre servicos via **API Gateway** e **mensageria**.
 
-O projeto segue os princípios de **Clean Architecture** e **Domain-Driven Design (DDD)**, utilizando padrões de integração modernos.
+## Arquitetura e Praticas
 
-### Padrões e Práticas
-*   **Event-Driven Architecture (EDA)**
-*   **Saga Pattern** (Coreografia/Orquestração) para transações distribuídas.
-*   **CQRS** (Command Query Responsibility Segregation).
-*   **Transactional Outbox Pattern** para garantia de entrega de eventos.
-*   **API Gateway** & **Service Discovery**.
-*   **Circuit Breaker** & **Retry Mechanisms**.
+As aplicacoes seguem:
 
-## 🚀 Stack Tecnológico
+- principios de **Clean Code**;
+- modelo de **Three-tier architecture** (controllers, services e repositories);
+- comunicacao assincrona baseada em eventos e filas;
+- exposicao de APIs por meio de **API Gateway**.
 
-### Core & Frameworks
-*   **Java 17+ / Kotlin**
-*   **Spring Boot 3.x**
-*   **Spring Cloud** (Gateway, OpenFeign, Config)
+## Stack Tecnologico
 
-### Persistência & Cache
-*   **PostgreSQL** (Banco de dados relacional por serviço)
-*   **MongoDB** (Read Models / Logs)
-*   **Redis** (Cache distribuído e Rate Limiting)
+### Servidores
 
-### Mensageria & Streaming
-*   **Apache Kafka** (Event Streaming de alta vazão)
-*   **RabbitMQ** (Filas de processamento e DLQs)
+- **Virtualização localhost com KVM/Qemu**
+- **VMs Debian 13 com Docker**
+- **Github Self-runners**
 
-### Infraestrutura & DevOps (Roadmap)
-*   **Docker** & **Docker Compose**
-*   **Kubernetes (K8s)**
-*   **Helm Charts**
-*   **CI/CD** (GitHub Actions)
+### Back-end
 
-### Observabilidade (Roadmap)
-*   **Prometheus** & **Grafana** (Métricas)
-*   **ELK Stack** (Elasticsearch, Logstash, Kibana) ou **Loki**
-*   **OpenTelemetry** / **Zipkin** / **Jaeger** (Distributed Tracing)
+- **Java 21**
+- **Spring Boot**
+- **Django**
+- **Django Rest Framework**
 
-### Segurança
-*   **Keycloak** / **OAuth2** / **OIDC**
+### Front-end
 
-## 📦 Serviços do Domínio (Microservices)
+- **Vue.js**
 
-1.  **Order Service**: Gerenciamento do ciclo de vida do pedido.
-2.  **Catalog/Inventory Service**: Gestão de produtos e controle de estoque em tempo real.
-3.  **Payment Service**: Processamento de pagamentos e integração com gateways.
-4.  **Delivery/Logistics Service**: Roteirização e gestão de entregadores.
-5.  **Notification Service**: Envio de emails, SMS e Push Notifications.
+### Persistencia e Cache
 
-## 📊 Status do MVP
+- **PostgreSQL**
+- **MongoDB**
+- **Redis**
 
-O desenvolvimento do MVP (Minimum Viable Product) está em andamento.
+### DevOps e Entrega Continua
 
-**Progresso Geral:**
-![Progress](https://geps.dev/progress/15) **15%**
+- **GitHub Actions** para CI/CD
+- **Docker** e **Docker Compose**
+- **Amazon ECR** para versionamento e distribuicao de imagens
 
-### Checklist de Funcionalidades MVP
-- [ ] Definição da Arquitetura Base
-- [ ] Configuração do Discovery & Gateway
-- [ ] Serviço de Catálogo (CRUD)
-- [ ] Serviço de Pedidos (Criação básica)
-- [ ] Integração Kafka/RabbitMQ
-- [ ] Fluxo de Pagamento (Mock)
-- [ ] Fluxo de Baixa de Estoque
-- [ ] Observabilidade Básica
+## Servicos do Dominio
 
-## 🛠️ Como Executar
+1. **Order Service**: gerenciamento do ciclo de vida de pedidos.
+2. **Catalog Service**: catalogo de produtos e estoque.
+3. **Payment Service**: processamento de pagamentos.
+4. **Delivery Service**: fluxo de entrega.
+5. **Recommendation Service**: recomendacao de produtos.
 
-*(Instruções futuras para rodar com Docker Compose)*
+## Objetivo de Estudo
+
+Este repositorio existe para praticar, de ponta a ponta, o ciclo de desenvolvimento e operacao de microsservicos:
+
+- desenvolvimento de servicos desacoplados;
+- automacao de build e deploy;
+- publicacao de imagens em registry privado;
+- execucao de ambientes locais para validacao funcional.
+
+## Como Executar (base local)
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
-## 🤝 Contribuição
+## Contribuicao
 
-Este é um projeto de estudo open-source. Sinta-se à vontade para abrir Issues ou Pull Requests para discutir padrões e implementações.
+Projeto de estudo aberto para colaboracao. Sugestoes, issues e pull requests sao bem-vindos.
