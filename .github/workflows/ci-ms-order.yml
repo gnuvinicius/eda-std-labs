@@ -1,9 +1,7 @@
 name: ms-order (CI/CD)
 
 on:
-  push:
-    paths:
-      - "ms-order/**"
+  workflow_dispatch: {}
 
 env:
   SHARED_NETWORK: garage-shared-net
