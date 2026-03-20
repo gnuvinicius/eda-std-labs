@@ -1,0 +1,54 @@
+name: Build and run API Gateway in DSV Environment
+
+on:
+    push:
+        paths:
+            - "infraestructure/images/api-gateway/**"
+
+env:
+    SHARED_NETWORK: garage-shared-net
+    API_GATEWAY_CONTAINER_NAME: api-gateway
+    API_GATEWAY_ALIAS: api-gateway
+
+jobs:
+    build-and-run:
+        runs-on: k8s-dsv
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v4
+
+            - name: Build API Gateway Image
+              run: |
+                  cd infraestructure/images/api-gateway
+                  docker build -t api-gateway:latest .
+
+            - name: Ensure shared Docker network
+              run: |
+                  docker network inspect "$SHARED_NETWORK" >/dev/null 2>&1 || docker network create "$SHARED_NETWORK"
+
+            - name: Run API Gateway Container
+              run: |
+                  IMAGE_TAG="api-gateway:latest"
+                  docker stop "$API_GATEWAY_CONTAINER_NAME" 2>/dev/null || true
+                  docker rm "$API_GATEWAY_CONTAINER_NAME" 2>/dev/null || true
+                  docker run -d \
+                    --name "$API_GATEWAY_CONTAINER_NAME" \
+                    --hostname "$API_GATEWAY_ALIAS" \
+                    --network "$SHARED_NETWORK" \
+                    --network-alias "$API_GATEWAY_ALIAS" \
+                    -p 8080:8080 \
+                    --restart unless-stopped \
+                    $IMAGE_TAG
+
+            - name: Wait for API Gateway health
+              run: |
+                  for i in $(seq 1 30); do
+                    if curl -fsS http://localhost:8080/health >/dev/null; then
+                      echo "API Gateway is healthy"
+                      exit 0
+                    fi
+                    sleep 2
+                  done
+                  echo "API Gateway did not become healthy in time"
+                  docker logs "$API_GATEWAY_CONTAINER_NAME" || true
+                  exit 1

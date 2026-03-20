@@ -141,7 +141,6 @@ jobs:
             --name "$CONTAINER_NAME" \
             --network "$SHARED_NETWORK" \
             --restart unless-stopped \
-            -p 8082:8080 -p 9992:9990 \
             -e DB_HOST=192.168.122.79 \
             -e DB_PORT=5432 \
             -e DB_NAME=msdelivery_db \
