@@ -43,6 +43,13 @@ jobs:
             - name: Wait for API Gateway health
               run: |
                   for i in $(seq 1 30); do
+                    if ! docker ps --format '{{.Names}}' | grep -q "^${API_GATEWAY_CONTAINER_NAME}$"; then
+                      echo "API Gateway container is not running"
+                      docker ps -a --filter "name=^/${API_GATEWAY_CONTAINER_NAME}$" || true
+                      docker logs "$API_GATEWAY_CONTAINER_NAME" || true
+                      exit 1
+                    fi
+
                     if curl -fsS http://localhost:8080/health >/dev/null; then
                       echo "API Gateway is healthy"
                       exit 0
