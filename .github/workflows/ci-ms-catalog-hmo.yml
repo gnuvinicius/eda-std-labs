@@ -1,0 +1,107 @@
+name: ms-catalog-hmo
+
+on:
+    push:
+        branches:
+            - develop
+        paths:
+            - "ms-catalog/**"
+
+env:
+    SHARED_NETWORK: garage-shared-net
+    LOCAL_REGISTRY: localhost:5000
+
+jobs:
+    # JOB 1: Build do Maven
+    maven-build:
+        runs-on: k8s-dsv
+        steps:
+            - uses: actions/checkout@v4
+            - name: Set up JDK 21
+              uses: actions/setup-java@v4
+              with:
+                  java-version: "21"
+                  distribution: "temurin"
+                  cache: "maven"
+
+            - name: Build with Maven
+              run: mvn clean package -DskipTests -f ms-catalog/pom.xml
+
+            - name: Upload JAR Artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: mscatalog-jar
+                  path: ms-catalog/target/mscatalog-0.0.1-SNAPSHOT.jar
+
+    # JOB 2: Build e Publish no Registry Local
+    docker-build-and-publish-local:
+        needs: maven-build
+        runs-on: k8s-dsv
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Download JAR Artifact
+              uses: actions/download-artifact@v4
+              with:
+                  name: mscatalog-jar
+                  path: ms-catalog/target/
+
+            - name: Build and Push Local Image
+              run: |
+                  set -euo pipefail
+
+                  IMAGE_TAG="${LOCAL_REGISTRY}/mscatalog:latest"
+                  cd ms-catalog
+
+                  docker build -t "$IMAGE_TAG" .
+                  docker push "$IMAGE_TAG"
+
+    # JOB 3: Deploy and Restart
+    deploy:
+        needs: docker-build-and-publish-local
+        runs-on: k8s-dsv
+        concurrency:
+            group: ms-catalog-hmo-deploy
+            cancel-in-progress: false
+        steps:
+            - name: Restart Container
+              run: |
+                  set -euo pipefail
+
+                  IMAGE_TAG="${LOCAL_REGISTRY}/mscatalog:latest"
+                  CONTAINER_NAME="ms-catalog-hmo-container"
+
+                  docker network inspect "$SHARED_NETWORK" >/dev/null 2>&1 || docker network create "$SHARED_NETWORK"
+
+                  docker rmi "$IMAGE_TAG" 2>/dev/null || true
+                  docker pull "$IMAGE_TAG"
+
+                  if docker container inspect "$CONTAINER_NAME" >/dev/null 2>&1; then
+                    docker stop "$CONTAINER_NAME"
+                    docker rm "$CONTAINER_NAME"
+
+                    for i in $(seq 1 15); do
+                      if ! docker container inspect "$CONTAINER_NAME" >/dev/null 2>&1; then
+                        break
+                      fi
+                      sleep 2
+                    done
+                  fi
+
+                  if docker container inspect "$CONTAINER_NAME" >/dev/null 2>&1; then
+                    echo "Container '$CONTAINER_NAME' still exists after waiting for removal."
+                    docker ps -a --filter "name=^/${CONTAINER_NAME}$"
+                    exit 1
+                  fi
+
+                  docker run -d \
+                    --pull always \
+                    --name "$CONTAINER_NAME" \
+                    --network "$SHARED_NETWORK" \
+                    --restart unless-stopped \
+                    -e DB_HOST=192.168.122.79 \
+                    -e DB_PORT=5432 \
+                    -e DB_NAME=mscatalog_db \
+                    -e DB_USER=postgres \
+                    -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+                    "$IMAGE_TAG"

@@ -1,7 +1,9 @@
-name: ms-catalog (CI/CD)
+name: ms-catalog-prd
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "ms-catalog/**"
 

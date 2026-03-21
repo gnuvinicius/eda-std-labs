@@ -1,7 +1,9 @@
-name: ms-delivery (CI/CD)
+name: ms-delivery-prd
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "ms-delivery/**"
 
