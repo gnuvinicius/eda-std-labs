@@ -77,9 +77,6 @@ jobs:
 
           docker network inspect "$SHARED_NETWORK" >/dev/null 2>&1 || docker network create "$SHARED_NETWORK"
 
-          docker rmi "$IMAGE_TAG" 2>/dev/null || true
-          docker pull "$IMAGE_TAG"
-
           if docker container inspect "$CONTAINER_NAME" >/dev/null 2>&1; then
             docker stop "$CONTAINER_NAME"
             docker rm "$CONTAINER_NAME"
