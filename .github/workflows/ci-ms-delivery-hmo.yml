@@ -73,7 +73,7 @@ jobs:
           set -euo pipefail
 
           IMAGE_TAG="msdelivery:latest"
-          CONTAINER_NAME="ms-delivery-hmo-container"
+          CONTAINER_NAME="ms-delivery-container"
 
           docker network inspect "$SHARED_NETWORK" >/dev/null 2>&1 || docker network create "$SHARED_NETWORK"
 

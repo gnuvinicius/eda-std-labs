@@ -77,7 +77,7 @@ jobs:
                   fi
 
                   IMAGE_TAG="${LOCAL_REGISTRY}/mscatalog:latest"
-                  CONTAINER_NAME="ms-catalog-hmo-container"
+                  CONTAINER_NAME="ms-catalog-container"
 
                   docker network inspect "$SHARED_NETWORK" >/dev/null 2>&1 || docker network create "$SHARED_NETWORK"
 
