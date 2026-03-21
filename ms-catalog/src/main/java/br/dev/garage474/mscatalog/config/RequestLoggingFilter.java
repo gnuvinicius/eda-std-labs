@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Enumeration;
 
-@Component
 public class RequestLoggingFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(RequestLoggingFilter.class);
