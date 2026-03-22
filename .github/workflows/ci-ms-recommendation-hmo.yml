@@ -10,6 +10,7 @@ on:
 env:
     SHARED_NETWORK: garage-shared-net
     RABBITMQ_HOST: rabbitmq
+    API_GATEWAY_CONTAINER_NAME: api-gateway
 
 jobs:
     # JOB 1: Build da Imagem Docker
@@ -63,6 +64,7 @@ jobs:
                   docker run -d \
                     --name "$CONTAINER_NAME" \
                     --network "$SHARED_NETWORK" \
+                    --network-alias "$CONTAINER_NAME" \
                     --restart unless-stopped \
                     -e DB_HOST=192.168.122.79 \
                     -e DB_PORT=5432 \
@@ -75,3 +77,22 @@ jobs:
                     -e RABBITMQ_PASSWORD=garage_password \
                     -e RABBITMQ_VHOST=/ \
                     "$IMAGE_TAG"
+
+                  # Reconnect gateway to the shared network if it exists on this runner.
+                  if docker container inspect "$API_GATEWAY_CONTAINER_NAME" >/dev/null 2>&1; then
+                    docker network connect "$SHARED_NETWORK" "$API_GATEWAY_CONTAINER_NAME" 2>/dev/null || true
+                  fi
+
+                  # Ensure recommendation container is reachable inside the Docker network.
+                  for i in $(seq 1 20); do
+                    if docker run --rm --network "$SHARED_NETWORK" busybox:1.36 sh -c "nc -z -w 2 ms-recommendation-container 8000" >/dev/null 2>&1; then
+                      echo "ms-recommendation is reachable on network '$SHARED_NETWORK'"
+                      exit 0
+                    fi
+                    sleep 2
+                  done
+
+                  echo "ms-recommendation container is not reachable on '$SHARED_NETWORK'"
+                  docker ps -a --filter "name=^/${CONTAINER_NAME}$"
+                  docker logs "$CONTAINER_NAME" || true
+                  exit 1
