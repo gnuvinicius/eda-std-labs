@@ -3,7 +3,6 @@ package br.dev.garage474.msdelivery.controllers;
 import br.dev.garage474.msdelivery.dtos.CreateCustomerRequest;
 import br.dev.garage474.msdelivery.dtos.CustomerResponse;
 import br.dev.garage474.msdelivery.services.CustomerService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,4 +36,3 @@ public class CustomerController {
         return customerService.findAllCustomers();
     }
 }
-
