@@ -1,4 +1,4 @@
-package br.dev.garage474.msdelivery.dtos;
+package br.dev.garage474.msdelivery.resources.dtos;
 
 import java.time.LocalDateTime;
 

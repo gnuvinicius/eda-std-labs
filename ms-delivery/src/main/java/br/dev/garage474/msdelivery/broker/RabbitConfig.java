@@ -1,4 +1,4 @@
-package br.dev.garage474.msdelivery.services;
+package br.dev.garage474.msdelivery.broker;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;

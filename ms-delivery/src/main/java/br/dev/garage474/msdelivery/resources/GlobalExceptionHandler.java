@@ -1,6 +1,6 @@
-package br.dev.garage474.msdelivery.controllers;
+package br.dev.garage474.msdelivery.resources;
 
-import br.dev.garage474.msdelivery.dtos.ErrorResponse;
+import br.dev.garage474.msdelivery.resources.dtos.ErrorResponse;
 import br.dev.garage474.msdelivery.exceptions.CartAlreadyCheckedOutException;
 import br.dev.garage474.msdelivery.exceptions.CartNotFoundException;
 import br.dev.garage474.msdelivery.exceptions.CustomerAlreadyExistsException;
