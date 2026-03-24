@@ -1,0 +1,112 @@
+name: ms-delivery-hmo
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - "ms-delivery/**"
+
+env:
+  SHARED_NETWORK: garage-shared-net
+  RABBITMQ_HOST: rabbitmq
+  # LOCAL_REGISTRY: 127.0.0.1:5000
+
+jobs:
+  # JOB 1: Build do Maven
+  maven-build:
+    runs-on: k8s-dsv
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          cache: "maven"
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests -f ms-delivery/pom.xml
+
+      - name: Upload JAR Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: msdelivery-jar
+          path: ms-delivery/target/msdelivery-0.0.1-SNAPSHOT.jar
+
+  # JOB 2: Build e Publish no Registry Local
+  docker-build-and-publish-local:
+    needs: maven-build
+    runs-on: k8s-dsv
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download JAR Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: msdelivery-jar
+          path: ms-delivery/target/
+
+      - name: Build and Push Local Image
+        run: |
+          set -euo pipefail
+
+          if ! docker container inspect local-registry >/dev/null 2>&1; then
+            docker run -d --restart unless-stopped -p 5000:5000 --name local-registry registry:2
+          fi
+
+          IMAGE_TAG="msdelivery:latest"
+          cd ms-delivery
+
+          docker build -t "$IMAGE_TAG" .
+
+  # JOB 3: Deploy and Restart
+  deploy:
+    needs: docker-build-and-publish-local
+    runs-on: k8s-dsv
+    concurrency:
+      group: ms-delivery-hmo-deploy
+      cancel-in-progress: false
+    steps:
+      - name: Restart Container
+        run: |
+          set -euo pipefail
+
+          IMAGE_TAG="msdelivery:latest"
+          CONTAINER_NAME="ms-delivery-container"
+
+          docker network inspect "$SHARED_NETWORK" >/dev/null 2>&1 || docker network create "$SHARED_NETWORK"
+
+          if docker container inspect "$CONTAINER_NAME" >/dev/null 2>&1; then
+            docker stop "$CONTAINER_NAME"
+            docker rm "$CONTAINER_NAME"
+
+            for i in $(seq 1 15); do
+              if ! docker container inspect "$CONTAINER_NAME" >/dev/null 2>&1; then
+                break
+              fi
+              sleep 2
+            done
+          fi
+
+          if docker container inspect "$CONTAINER_NAME" >/dev/null 2>&1; then
+            echo "Container '$CONTAINER_NAME' still exists after waiting for removal."
+            docker ps -a --filter "name=^/${CONTAINER_NAME}$"
+            exit 1
+          fi
+
+          docker run -d \
+            --name "$CONTAINER_NAME" \
+            --network "$SHARED_NETWORK" \
+            --restart unless-stopped \
+            -e DB_HOST=192.168.122.79 \
+            -e DB_PORT=5432 \
+            -e DB_NAME=msdelivery_db \
+            -e DB_USER=postgres \
+            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e RABBITMQ_HOST=${{ env.RABBITMQ_HOST }} \
+            -e RABBITMQ_PORT=5672 \
+            -e RABBITMQ_USERNAME=garage_user \
+            -e RABBITMQ_PASSWORD=garage_password \
+            -e RABBITMQ_VHOST=/ \
+            $IMAGE_TAG

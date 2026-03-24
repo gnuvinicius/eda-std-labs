@@ -1,0 +1,78 @@
+name: Build and run Portainer in DSV Environment
+
+on:
+    push:
+        paths:
+            - "infraestructure/images/portainer/**"
+
+env:
+    SHARED_NETWORK: garage-shared-net
+    PORTAINER_CONTAINER_NAME: portainer
+    PORTAINER_ALIAS: portainer
+    PORTAINER_VOLUME: portainer_data
+
+jobs:
+    build-and-run:
+        runs-on: k8s-dsv
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v4
+
+            - name: Build Portainer Image
+              run: |
+                  set -euo pipefail
+
+                  cd infraestructure/images/portainer
+                  docker build -t portainer:latest .
+
+            - name: Ensure shared Docker network and data volume
+              run: |
+                  set -euo pipefail
+
+                  docker network inspect "$SHARED_NETWORK" >/dev/null 2>&1 || docker network create "$SHARED_NETWORK"
+                  docker volume inspect "$PORTAINER_VOLUME" >/dev/null 2>&1 || docker volume create "$PORTAINER_VOLUME"
+
+            - name: Run Portainer Container
+              run: |
+                  set -euo pipefail
+
+                  IMAGE_TAG="portainer:latest"
+
+                  docker stop "$PORTAINER_CONTAINER_NAME" 2>/dev/null || true
+                  docker rm "$PORTAINER_CONTAINER_NAME" 2>/dev/null || true
+
+                  docker run -d \
+                    --name "$PORTAINER_CONTAINER_NAME" \
+                    --hostname "$PORTAINER_ALIAS" \
+                    --network "$SHARED_NETWORK" \
+                    --network-alias "$PORTAINER_ALIAS" \
+                    -p 9000:9000 \
+                    -p 9443:9443 \
+                    --restart unless-stopped \
+                    -v /var/run/docker.sock:/var/run/docker.sock \
+                    -v "$PORTAINER_VOLUME":/data \
+                    "$IMAGE_TAG" \
+                    --http-enabled
+
+            - name: Wait for Portainer web UI
+              run: |
+                  set -euo pipefail
+
+                  for i in $(seq 1 30); do
+                    if ! docker ps --format '{{.Names}}' | grep -q "^${PORTAINER_CONTAINER_NAME}$"; then
+                      echo "Portainer container is not running"
+                      docker ps -a --filter "name=^/${PORTAINER_CONTAINER_NAME}$" || true
+                      docker logs "$PORTAINER_CONTAINER_NAME" || true
+                      exit 1
+                    fi
+
+                    if curl -fsS http://localhost:9000/api/status >/dev/null; then
+                      echo "Portainer is available"
+                      exit 0
+                    fi
+                    sleep 2
+                  done
+
+                  echo "Portainer did not become available in time"
+                  docker logs "$PORTAINER_CONTAINER_NAME" || true
+                  exit 1

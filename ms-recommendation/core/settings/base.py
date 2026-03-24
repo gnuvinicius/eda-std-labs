@@ -117,7 +117,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+# Service is exposed behind API Gateway under /recommendation.
+STATIC_URL = '/recommendation/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -127,6 +128,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173"
 ]
+
+RABBITMQ_URL = 'amqp://garage_user:garage_password@192.168.122.223:5672/%2F'
+
+ORDER_EXCHANGE_NAME = "order.events.exchange"
+ORDER_DLX_NAME = "order.events.dlx"
+ORDER_QUEUE_NAME = "order.created.v1.queue"
+ORDER_ROUTING_KEY = "order.created.v1"
+ORDER_DLQ_ROUTING_KEY = "order.created.v1.dlq"
 
 LOGGING = {
     'version': 1,

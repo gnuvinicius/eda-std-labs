@@ -9,7 +9,7 @@ on:
 
 env:
     SHARED_NETWORK: garage-shared-net
-    LOCAL_REGISTRY: localhost:5000
+    LOCAL_REGISTRY: 127.0.0.1:5000
 
 jobs:
     # JOB 1: Build do Maven
@@ -50,6 +50,10 @@ jobs:
               run: |
                   set -euo pipefail
 
+                  if ! docker container inspect local-registry >/dev/null 2>&1; then
+                    docker run -d --restart unless-stopped -p 5000:5000 --name local-registry registry:2
+                  fi
+
                   IMAGE_TAG="${LOCAL_REGISTRY}/mscatalog:latest"
                   cd ms-catalog
 
@@ -68,8 +72,12 @@ jobs:
               run: |
                   set -euo pipefail
 
+                  if ! docker container inspect local-registry >/dev/null 2>&1; then
+                    docker run -d --restart unless-stopped -p 5000:5000 --name local-registry registry:2
+                  fi
+
                   IMAGE_TAG="${LOCAL_REGISTRY}/mscatalog:latest"
-                  CONTAINER_NAME="ms-catalog-hmo-container"
+                  CONTAINER_NAME="ms-catalog-container"
 
                   docker network inspect "$SHARED_NETWORK" >/dev/null 2>&1 || docker network create "$SHARED_NETWORK"
 
