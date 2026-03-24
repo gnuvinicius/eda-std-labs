@@ -130,16 +130,12 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 RABBITMQ_URL = 'amqp://garage_user:garage_password@192.168.122.223:5672/%2F'
-RABBITMQ_QUEUE = 'order.created.v1.queue'
 
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", RABBITMQ_URL)
-CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", RABBITMQ_URL)
-CELERY_TASK_DEFAULT_QUEUE = "recommendation.tasks"
-CELERY_TASK_SERIALIZER = "json"
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_RESULT_SERIALIZER = "json"
-CELERY_TIMEZONE = TIME_ZONE
-CELERY_ENABLE_UTC = True
+ORDER_EXCHANGE_NAME = "order.events.exchange"
+ORDER_DLX_NAME = "order.events.dlx"
+ORDER_QUEUE_NAME = "order.created.v1.queue"
+ORDER_ROUTING_KEY = "order.created.v1"
+ORDER_DLQ_ROUTING_KEY = "order.created.v1.dlq"
 
 LOGGING = {
     'version': 1,

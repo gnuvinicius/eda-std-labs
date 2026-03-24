@@ -1,18 +1,14 @@
 import logging
 from django.utils import timezone
 from django.db import transaction
-from celery import shared_task
 from apps.recommendation.models import Order, OrderItem
 
 logger = logging.getLogger(__name__)
 
-@shared_task(bind=True, autoretry_for=(Exception,), retry_backoff=True, retry_kwargs={"max_retries": 5})
-def ingest_order_task(self, payload: dict) -> None:
-    save_order_message(payload)
-    logger.info("Order processada com sucesso: cartId=%s", payload.get('cartId'))
 
 def save_order_message(payload: dict) -> None:
     now = timezone.now()
+    logger.info("payload: %s", payload)
 
     with transaction.atomic():
         order, created = Order.objects.get_or_create(
@@ -22,6 +18,8 @@ def save_order_message(payload: dict) -> None:
                 "updated_at": now,
             }
         )
+        logger.info("adicionado novo order: %s", order)
+        logger.info("created: %s", created)
 
         if not created:
             order.updated_at = now
