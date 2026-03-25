@@ -1,5 +1,8 @@
 package br.dev.garage474.msdelivery.broker;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.QueueBuilder;
@@ -23,6 +26,14 @@ public class RabbitConfig {
     @Bean
     public TopicExchange orderEventsDeadLetterExchange(@Value("${delivery.rabbit.dlx}") String dlxName) {
         return new TopicExchange(dlxName, true, false);
+    }
+
+    @Bean
+    public MessageConverter rabbitMessageConverter(ObjectMapper objectMapper) {
+        ObjectMapper mapper = objectMapper.copy();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return new Jackson2JsonMessageConverter(mapper);
     }
 
     @Bean
@@ -60,9 +71,5 @@ public class RabbitConfig {
         return BindingBuilder.bind(orderNewDlq).to(orderEventsDeadLetterExchange).with(dlqRoutingKey);
     }
 
-    @Bean
-    public MessageConverter rabbitMessageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }
 }
 

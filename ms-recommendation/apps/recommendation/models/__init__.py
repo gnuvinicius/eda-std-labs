@@ -1,2 +1,2 @@
-from apps.recommendation.models.order import Order
-from apps.recommendation.models.order_item import OrderItem
+from apps.recommendation.models.order import Orders
+from apps.recommendation.models.order_item import OrderItems

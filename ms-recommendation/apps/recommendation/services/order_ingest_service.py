@@ -1,7 +1,7 @@
 import logging
 from django.utils import timezone
 from django.db import transaction
-from apps.recommendation.models import Order, OrderItem
+from apps.recommendation.models import Orders, OrderItems
 
 logger = logging.getLogger(__name__)
 
@@ -11,22 +11,22 @@ def save_order_message(payload: dict) -> None:
     logger.info("payload: %s", payload)
 
     with transaction.atomic():
-        order, created = Order.objects.get_or_create(
-            order_id=payload['cartId'],
+        order, created = Orders.objects.get_or_create(
+            order_id=payload['orderId'],
+            customer_id=payload['customerId'],
             defaults={
-                "created_at": now,
-                "updated_at": now,
+                "checked_out_at": payload['checkedOutAt'],
             }
         )
         logger.info("adicionado novo order: %s", order)
         logger.info("created: %s", created)
 
         if not created:
-            order.updated_at = now
-            order.save(update_fields=['updated_at'])
+            order.checked_out_at = now
+            order.save(update_fields=['checked_out_at'])
 
         for item in payload.get("items", []):
-            OrderItem.objects.update_or_create(
+            OrderItems.objects.update_or_create(
                 order=order,
                 product_id=item["productId"],
                 defaults={

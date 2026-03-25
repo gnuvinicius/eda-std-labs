@@ -1,7 +1,7 @@
 from typing import TypedDict, cast
 
 from django.db.models import Count, Max
-from apps.recommendation.models import OrderItem
+from apps.recommendation.models import OrderItems
 
 
 class RecommendationItem(TypedDict):
@@ -13,14 +13,14 @@ class RecommendationItem(TypedDict):
 
 def recommend_common_products(product_id, limit=10) -> list[RecommendationItem]:
     order_ids = (
-        OrderItem.objects
+        OrderItems.objects
         .filter(product_id=product_id)
         .values_list('order_id', flat=True)
         .distinct()
     )
 
     recommendations = (
-        OrderItem.objects
+        OrderItems.objects
         .filter(order_id__in=order_ids)
         .exclude(product_id=product_id)
         .values("product_id")
