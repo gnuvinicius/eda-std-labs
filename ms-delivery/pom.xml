@@ -77,6 +77,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>ms-delivery</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
