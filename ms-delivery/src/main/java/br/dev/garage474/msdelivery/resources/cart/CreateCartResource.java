@@ -1,10 +1,10 @@
 package br.dev.garage474.msdelivery.resources.cart;
 
-import br.dev.garage474.msdelivery.resources.dtos.CartResponse;
-import br.dev.garage474.msdelivery.resources.dtos.CreateCartRequest;
 import br.dev.garage474.msdelivery.models.Cart;
 import br.dev.garage474.msdelivery.models.CartStatus;
 import br.dev.garage474.msdelivery.repositories.CartRepository;
+import br.dev.garage474.msdelivery.resources.dtos.CartResponse;
+import br.dev.garage474.msdelivery.resources.dtos.CreateCartRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Tag(name = "Cart", description = "Endpoints para gerenciamento do carrinho de compras")
@@ -66,14 +67,19 @@ public class CreateCartResource {
             @RequestBody CreateCartRequest request
     ) {
         try {
-            Cart cart = new Cart();
-            cart.setId(UUID.randomUUID());
-            cart.setCustomerId(request.customerId());
-            cart.setStatus(CartStatus.OPEN);
+            Optional<Cart> byCustomerId = cartRepository.findByCustomerId(request.customerId());
 
-            Cart savedCart = cartRepository.save(cart);
-            log.info("cart created with id={} customerId={}", savedCart.getId(), savedCart.getCustomerId());
-            return ResponseEntity.ok(CartResponse.toResponse(savedCart));
+            if (byCustomerId.isPresent()) {
+                return ResponseEntity.ok(CartResponse.toResponse(byCustomerId.get()));
+            } else {
+                Cart cart = new Cart();
+                cart.setId(UUID.randomUUID());
+                cart.setCustomerId(request.customerId());
+                cart.setStatus(CartStatus.OPEN);
+                Cart savedCart = cartRepository.save(cart);
+                log.info("cart created with id={} customerId={}", savedCart.getId(), savedCart.getCustomerId());
+                return ResponseEntity.ok(CartResponse.toResponse(savedCart));
+            }
         } catch (Exception e) {
             log.error("error creating cart for customerId={}: {}", request.customerId(), e.getMessage(), e);
             return ResponseEntity.badRequest().build();
