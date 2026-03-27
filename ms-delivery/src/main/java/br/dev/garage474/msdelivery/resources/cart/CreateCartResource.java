@@ -67,7 +67,7 @@ public class CreateCartResource {
             @RequestBody CreateCartRequest request
     ) {
         try {
-            Optional<Cart> byCustomerId = cartRepository.findByCustomerId(request.customerId());
+            Optional<Cart> byCustomerId = cartRepository.findByCustomerId(request.customerId(), CartStatus.OPEN);
 
             if (byCustomerId.isPresent()) {
                 return ResponseEntity.ok(CartResponse.toResponse(byCustomerId.get()));

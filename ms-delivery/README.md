@@ -1,1 +1,1 @@
-### ms-delivery v1.0.6-hmo
+### ms-delivery v1.0.7-hmo

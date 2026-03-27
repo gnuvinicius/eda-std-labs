@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>br.dev.garage474</groupId>
 	<artifactId>msdelivery</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 	<name>msdelivery</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
