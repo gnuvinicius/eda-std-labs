@@ -7,7 +7,7 @@ export class HttpClientService {
 
   constructor() {
     this.http = axios.create({
-      baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080',
+      baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://192.168.122.223:8080',
       timeout: 10_000,
       headers: {
         'Content-Type': 'application/json',
