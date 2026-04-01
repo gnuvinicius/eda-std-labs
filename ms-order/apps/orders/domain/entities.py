@@ -1,12 +1,24 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 from uuid import UUID, uuid4
 
 
+def _map_model_to_data(model, entity_cls, *, exclude: set[str] | None = None):
+	exclude = exclude or set()
+	return {
+		field.name: getattr(model, field.name)
+		for field in fields(entity_cls)
+		if field.init and field.name not in exclude and hasattr(model, field.name)
+	}
+
+
+# slots cria instancia em __slots__ que é diferente de __dict__,
+# sendo mais leve e rápido, mas não permite atributos dinâmicos
+# define quais atributos a classe pode ter de forma fixa
 @dataclass(slots=True)
 class Address:
 	id: Optional[int] = None
@@ -43,7 +55,7 @@ class OrderItem:
 
 
 @dataclass(slots=True)
-class Order:
+class OrderEntity:
 	id: UUID = field(default_factory=uuid4)
 	cancellation_reason: Optional[str] = None
 	customer_id: Optional[UUID] = None
@@ -62,4 +74,16 @@ class Order:
 	def add_item(self, item: OrderItem) -> None:
 		item.order_id = self.id
 		self.items.append(item)
+
+	@classmethod
+	def from_model(cls, order):
+		return cls(
+			**_map_model_to_data(
+				order,
+				cls,
+				exclude={"payment", "shipping_address", "items"},
+			),
+			payment=Payment(**_map_model_to_data(order.payment, Payment)) if order.payment else None,
+			shipping_address=Address(**_map_model_to_data(order.shipping_address, Address)) if order.shipping_address else None,
+		)
 
