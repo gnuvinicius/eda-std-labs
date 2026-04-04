@@ -5,6 +5,33 @@ import uuid
 from django.db import models
 
 
+class OrderStatus(models.TextChoices):
+    # Estágios iniciais
+    PENDING = "pending", "Pendente"
+    CONFIRMED = "confirmed", "Confirmado"
+    PROCESSING = "processing", "Em Processamento"
+
+    # Pagamento
+    AWAITING_PAYMENT = "awaiting_payment", "Aguardando Pagamento"
+    PAYMENT_CONFIRMED = "payment_confirmed", "Pagamento Confirmado"
+    PAYMENT_FAILED = "payment_failed", "Pagamento Falhou"
+
+    # Envio
+    PREPARING = "preparing", "Preparando Envio"
+    SHIPPED = "shipped", "Enviado"
+    IN_TRANSIT = "in_transit", "Em Trânsito"
+    OUT_FOR_DELIVERY = "out_for_delivery", "Saiu para Entrega"
+    DELIVERED = "delivered", "Entregue"
+
+    # Problemas
+    DELAYED = "delayed", "Atrasado"
+    RETURNED = "returned", "Devolvido"
+
+    # Cancelamento
+    CANCELLED = "cancelled", "Cancelado"
+    REFUNDED = "refunded", "Reembolsado"
+
+
 class Address(models.Model):
     id = models.BigAutoField(primary_key=True)
     city = models.CharField(max_length=255, null=True, blank=True)
@@ -73,6 +100,20 @@ class Order(models.Model):
     class Meta:
         managed = False
         db_table = "orders"
+
+    @classmethod
+    def create(cls, *, payment=None, shipping_address=None, **kwargs):
+        order = cls(
+            customer_id=kwargs['customer_id'],
+            status=OrderStatus.PENDING.value,
+            shipping_cost=kwargs['shipping_cost'],
+            total_discount=kwargs['total_discount'],
+            shipping_address=shipping_address,
+            payment=payment,
+            created_at=kwargs['created_at'],
+            updated_at=kwargs['updated_at'],
+        )
+        return order
 
     def __str__(self) -> str:
         return f"Order<{self.id}>"

@@ -8,7 +8,7 @@
     {
       "name": "order.events.exchange",
       "vhost": "/",
-      "type": "topic",
+      "type": "fanout",
       "durable": true,
       "auto_delete": false,
       "internal": false,
@@ -17,7 +17,7 @@
     {
       "name": "order.events.dlx",
       "vhost": "/",
-      "type": "topic",
+      "type": "fanout",
       "durable": true,
       "auto_delete": false,
       "internal": false,
