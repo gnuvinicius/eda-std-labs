@@ -6,8 +6,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -52,19 +52,17 @@ public class RabbitConfig {
     @Bean
     public Binding orderNewQueueBinding(
             @Qualifier("orderNewQueue") Queue orderNewQueue,
-            @Qualifier("orderEventsExchange") TopicExchange orderEventsExchange,
-            @Value("${delivery.rabbit.routing-key}") String routingKey
+            @Qualifier("orderEventsExchange") FanoutExchange orderEventsExchange
     ) {
-        return BindingBuilder.bind(orderNewQueue).to(orderEventsExchange).with(routingKey);
+        return BindingBuilder.bind(orderNewQueue).to(orderEventsExchange);
     }
 
     @Bean
     public Binding orderNewDlqBinding(
             @Qualifier("orderNewDlq") Queue orderNewDlq,
-            @Qualifier("orderEventsDeadLetterExchange") TopicExchange orderEventsDeadLetterExchange,
-            @Value("${delivery.rabbit.dlq-routing-key}") String dlqRoutingKey
+            @Qualifier("orderEventsDeadLetterExchange") FanoutExchange orderEventsDeadLetterExchange
     ) {
-        return BindingBuilder.bind(orderNewDlq).to(orderEventsDeadLetterExchange).with(dlqRoutingKey);
+        return BindingBuilder.bind(orderNewDlq).to(orderEventsDeadLetterExchange);
     }
 
 }
