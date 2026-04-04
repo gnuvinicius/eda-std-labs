@@ -3,11 +3,7 @@ package br.dev.garage474.msdelivery.broker;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.QueueBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,13 +15,13 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitConfig {
 
     @Bean
-    public TopicExchange orderEventsExchange(@Value("${delivery.rabbit.exchange}") String exchangeName) {
-        return new TopicExchange(exchangeName, true, false);
+    public FanoutExchange orderEventsExchange(@Value("${delivery.rabbit.exchange}") String exchangeName) {
+        return new FanoutExchange(exchangeName, true, false);
     }
 
     @Bean
-    public TopicExchange orderEventsDeadLetterExchange(@Value("${delivery.rabbit.dlx}") String dlxName) {
-        return new TopicExchange(dlxName, true, false);
+    public FanoutExchange orderEventsDeadLetterExchange(@Value("${delivery.rabbit.dlx}") String dlxName) {
+        return new FanoutExchange(dlxName, true, false);
     }
 
     @Bean
