@@ -1,4 +1,20 @@
 {
+  "users": [
+    {
+      "name": "garage_user",
+      "password": "garage_password",
+      "tags": ["administrator"]
+    }
+  ],
+  "permissions": [
+    {
+      "user": "garage_user",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
   "vhosts": [
     {
       "name": "/"
