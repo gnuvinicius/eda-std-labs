@@ -37,19 +37,15 @@ def start_consumer() -> None:
     """
 
     exchange = Exchange(settings.ORDER_EXCHANGE_NAME,
-                        type="topic",
+                        type="fanout",
                         durable=True
                         )
 
     queue = Queue(
         settings.ORDER_QUEUE_NAME,
         exchange=exchange,
-        routing_key=settings.ORDER_ROUTING_KEY,
         durable=True,
-        queue_arguments={
-            "x-dead-letter-exchange": settings.ORDER_DLX_NAME,
-            "x-dead-letter-routing-key": settings.ORDER_DLQ_ROUTING_KEY,
-        }
+        queue_arguments={}
     )
 
     def processar_mensagem(body, message):
