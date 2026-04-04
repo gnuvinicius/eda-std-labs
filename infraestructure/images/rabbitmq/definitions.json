@@ -3,7 +3,9 @@
     {
       "name": "garage_user",
       "password": "garage_password",
-      "tags": ["administrator"]
+      "tags": [
+        "administrator"
+      ]
     }
   ],
   "permissions": [
@@ -42,6 +44,16 @@
   ],
   "queues": [
     {
+      "name": "order.created.v1.recommendation.queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "order.events.dlx",
+        "x-dead-letter-routing-key": "order.created.v1.dlq"
+      }
+    },
+    {
       "name": "order.created.v1.queue",
       "vhost": "/",
       "durable": true,
@@ -60,6 +72,14 @@
     }
   ],
   "bindings": [
+    {
+      "source": "order.events.exchange",
+      "vhost": "/",
+      "destination": "order.created.v1.recommendation.queue",
+      "destination_type": "queue",
+      "routing_key": "order.created.v1",
+      "arguments": {}
+    },
     {
       "source": "order.events.exchange",
       "vhost": "/",
