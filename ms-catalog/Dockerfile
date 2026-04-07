@@ -7,7 +7,7 @@ USER appuser
 COPY target/mscatalog-0.0.1-SNAPSHOT.jar /app/mscatalog.jar
 
 ENV SPRING_PROFILES_ACTIVE=prod \
-    SPRING_DATASOURCE_URL=jdbc:postgresql://192.168.122.79:5432/mscatalog_db \
+    SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/mscatalog_db \
     SPRING_DATASOURCE_USERNAME=postgres \
     SPRING_DATASOURCE_PASSWORD=2AkByM4NfHFkeJz \
     SPRING_RABBITMQ_HOST=rabbitmq \
