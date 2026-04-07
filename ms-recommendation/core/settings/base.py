@@ -91,7 +91,7 @@ DATABASES = {
         'NAME': os.getenv('DB_NAME', 'msrecommendation_db'),
         'USER': os.getenv('DB_USER', 'postgres'),
         'PASSWORD': os.getenv('DB_PASSWORD', '2AkByM4NfHFkeJz'),
-        'HOST': os.getenv('DB_HOST', '192.168.122.79'),
+        'HOST': os.getenv('DB_HOST', 'postgres'),
         'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
@@ -127,7 +127,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173"
 ]
 
-RABBITMQ_URL = 'amqp://garage_user:garage_password@192.168.122.223:5672/%2F'
+RABBITMQ_URL = 'amqp://garage_user:garage_password@rabbitmq:5672/%2F'
 
 ORDER_EXCHANGE_NAME = "order.events.exchange"
 ORDER_DLX_NAME = "order.events.dlx"
