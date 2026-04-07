@@ -8,7 +8,7 @@ COPY target/ms-delivery.jar /app/msdelivery.jar
 
 ENV SPRING_PROFILES_ACTIVE=prod \
     SPRING_PROFILES_ACTIVE=prod \
-    SPRING_DATASOURCE_URL=jdbc:postgresql://192.168.122.79:5432/msdelivery_db \
+    SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/msdelivery_db \
     SPRING_DATASOURCE_USERNAME=postgres \
     SPRING_DATASOURCE_PASSWORD=2AkByM4NfHFkeJz \
     RABBITMQ_HOST=rabbitmq \
