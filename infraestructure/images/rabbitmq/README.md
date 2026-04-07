@@ -1,4 +1,4 @@
-# RabbitMQ Image (Order Events) v1.0.2
+# RabbitMQ Image (Order Events) v1.0.3
 
 This image boots RabbitMQ with a preconfigured topology for new order events.
 
