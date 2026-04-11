@@ -1,4 +1,4 @@
-## ms-catalog v1.0.4-hmo
+## ms-catalog v1.0.5-hmo
 
 ### Product (Produto Pai / Modelo)
 

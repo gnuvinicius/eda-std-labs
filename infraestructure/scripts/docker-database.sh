@@ -1,10 +1,10 @@
 #!/bin/bash
 
-docker network create msdelivery-network
+docker network create garage-shared-net
 
 docker run -d --name postgres \
   -p 5432:5432 \
-  --network msdelivery-network \
+  --network garage-shared-net \
   --restart always \
   -e POSTGRES_PASSWORD=2AkByM4NfHFkeJz \
   -e POSTGRES_USER=postgres \
@@ -30,3 +30,4 @@ docker exec postgres bash -c "psql -U postgres -c 'CREATE DATABASE msregister_db
 docker exec postgres bash -c "psql -U postgres -c 'CREATE DATABASE msorder_db;'"
 docker exec postgres bash -c "psql -U postgres -c 'CREATE DATABASE mscatalog_db;'"
 docker exec postgres bash -c "psql -U postgres -c 'CREATE DATABASE msdelivery_db;'"
+docker exec postgres bash -c "psql -U postgres -c 'CREATE DATABASE msrecommendation_db;'"
