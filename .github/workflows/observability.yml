@@ -23,8 +23,8 @@ env:
   GRAFANA_IMAGE: grafana/grafana:11.6.0
 
 jobs:
-  build-and-run:
-    runs-on: [self-hosted, k8s-dsv]
+  prepare:
+    runs-on: k8s-dsv
 
     steps:
       - name: Checkout
@@ -67,6 +67,14 @@ jobs:
             docker rm "$c" 2>/dev/null || true
           done
 
+  run-prometheus:
+    runs-on: k8s-dsv
+    needs: prepare
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Run Prometheus container
         run: |
           set -euo pipefail
@@ -85,6 +93,14 @@ jobs:
             --storage.tsdb.path=/prometheus \
             --web.enable-lifecycle
 
+  run-tempo:
+    runs-on: k8s-dsv
+    needs: prepare
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Run Tempo container
         run: |
           set -euo pipefail
@@ -100,6 +116,14 @@ jobs:
             --restart unless-stopped \
             "$TEMPO_IMAGE" \
             -config.file=/etc/tempo.yml
+
+  run-otel-collector:
+    runs-on: k8s-dsv
+    needs: prepare
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Run OTel Collector container
         run: |
@@ -118,6 +142,14 @@ jobs:
             "$OTEL_IMAGE" \
             --config=/etc/otel-collector.yml
 
+  run-loki:
+    runs-on: k8s-dsv
+    needs: prepare
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Run Loki container
         run: |
           set -euo pipefail
@@ -133,6 +165,17 @@ jobs:
             --restart unless-stopped \
             "$LOKI_IMAGE" \
             -config.file=/etc/loki.yml
+
+  run-grafana:
+    runs-on: k8s-dsv
+    needs:
+      - run-prometheus
+      - run-tempo
+      - run-loki
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Run Grafana container
         run: |
@@ -152,6 +195,16 @@ jobs:
             --restart unless-stopped \
             "$GRAFANA_IMAGE"
 
+  validate:
+    runs-on: k8s-dsv
+    needs:
+      - run-prometheus
+      - run-tempo
+      - run-otel-collector
+      - run-loki
+      - run-grafana
+
+    steps:
       - name: Wait for core endpoints
         run: |
           set -euo pipefail
