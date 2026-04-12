@@ -10,12 +10,10 @@ on:
 env:
   SHARED_NETWORK: garage-shared-net
   RABBITMQ_HOST: rabbitmq
-  # LOCAL_REGISTRY: 127.0.0.1:5000
 
 jobs:
-  # JOB 1: Build do Maven
   maven-build:
-    runs-on: k8s-dsv
+    runs-on: k8s-srv
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 21
@@ -32,12 +30,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: msdelivery-jar
-          path: ms-delivery/target/msdelivery-0.0.1-SNAPSHOT.jar
+          path: ms-delivery/target/ms-delivery.jar
 
   # JOB 2: Build e Publish no Registry Local
   docker-build-and-publish-local:
     needs: maven-build
-    runs-on: k8s-dsv
+    runs-on: k8s-srv
     steps:
       - uses: actions/checkout@v4
 
@@ -63,7 +61,7 @@ jobs:
   # JOB 3: Deploy and Restart
   deploy:
     needs: docker-build-and-publish-local
-    runs-on: k8s-dsv
+    runs-on: k8s-srv
     concurrency:
       group: ms-delivery-hmo-deploy
       cancel-in-progress: false
@@ -99,12 +97,12 @@ jobs:
             --name "$CONTAINER_NAME" \
             --network "$SHARED_NETWORK" \
             --restart unless-stopped \
-            -e DB_HOST=192.168.122.79 \
+            -e DB_HOST=postgres \
             -e DB_PORT=5432 \
             -e DB_NAME=msdelivery_db \
             -e DB_USER=postgres \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            -e RABBITMQ_HOST=${{ env.RABBITMQ_HOST }} \
+            -e RABBITMQ_HOST=rabbitmq \
             -e RABBITMQ_PORT=5672 \
             -e RABBITMQ_USERNAME=garage_user \
             -e RABBITMQ_PASSWORD=garage_password \

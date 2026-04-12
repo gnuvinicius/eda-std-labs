@@ -10,7 +10,7 @@ from tabulate import tabulate
 
 def get_conn():
     return psycopg2.connect(
-        host=os.getenv("PGHOST", "192.168.122.79"),
+        host=os.getenv("PGHOST", "192.168.122.46"),
         port=int(os.getenv("PGPORT", 5432)),
         user=os.getenv("PGUSER", "postgres"),
         password=os.getenv("PGPASSWORD", "2AkByM4NfHFkeJz"),

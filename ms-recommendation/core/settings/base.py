@@ -25,32 +25,45 @@ SECRET_KEY = 'django-insecure-jd@(i3gmwc4*g9cc9ni7(+d7gd&&i%f5uk$_=3npx8apy36vtj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+MIGRATION_MODULES = {
+    'core': None,
+}
+
 ALLOWED_HOSTS = ['*']
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'drf_spectacular',
     'apps.recommendation',
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [],
+    'DEFAULT_PERMISSION_CLASSES': [],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'UNAUTHENTICATED_USER': None,
+    'UNAUTHENTICATED_TOKEN': None,
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Recommendation API',
+    'DESCRIPTION': 'API for product recommendations based on user behavior and preferences.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
 
 ROOT_URLCONF = 'core.urls'
 
@@ -62,8 +75,6 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
             ],
         },
     },
@@ -80,7 +91,7 @@ DATABASES = {
         'NAME': os.getenv('DB_NAME', 'msrecommendation_db'),
         'USER': os.getenv('DB_USER', 'postgres'),
         'PASSWORD': os.getenv('DB_PASSWORD', '2AkByM4NfHFkeJz'),
-        'HOST': os.getenv('DB_HOST', '192.168.122.79'),
+        'HOST': os.getenv('DB_HOST', 'postgres'),
         'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
@@ -88,20 +99,7 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+AUTH_PASSWORD_VALIDATORS = []
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
@@ -129,11 +127,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173"
 ]
 
-RABBITMQ_URL = 'amqp://garage_user:garage_password@192.168.122.223:5672/%2F'
+RABBITMQ_URL = 'amqp://garage_user:garage_password@rabbitmq:5672/%2F'
 
 ORDER_EXCHANGE_NAME = "order.events.exchange"
 ORDER_DLX_NAME = "order.events.dlx"
-ORDER_QUEUE_NAME = "order.created.v1.queue"
+ORDER_QUEUE_NAME = "order.created.v1.recommendation.queue"
 ORDER_ROUTING_KEY = "order.created.v1"
 ORDER_DLQ_ROUTING_KEY = "order.created.v1.dlq"
 

@@ -15,7 +15,7 @@ env:
 jobs:
     # JOB 1: Build da Imagem Docker
     docker-build:
-        runs-on: k8s-dsv
+        runs-on: k8s-srv
         steps:
             - uses: actions/checkout@v4
 
@@ -29,7 +29,7 @@ jobs:
     # JOB 2: Deploy and Restart
     deploy:
         needs: docker-build
-        runs-on: k8s-dsv
+        runs-on: k8s-srv
         concurrency:
             group: ms-recommendation-hmo-deploy
             cancel-in-progress: false
@@ -66,12 +66,12 @@ jobs:
                     --network "$SHARED_NETWORK" \
                     --network-alias "$CONTAINER_NAME" \
                     --restart unless-stopped \
-                    -e DB_HOST=192.168.122.79 \
+                    -e DB_HOST=postgres \
                     -e DB_PORT=5432 \
                     -e DB_NAME=msrecommendation_db \
                     -e DB_USER=postgres \
                     -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-                    -e RABBITMQ_HOST=${{ env.RABBITMQ_HOST }} \
+                    -e RABBITMQ_HOST=rabbitmq \
                     -e RABBITMQ_PORT=5672 \
                     -e RABBITMQ_USERNAME=garage_user \
                     -e RABBITMQ_PASSWORD=garage_password \

@@ -1,4 +1,4 @@
-## ms-recommendation v1.0.1-hmo
+## ms-recommendation v1.0.3-hmo
 
 ## Cria o ambiente virtual
 

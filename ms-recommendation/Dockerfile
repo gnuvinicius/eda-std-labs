@@ -8,15 +8,19 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends gcc libpq-dev \
+    && apt-get install -y --no-install-recommends gcc libpq-dev tini \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements/development.txt /tmp/requirements.txt
 
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt \
+    && pip install --no-cache-dir gunicorn
 
 COPY . .
 
+RUN chmod +x /app/scripts/entrypoint.sh
+
 EXPOSE 8000
 
-CMD ["sh", "-c", "python manage.py runserver 0.0.0.0:${PORT:-8000}"]
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD ["/app/scripts/entrypoint.sh"]

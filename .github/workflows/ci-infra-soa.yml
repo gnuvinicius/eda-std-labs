@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-image:
-    runs-on: k8s-dsv
+    runs-on: k8s-srv
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -19,7 +19,7 @@ jobs:
   # JOB 3: Push para o ECR
   docker-push:
     needs: build-image
-    runs-on: k8s-dsv
+    runs-on: k8s-srv
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4

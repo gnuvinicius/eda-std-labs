@@ -12,7 +12,7 @@ env:
 
 jobs:
     build-and-run:
-        runs-on: k8s-dsv
+        runs-on: k8s-srv
         steps:
             - name: Checkout Repository
               uses: actions/checkout@v4

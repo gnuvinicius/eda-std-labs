@@ -11,9 +11,8 @@ def start_consumer() -> None:
        Inicia o consumidor de eventos de pedidos no RabbitMQ.
 
        Fluxo de execução:
-       1) Define a exchange de eventos (`ORDER_EXCHANGE_NAME`) como `topic` e durável.
+       1) Define a exchange de eventos (`ORDER_EXCHANGE_NAME`) como `fanout` e durável.
        2) Define a fila (`ORDER_QUEUE_NAME`) com:
-          - routing key de consumo (`ORDER_ROUTING_KEY`)
           - dead-letter exchange (`ORDER_DLX_NAME`)
           - dead-letter routing key (`ORDER_DLQ_ROUTING_KEY`)
        3) Registra o callback `processar_mensagem(body, message)` para tratar cada evento recebido.
@@ -37,14 +36,13 @@ def start_consumer() -> None:
     """
 
     exchange = Exchange(settings.ORDER_EXCHANGE_NAME,
-                        type="topic",
+                        type="fanout",
                         durable=True
                         )
 
     queue = Queue(
         settings.ORDER_QUEUE_NAME,
         exchange=exchange,
-        routing_key=settings.ORDER_ROUTING_KEY,
         durable=True,
         queue_arguments={
             "x-dead-letter-exchange": settings.ORDER_DLX_NAME,
