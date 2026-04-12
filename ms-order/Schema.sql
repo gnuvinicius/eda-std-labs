@@ -1,3 +1,19 @@
+CREATE TABLE public.addresses
+(
+    id           bigserial NOT NULL,
+    city         varchar(255) NULL,
+    complement   varchar(255) NULL,
+    country      varchar(255) NULL,
+    neighborhood varchar(255) NULL,
+    "number"     varchar(255) NULL,
+    state        varchar(255) NULL,
+    street       varchar(255) NULL,
+    zipcode      varchar(255) NULL,
+    CONSTRAINT addresses_pkey PRIMARY KEY (id)
+);
+
+-------------------
+
 CREATE TABLE public.orders
 (
     id                  uuid NOT NULL,
@@ -14,6 +30,20 @@ CREATE TABLE public.orders
     payment_id          int8 NULL,
     shipping_address_id int8 NULL,
     CONSTRAINT orders_pkey PRIMARY KEY (id)
+);
+
+-------------------
+
+CREATE TABLE public.payments
+(
+    id             bigserial      NOT NULL,
+    payment_date   timestamp(6) NULL,
+    payment_method varchar(255)   NOT NULL,
+    payment_notes  varchar(255) NULL,
+    payment_status varchar(255) NULL,
+    total_amount   numeric(38, 2) NOT NULL,
+    transaction_id varchar(255) NULL,
+    CONSTRAINT payments_pkey PRIMARY KEY (id)
 );
 
 ------------------
@@ -41,37 +71,11 @@ CREATE TABLE public.order_items
     CONSTRAINT order_items_pkey PRIMARY KEY (id)
 );
 
+-------------------
+
 ALTER TABLE public.order_items
     ADD CONSTRAINT order_items_order_id_fkey
         FOREIGN KEY (order_id)
             REFERENCES public.orders (id) ON DELETE CASCADE;
 
 -------------------
-
-CREATE TABLE public.addresses
-(
-    id           bigserial NOT NULL,
-    city         varchar(255) NULL,
-    complement   varchar(255) NULL,
-    country      varchar(255) NULL,
-    neighborhood varchar(255) NULL,
-    "number"     varchar(255) NULL,
-    state        varchar(255) NULL,
-    street       varchar(255) NULL,
-    zipcode      varchar(255) NULL,
-    CONSTRAINT addresses_pkey PRIMARY KEY (id)
-);
-
---------------------
-
-CREATE TABLE public.payments
-(
-    id             bigserial      NOT NULL,
-    payment_date   timestamp(6) NULL,
-    payment_method varchar(255)   NOT NULL,
-    payment_notes  varchar(255) NULL,
-    payment_status varchar(255) NULL,
-    total_amount   numeric(38, 2) NOT NULL,
-    transaction_id varchar(255) NULL,
-    CONSTRAINT payments_pkey PRIMARY KEY (id)
-);

@@ -1,1 +1,1 @@
-portainer v1.0.0
+portainer v1.0.1
