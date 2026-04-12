@@ -1,15 +1,29 @@
 name: Deploy Observability Stack
 
 on:
-  workflow_dispatch:
   push:
-    branches: ["main"]
     paths:
-      - "observability/**"
+      - "infraestructure/observability/**"
       - ".github/workflows/observability.yml"
 
+env:
+  SHARED_NETWORK: garage-shared-net
+  OBS_BASE_DIR: infraestructure/observability
+
+  PROMETHEUS_CONTAINER_NAME: obs-prometheus
+  TEMPO_CONTAINER_NAME: obs-tempo
+  OTEL_CONTAINER_NAME: obs-otel-collector
+  LOKI_CONTAINER_NAME: obs-loki
+  GRAFANA_CONTAINER_NAME: obs-grafana
+
+  PROMETHEUS_IMAGE: prom/prometheus:v3.0.1
+  TEMPO_IMAGE: grafana/tempo:2.7.2
+  OTEL_IMAGE: otel/opentelemetry-collector-contrib:0.122.1
+  LOKI_IMAGE: grafana/loki:3.4.2
+  GRAFANA_IMAGE: grafana/grafana:11.6.0
+
 jobs:
-  deploy:
+  build-and-run:
     runs-on: [self-hosted, k8s-dsv]
 
     steps:
@@ -18,18 +32,145 @@ jobs:
 
       - name: Verify Docker
         run: |
+          set -euo pipefail
           docker version
-          docker compose version
 
-      - name: Pull images
-        working-directory: observability
+      - name: Ensure shared network and volumes
         run: |
-          docker compose -f docker-compose.observability.yml pull
+          set -euo pipefail
+          docker network inspect "$SHARED_NETWORK" >/dev/null 2>&1 || docker network create "$SHARED_NETWORK"
 
-      - name: Up (detach)
-        working-directory: observability
+          docker volume create obs_prometheus_data >/dev/null
+          docker volume create obs_tempo_data >/dev/null
+          docker volume create obs_loki_data >/dev/null
+          docker volume create obs_grafana_data >/dev/null
+
+      - name: Pull observability images
         run: |
-          docker compose -f docker-compose.observability.yml up -d
+          set -euo pipefail
+          docker pull "$PROMETHEUS_IMAGE"
+          docker pull "$TEMPO_IMAGE"
+          docker pull "$OTEL_IMAGE"
+          docker pull "$LOKI_IMAGE"
+          docker pull "$GRAFANA_IMAGE"
+
+      - name: Remove previous observability containers
+        run: |
+          set -euo pipefail
+          for c in \
+            "$PROMETHEUS_CONTAINER_NAME" \
+            "$TEMPO_CONTAINER_NAME" \
+            "$OTEL_CONTAINER_NAME" \
+            "$LOKI_CONTAINER_NAME" \
+            "$GRAFANA_CONTAINER_NAME"; do
+            docker stop "$c" 2>/dev/null || true
+            docker rm "$c" 2>/dev/null || true
+          done
+
+      - name: Run Prometheus container
+        run: |
+          set -euo pipefail
+          BASE_DIR="$GITHUB_WORKSPACE/$OBS_BASE_DIR"
+
+          docker run -d \
+            --name "$PROMETHEUS_CONTAINER_NAME" \
+            --network "$SHARED_NETWORK" \
+            --network-alias "$PROMETHEUS_CONTAINER_NAME" \
+            -v "$BASE_DIR/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro" \
+            -v obs_prometheus_data:/prometheus \
+            -p 9090:9090 \
+            --restart unless-stopped \
+            "$PROMETHEUS_IMAGE" \
+            --config.file=/etc/prometheus/prometheus.yml \
+            --storage.tsdb.path=/prometheus \
+            --web.enable-lifecycle
+
+      - name: Run Tempo container
+        run: |
+          set -euo pipefail
+          BASE_DIR="$GITHUB_WORKSPACE/$OBS_BASE_DIR"
+
+          docker run -d \
+            --name "$TEMPO_CONTAINER_NAME" \
+            --network "$SHARED_NETWORK" \
+            --network-alias "$TEMPO_CONTAINER_NAME" \
+            -v "$BASE_DIR/tempo/tempo.yml:/etc/tempo.yml:ro" \
+            -v obs_tempo_data:/var/tempo \
+            -p 3200:3200 \
+            --restart unless-stopped \
+            "$TEMPO_IMAGE" \
+            -config.file=/etc/tempo.yml
+
+      - name: Run OTel Collector container
+        run: |
+          set -euo pipefail
+          BASE_DIR="$GITHUB_WORKSPACE/$OBS_BASE_DIR"
+
+          docker run -d \
+            --name "$OTEL_CONTAINER_NAME" \
+            --network "$SHARED_NETWORK" \
+            --network-alias "$OTEL_CONTAINER_NAME" \
+            -v "$BASE_DIR/otel/otel-collector.yml:/etc/otel-collector.yml:ro" \
+            -p 4317:4317 \
+            -p 4318:4318 \
+            -p 8889:8889 \
+            --restart unless-stopped \
+            "$OTEL_IMAGE" \
+            --config=/etc/otel-collector.yml
+
+      - name: Run Loki container
+        run: |
+          set -euo pipefail
+          BASE_DIR="$GITHUB_WORKSPACE/$OBS_BASE_DIR"
+
+          docker run -d \
+            --name "$LOKI_CONTAINER_NAME" \
+            --network "$SHARED_NETWORK" \
+            --network-alias "$LOKI_CONTAINER_NAME" \
+            -v "$BASE_DIR/loki/loki.yml:/etc/loki.yml:ro" \
+            -v obs_loki_data:/loki \
+            -p 3100:3100 \
+            --restart unless-stopped \
+            "$LOKI_IMAGE" \
+            -config.file=/etc/loki.yml
+
+      - name: Run Grafana container
+        run: |
+          set -euo pipefail
+          BASE_DIR="$GITHUB_WORKSPACE/$OBS_BASE_DIR"
+
+          docker run -d \
+            --name "$GRAFANA_CONTAINER_NAME" \
+            --network "$SHARED_NETWORK" \
+            --network-alias "$GRAFANA_CONTAINER_NAME" \
+            -e GF_SECURITY_ADMIN_USER=admin \
+            -e GF_SECURITY_ADMIN_PASSWORD=admin \
+            -e GF_USERS_ALLOW_SIGN_UP=false \
+            -v obs_grafana_data:/var/lib/grafana \
+            -v "$BASE_DIR/grafana/provisioning:/etc/grafana/provisioning:ro" \
+            -p 3000:3000 \
+            --restart unless-stopped \
+            "$GRAFANA_IMAGE"
+
+      - name: Wait for core endpoints
+        run: |
+          set -euo pipefail
+
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:9090/-/ready >/dev/null 2>&1 && \
+               curl -fsS http://localhost:3100/ready >/dev/null 2>&1 && \
+               curl -fsS http://localhost:3000/api/health >/dev/null 2>&1; then
+              echo "Prometheus, Loki and Grafana are ready"
+              exit 0
+            fi
+            sleep 2
+          done
+
+          echo "Observability stack did not become ready in time"
+          docker logs "$PROMETHEUS_CONTAINER_NAME" || true
+          docker logs "$LOKI_CONTAINER_NAME" || true
+          docker logs "$GRAFANA_CONTAINER_NAME" || true
+          exit 1
 
       - name: Show running containers
         run: |
