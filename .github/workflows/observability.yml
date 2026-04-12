@@ -24,7 +24,7 @@ env:
 
 jobs:
   prepare:
-    runs-on: k8s-dsv
+    runs-on: k8s-srv
 
     steps:
       - name: Checkout
@@ -68,7 +68,7 @@ jobs:
           done
 
   run-prometheus:
-    runs-on: k8s-dsv
+    runs-on: k8s-srv
     needs: prepare
 
     steps:
@@ -94,7 +94,7 @@ jobs:
             --web.enable-lifecycle
 
   run-tempo:
-    runs-on: k8s-dsv
+    runs-on: k8s-srv
     needs: prepare
 
     steps:
@@ -118,7 +118,7 @@ jobs:
             -config.file=/etc/tempo.yml
 
   run-otel-collector:
-    runs-on: k8s-dsv
+    runs-on: k8s-srv
     needs: prepare
 
     steps:
@@ -143,7 +143,7 @@ jobs:
             --config=/etc/otel-collector.yml
 
   run-loki:
-    runs-on: k8s-dsv
+    runs-on: k8s-srv
     needs: prepare
 
     steps:
@@ -167,7 +167,7 @@ jobs:
             -config.file=/etc/loki.yml
 
   run-grafana:
-    runs-on: k8s-dsv
+    runs-on: k8s-srv
     needs:
       - run-prometheus
       - run-tempo
@@ -196,7 +196,7 @@ jobs:
             "$GRAFANA_IMAGE"
 
   validate:
-    runs-on: k8s-dsv
+    runs-on: k8s-srv
     needs:
       - run-prometheus
       - run-tempo
