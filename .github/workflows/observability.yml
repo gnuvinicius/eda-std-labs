@@ -15,12 +15,16 @@ env:
   OTEL_CONTAINER_NAME: obs-otel-collector
   LOKI_CONTAINER_NAME: obs-loki
   GRAFANA_CONTAINER_NAME: obs-grafana
+  CADVISOR_CONTAINER_NAME: obs-cadvisor
+  POSTGRES_EXPORTER_CONTAINER_NAME: obs-postgres-exporter
 
   PROMETHEUS_IMAGE: prom/prometheus:v3.0.1
   TEMPO_IMAGE: grafana/tempo:2.7.2
   OTEL_IMAGE: otel/opentelemetry-collector-contrib:0.122.1
   LOKI_IMAGE: grafana/loki:3.4.2
   GRAFANA_IMAGE: grafana/grafana:11.6.0
+  CADVISOR_IMAGE: gcr.io/cadvisor/cadvisor:v0.49.1
+  POSTGRES_EXPORTER_IMAGE: quay.io/prometheuscommunity/postgres-exporter:v0.17.1
 
 jobs:
   prepare:
@@ -53,6 +57,8 @@ jobs:
           docker pull "$OTEL_IMAGE"
           docker pull "$LOKI_IMAGE"
           docker pull "$GRAFANA_IMAGE"
+          docker pull "$CADVISOR_IMAGE"
+          docker pull "$POSTGRES_EXPORTER_IMAGE"
 
       - name: Remove previous observability containers
         run: |
@@ -62,7 +68,9 @@ jobs:
             "$TEMPO_CONTAINER_NAME" \
             "$OTEL_CONTAINER_NAME" \
             "$LOKI_CONTAINER_NAME" \
-            "$GRAFANA_CONTAINER_NAME"; do
+            "$GRAFANA_CONTAINER_NAME" \
+            "$CADVISOR_CONTAINER_NAME" \
+            "$POSTGRES_EXPORTER_CONTAINER_NAME"; do
             docker stop "$c" 2>/dev/null || true
             docker rm "$c" 2>/dev/null || true
           done
@@ -166,12 +174,58 @@ jobs:
             "$LOKI_IMAGE" \
             -config.file=/etc/loki.yml
 
+  run-cadvisor:
+    runs-on: k8s-srv
+    needs: prepare
+
+    steps:
+      - name: Run cAdvisor container
+        run: |
+          set -euo pipefail
+
+          docker run -d \
+            --name "$CADVISOR_CONTAINER_NAME" \
+            --network "$SHARED_NETWORK" \
+            --network-alias "$CADVISOR_CONTAINER_NAME" \
+            -v /:/rootfs:ro \
+            -v /var/run:/var/run:ro \
+            -v /sys:/sys:ro \
+            -v /var/lib/docker:/var/lib/docker:ro \
+            -v /dev/disk:/dev/disk:ro \
+            --privileged \
+            --device /dev/kmsg \
+            --restart unless-stopped \
+            "$CADVISOR_IMAGE"
+
+  run-postgres-exporter:
+    runs-on: k8s-srv
+    needs: prepare
+
+    steps:
+      - name: Run postgres-exporter container
+        run: |
+          set -euo pipefail
+
+          if docker inspect postgres >/dev/null 2>&1; then
+            docker network connect "$SHARED_NETWORK" postgres 2>/dev/null || true
+          fi
+
+          docker run -d \
+            --name "$POSTGRES_EXPORTER_CONTAINER_NAME" \
+            --network "$SHARED_NETWORK" \
+            --network-alias "$POSTGRES_EXPORTER_CONTAINER_NAME" \
+            -e DATA_SOURCE_NAME="postgresql://postgres:${{ secrets.DB_PASSWORD }}@postgres:5432/postgres?sslmode=disable" \
+            --restart unless-stopped \
+            "$POSTGRES_EXPORTER_IMAGE"
+
   run-grafana:
     runs-on: k8s-srv
     needs:
       - run-prometheus
       - run-tempo
       - run-loki
+      - run-cadvisor
+      - run-postgres-exporter
 
     steps:
       - name: Checkout
@@ -203,6 +257,8 @@ jobs:
       - run-otel-collector
       - run-loki
       - run-grafana
+      - run-cadvisor
+      - run-postgres-exporter
 
     steps:
       - name: Wait for core endpoints

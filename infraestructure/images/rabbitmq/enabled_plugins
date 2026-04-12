@@ -1,2 +1,2 @@
-[rabbitmq_management].
+[rabbitmq_management,rabbitmq_prometheus].
 

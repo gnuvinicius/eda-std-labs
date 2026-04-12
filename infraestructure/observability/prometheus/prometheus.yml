@@ -8,37 +8,29 @@ scrape_configs:
     static_configs:
       - targets: ["obs-prometheus:9090"]
 
+  # Container metrics via cAdvisor.
+  - job_name: cadvisor
+    static_configs:
+      - targets: ["obs-cadvisor:8080"]
+
   # Métricas do OTel Collector (exportadas em 8889)
   - job_name: otel-collector
     static_configs:
       - targets: ["obs-otel-collector:8889"]
 
-  # Spring Boot (containers definidos nos workflows)
-  - job_name: ms-catalog-container
-    metrics_path: /actuator/prometheus
-    static_configs:
-      - targets: ["ms-catalog-container:8080"]
-
-  - job_name: ms-delivery-container
-    metrics_path: /actuator/prometheus
-    static_configs:
-      - targets: ["ms-delivery-container:8080"]
-
-  # Django service
-  - job_name: ms-recommendation-container
-    metrics_path: /metrics
-    static_configs:
-      - targets: ["ms-recommendation-container:8000"]
-
-  # RabbitMQ exposto nos workflows em 15672 (management).
-  # Se /metrics nao estiver habilitado nessa imagem, habilite o plugin rabbitmq_prometheus.
+  # RabbitMQ broker metrics via rabbitmq_prometheus plugin.
   - job_name: rabbitmq
     metrics_path: /metrics
     static_configs:
-      - targets: ["rabbitmq:15672"]
+      - targets: ["rabbitmq:15692"]
 
-  # PostgreSQL nao expõe metrics Prometheus nativamente na porta 5432.
-  # Configure um exporter (ex.: postgres-exporter) e mantenha o alvo abaixo.
+  # PostgreSQL metrics via postgres-exporter.
   - job_name: postgres
     static_configs:
-      - targets: ["postgres:9187"]
+      - targets: ["obs-postgres-exporter:9187"]
+
+  # Optional application metrics.
+  # These services are not instrumented in the current repository, so container-level
+  # monitoring is provided by cAdvisor above. Re-enable these jobs after adding:
+  # - Spring Boot Actuator + Micrometer Prometheus to ms-catalog and ms-delivery.
+  # - django-prometheus or OTEL metrics export to ms-recommendation.
