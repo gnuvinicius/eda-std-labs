@@ -1,0 +1,36 @@
+name: Deploy Observability Stack
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths:
+      - "observability/**"
+      - ".github/workflows/observability.yml"
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, k8s-dsv]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify Docker
+        run: |
+          docker version
+          docker compose version
+
+      - name: Pull images
+        working-directory: observability
+        run: |
+          docker compose -f docker-compose.observability.yml pull
+
+      - name: Up (detach)
+        working-directory: observability
+        run: |
+          docker compose -f docker-compose.observability.yml up -d
+
+      - name: Show running containers
+        run: |
+          docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"
