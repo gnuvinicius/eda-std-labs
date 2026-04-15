@@ -75,3 +75,8 @@ Este repositório existe para praticar, de ponta a ponta, o ciclo de desenvolvim
 ## Contribuição
 
 Projeto de estudo aberto para colaboração. Sugestões, issues e pull requests são bem-vindos.
+
+
+
+
+docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Names}}"
